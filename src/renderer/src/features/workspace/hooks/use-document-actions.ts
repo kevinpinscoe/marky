@@ -128,6 +128,20 @@ export function useDocumentActions(
           }
           return;
         }
+        case 'file:reload': {
+          if (!activeDocument.path) {
+            setNotice(t('notice.nothingToReload'), 'info');
+            return;
+          }
+          const reloaded = await window.marky.openDocumentFromPath(
+            activeDocument.path,
+          );
+          if (reloaded) {
+            setDocument(reloaded);
+            setNotice(t('notice.reloaded'), 'success');
+          }
+          return;
+        }
         case 'file:save':
           return saveDocument('save');
         case 'file:save-as':

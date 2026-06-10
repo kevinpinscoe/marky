@@ -46,6 +46,7 @@ export const es: TranslationKeys = {
   // Barra de título
   'titlebar.new': 'Nuevo documento',
   'titlebar.open': 'Abrir',
+  'titlebar.reload': 'Recargar',
   'titlebar.save': 'Guardar',
   'titlebar.saveCopy': 'Guardar una copia',
   'titlebar.export': 'Exportar',
@@ -170,6 +171,9 @@ export const es: TranslationKeys = {
   'notice.opened': '{name} abierto.',
   'notice.fileNotFound':
     'Archivo no encontrado — eliminado de la lista de recientes.',
+  'notice.reloaded': 'Archivo recargado desde el disco.',
+  'notice.nothingToReload':
+    'No hay ningún archivo guardado abierto — nada que recargar.',
 
   // Controles compartidos
   'combobox.noMatches': 'Sin coincidencias',

@@ -38,6 +38,7 @@ export type TranslationKeys = {
   'titlebar.removeRecent': string;
   'titlebar.new': string;
   'titlebar.open': string;
+  'titlebar.reload': string;
   'titlebar.save': string;
   'titlebar.saveCopy': string;
   'titlebar.export': string;
@@ -156,6 +157,8 @@ export type TranslationKeys = {
   'notice.freshDraft': string;
   'notice.opened': string;
   'notice.fileNotFound': string;
+  'notice.reloaded': string;
+  'notice.nothingToReload': string;
 
   // Shared controls
   'combobox.noMatches': string;

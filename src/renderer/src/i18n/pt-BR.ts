@@ -46,6 +46,7 @@ export const ptBR: TranslationKeys = {
   // Barra de título
   'titlebar.new': 'Novo documento',
   'titlebar.open': 'Abrir',
+  'titlebar.reload': 'Recarregar',
   'titlebar.save': 'Salvar',
   'titlebar.saveCopy': 'Salvar uma cópia',
   'titlebar.export': 'Exportar',
@@ -170,6 +171,9 @@ export const ptBR: TranslationKeys = {
   'notice.opened': '{name} aberto.',
   'notice.fileNotFound':
     'Arquivo não encontrado — removido da lista de recentes.',
+  'notice.reloaded': 'Arquivo recarregado do disco.',
+  'notice.nothingToReload':
+    'Nenhum arquivo salvo está aberto — nada para recarregar.',
 
   // Controles compartilhados
   'combobox.noMatches': 'Nenhum resultado',

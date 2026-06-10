@@ -6,6 +6,7 @@ import {
   Minus,
   PanelLeft,
   PanelRight,
+  RefreshCw,
   ScanSearch,
   Settings,
   Square,
@@ -31,6 +32,7 @@ interface TitleBarProps {
   recentFiles: string[];
   onNew: () => void;
   onOpen: () => void;
+  onReload: () => void;
   onOpenRecent: (path: string) => void;
   onRemoveRecent: (path: string) => void;
   onClearRecent: () => void;
@@ -61,6 +63,7 @@ export function TitleBar({
   recentFiles,
   onNew,
   onOpen,
+  onReload,
   onOpenRecent,
   onRemoveRecent,
   onClearRecent,
@@ -187,6 +190,16 @@ export function TitleBar({
         onRemoveRecent={onRemoveRecent}
         onClearRecent={onClearRecent}
       />
+      <Button
+        variant="ghost"
+        size="icon"
+        className="rounded-full"
+        onClick={onReload}
+        aria-label={t('titlebar.reload')}
+        title={`${t('titlebar.reload')} (Ctrl+R)`}
+      >
+        <RefreshCw className="size-4" />
+      </Button>
       <SplitSaveButton onSave={onSave} onSaveAs={onSaveAs} />
       <ExportDropdown onExportPdf={onExportPdf} onExportHtml={onExportHtml} />
       <Button

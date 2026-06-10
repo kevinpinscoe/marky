@@ -46,6 +46,7 @@ export const en: TranslationKeys = {
   // Title bar
   'titlebar.new': 'New document',
   'titlebar.open': 'Open',
+  'titlebar.reload': 'Reload',
   'titlebar.save': 'Save',
   'titlebar.saveCopy': 'Save a copy',
   'titlebar.export': 'Export',
@@ -169,6 +170,8 @@ export const en: TranslationKeys = {
   'notice.freshDraft': 'Started a fresh draft.',
   'notice.opened': 'Opened {name}.',
   'notice.fileNotFound': 'File not found — removed from recent list.',
+  'notice.reloaded': 'File reloaded from disk.',
+  'notice.nothingToReload': 'No saved file is open — nothing to reload.',
 
   // Shared controls
   'combobox.noMatches': 'No matches',
