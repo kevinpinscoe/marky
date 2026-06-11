@@ -2,4 +2,7 @@
 
 set -e
 
+branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+[ "$branch" = "personal" ] && exit 0
+
 npm run commitlint "$1"
