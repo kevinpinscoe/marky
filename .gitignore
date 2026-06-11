@@ -6,3 +6,19 @@ dist
 test-results/
 .flatpak-build
 .flatpak-builder
+
+# OS and editor artifacts
+**/.DS_Store
+**/Thumbs.db
+**/*.swp
+**/.codex
+**/.trash/
+
+# Local scripts
+**/resume.sh
+**/resume.txt
+
+# Python artifacts
+**/*.pyc
+**/*.pyo
+**/__pycache__/
