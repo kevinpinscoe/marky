@@ -40,6 +40,18 @@ Run a single unit test file:
 npx vitest run tests/unit/markdown.test.ts
 ```
 
+### build.sh — build + install on Fedora KDE
+
+`build.sh` wraps `npm run build:linux` and installs the result in a repeatable location so the KDE desktop icon always resolves:
+
+| What | Where |
+|---|---|
+| AppImage | `~/.local/bin/Marky.AppImage` |
+| Icons (all sizes from `build/icons/`) | `~/.local/share/icons/hicolor/<size>/apps/io.github.marky_editor.marky.png` |
+| Desktop entry | `~/.local/share/applications/marky.desktop` |
+
+Run it from the repo root: `./build.sh`. Subsequent runs overwrite the AppImage and icons in-place — the desktop entry's `Exec=` path never changes, so the KDE launcher always finds the latest build.
+
 ## Architecture
 
 ### Process layout
