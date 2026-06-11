@@ -8,6 +8,21 @@ It takes inspiration from Apostrophe on Linux, but it is being built as a cross-
 
 If you are wondering why not simply contribute to Apostrophe instead: Apostrophe is a lovely project, and its GNOME-first design is part of what makes it special. But its own build instructions list `libwebkit2gtk` for rendering the preview panel, which makes it a very different foundation from the one needed for a native Windows-friendly app. Marky exists partly because building a cross-platform editor around a stack I can realistically understand, maintain, and ship is a much more honest path than pretending I can personally take on a deep Windows port of Apostrophe.
 
+## Personal fork — Kevin P. Inscoe
+
+This is a personal fork of [marky-editor/marky](https://github.com/marky-editor/marky). The upstream project remains the authoritative source; this fork exists to carry personal customizations without disrupting the ability to contribute back or receive upstream updates.
+
+### Branch philosophy
+
+- **`personal`** — long-running branch where all personal customizations live. Commits here are unrestricted: no conventional commit format required, no lint gate, no typecheck gate. This is the default working branch.
+- **`main`** — kept clean and close to upstream. Used for syncing upstream changes (via `git fetch upstream && git merge upstream/main`) and as the base for pull requests back to the upstream project.
+
+The workflow is: work freely on `personal`, periodically rebase or merge `main` onto `personal` to stay current with upstream, and cut short-lived branches off `main` when submitting fixes or improvements upstream.
+
+### Git hooks on this fork
+
+The upstream Husky hooks (ESLint, TypeScript type-check, Commitlint) are bypassed automatically when committing on the `personal` branch. They remain fully active on `main` and any other branch, so pull requests to upstream still go through the full quality gate.
+
 ## Why Marky exists
 
 There are plenty of Markdown tools that are either too bare, too busy, or too dependent on external tooling. Marky aims for a middle ground:

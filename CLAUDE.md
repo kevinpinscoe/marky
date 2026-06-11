@@ -12,6 +12,10 @@ The `personal` branch is Kevin's long-running customization branch. Commits to `
 
 When making commits on the `personal` branch, sign them per the SSH signing key configured globally (`git config --global gpg.format ssh`).
 
+### Git hooks
+
+The `.husky/pre-commit` and `.husky/commit-msg` hooks both check the current branch at the start and exit 0 immediately on `personal`, so lint, typecheck, and commitlint are all bypassed. On `main` and any other branch the full upstream hook chain runs: ESLint → TypeScript type-check → Commitlint (Conventional Commits format required).
+
 ## What this is
 
 Marky is an Apostrophe-inspired Markdown editor built with Electron, React, and TypeScript. It uses electron-vite for bundling, CodeMirror for editing, and a remark/rehype pipeline for live preview.
