@@ -21,16 +21,14 @@ import {
 import { useSettingsStore } from '@renderer/features/settings/store';
 import { SettingsDialog } from '@renderer/features/settings/components/settings-dialog';
 import { HelpDialog } from '@renderer/features/help/components/help-dialog';
-import {
-  toEditorFontFamilyCss,
-  toPreviewFontFamilyCss,
-} from '@renderer/features/settings/lib/font-options';
+import { useSettingsBootstrap } from '@renderer/features/settings/hooks/use-settings-bootstrap';
+import { useAppearance } from '@renderer/features/settings/hooks/use-appearance';
 import {
   insertImage,
   insertLink,
 } from '@renderer/features/editor/lib/toolbar-actions';
 import { useScrollSync } from '@renderer/features/editor/hooks/use-scroll-sync';
-import { I18nProvider, detectClosestLocale } from '@renderer/i18n';
+import { I18nProvider } from '@renderer/i18n';
 
 export function App() {
   const previewRef = useRef<HTMLDivElement | null>(null);
@@ -66,75 +64,21 @@ export function App() {
     clearRecentFiles,
   } = useDocumentActions(previewRef);
 
-  const settings = useSettingsStore((state) => state.settings);
-  const setSettings = useSettingsStore((state) => state.setSettings);
-  const updateSettings = useSettingsStore((state) => state.updateSettings);
+  const language = useSettingsStore((state) => state.settings.language);
   const openDialog = useSettingsStore((state) => state.openDialog);
   const openHelp = useSettingsStore((state) => state.openHelp);
   const isSettingsOpen = useSettingsStore((state) => state.isOpen);
   const isHelpOpen = useSettingsStore((state) => state.isHelpOpen);
   const recentFiles = useSettingsStore((state) => state.settings.recentFiles);
 
+  useSettingsBootstrap();
+  useAppearance();
+
   useEffect(() => {
     if (!isSettingsOpen && !isHelpOpen) {
       requestAnimationFrame(() => editorViewRef.current?.focus());
     }
   }, [isSettingsOpen, isHelpOpen]);
-
-  // Load settings and auto-detect language on first launch
-  const languageDetected = useRef(false);
-  useEffect(() => {
-    void window.marky.getSettings().then((loaded) => {
-      setSettings(loaded);
-
-      // Auto-detect language only on first launch (language still at default 'en')
-      if (!languageDetected.current && loaded.language === 'en') {
-        languageDetected.current = true;
-        void window.marky.getLocale().then((osLocale) => {
-          const detected = detectClosestLocale(osLocale);
-          if (detected !== 'en') {
-            updateSettings({ language: detected });
-          }
-        });
-      }
-    });
-  }, [setSettings, updateSettings]);
-
-  // Sync native menu language whenever settings.language changes
-  useEffect(() => {
-    void window.marky.updateMenuLanguage(settings.language);
-  }, [settings.language]);
-
-  useEffect(() => {
-    const root = globalThis.document.documentElement;
-    if (settings.theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  }, [settings.theme]);
-
-  useEffect(() => {
-    const root = globalThis.document.documentElement;
-    root.style.setProperty(
-      '--editor-font-family',
-      toEditorFontFamilyCss(settings.editorFontFamily),
-    );
-    root.style.setProperty('--editor-font-size', `${settings.editorFontSize}px`);
-    root.style.setProperty(
-      '--preview-font-family',
-      toPreviewFontFamilyCss(settings.previewFontFamily),
-    );
-    root.style.setProperty(
-      '--preview-font-size',
-      `${settings.previewFontSize}px`,
-    );
-  }, [
-    settings.editorFontFamily,
-    settings.editorFontSize,
-    settings.previewFontFamily,
-    settings.previewFontSize,
-  ]);
 
   useEffect(() => {
     globalThis.document.title = `${isDirty ? '\u2022 ' : ''}${activeDocument.name} - Marky`;
@@ -167,7 +111,7 @@ export function App() {
   }
 
   return (
-    <I18nProvider locale={settings.language}>
+    <I18nProvider locale={language}>
       <div className="relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
         <div className="app-shell-overlay" />
         <div className="app-grain-overlay" />
