@@ -21,7 +21,7 @@ export function registerWindowIpc() {
     window?.close();
   });
 
-  ipcMain.handle(ipcChannels.windowIsMaximized, (event) => {
+  ipcMain.handle(ipcChannels.windowIsMaximized, (event): boolean => {
     const window = BrowserWindow.fromWebContents(event.sender);
     return window?.isMaximized() ?? false;
   });
