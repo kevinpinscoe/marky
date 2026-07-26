@@ -1,12 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
-import { Button } from '@renderer/components/ui/button';
+import { Modal } from '@renderer/components/ui/modal';
 import { useSettingsStore } from '@renderer/features/settings/store';
 import { useTranslation } from '@renderer/i18n';
 import { isMac, modKey as mod } from '@renderer/lib/platform';
 import type { TranslationKeys } from '@renderer/i18n';
-import { noDrag } from '@renderer/lib/window-region';
-
 
 type ShortcutEntry = {
   keys: string;
@@ -108,80 +104,33 @@ export function HelpDialog() {
   const { t } = useTranslation();
   const isHelpOpen = useSettingsStore((s) => s.isHelpOpen);
   const closeHelp = useSettingsStore((s) => s.closeHelp);
-  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (isHelpOpen) scrollAreaRef.current?.focus();
-  }, [isHelpOpen]);
-
-  useEffect(() => {
-    if (!isHelpOpen) return;
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        closeHelp();
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isHelpOpen, closeHelp]);
 
   if (!isHelpOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm"
-      onClick={closeHelp}
-      style={noDrag}
+    <Modal
+      title={t('help.title')}
+      subtitle={t('help.subtitle')}
+      className="w-[460px]"
+      scrollableBody
+      bodyClassName="space-y-5"
+      onClose={closeHelp}
     >
-      <div
-        className="relative flex max-h-[calc(100vh-1.5rem)] w-[460px] max-w-[calc(100vw-1.5rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-        style={noDrag}
-      >
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <div>
-            <h2 className="text-sm font-semibold tracking-wide">
-              {t('help.title')}
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t('help.subtitle')}
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 rounded-full"
-            aria-label={t('titlebar.close')}
-            onClick={closeHelp}
-          >
-            <X className="size-4" />
-          </Button>
-        </div>
-
-        <div
-          className="themed-scrollbar min-h-0 space-y-5 overflow-y-auto px-5 py-5 focus:outline-none"
-          tabIndex={0}
-          ref={scrollAreaRef}
-        >
-          <ShortcutSection
-            title={t('help.formatting')}
-            entries={formattingShortcuts}
-          />
-          <div className="border-t border-border" />
-          <ShortcutSection
-            title={t('help.tableNavigation')}
-            entries={tableShortcuts}
-          />
-          <div className="border-t border-border" />
-          <ShortcutSection title={t('help.editor')} entries={editorShortcuts} />
-          <div className="border-t border-border" />
-          <ShortcutSection title={t('help.file')} entries={fileShortcuts} />
-          <div className="border-t border-border" />
-          <ShortcutSection title={t('help.view')} entries={viewShortcuts} />
-        </div>
-      </div>
-    </div>
+      <ShortcutSection
+        title={t('help.formatting')}
+        entries={formattingShortcuts}
+      />
+      <div className="border-t border-border" />
+      <ShortcutSection
+        title={t('help.tableNavigation')}
+        entries={tableShortcuts}
+      />
+      <div className="border-t border-border" />
+      <ShortcutSection title={t('help.editor')} entries={editorShortcuts} />
+      <div className="border-t border-border" />
+      <ShortcutSection title={t('help.file')} entries={fileShortcuts} />
+      <div className="border-t border-border" />
+      <ShortcutSection title={t('help.view')} entries={viewShortcuts} />
+    </Modal>
   );
 }
