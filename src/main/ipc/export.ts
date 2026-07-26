@@ -3,7 +3,10 @@ import { writeFile, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { ipcChannels } from '@shared/contracts';
+import { defaultAppSettings } from '@shared/settings';
 import type { ExportPayload } from '@shared/types';
+
+const MM_PER_INCH = 25.4;
 
 async function createPdfWindow(htmlDocument: string): Promise<{
   window: BrowserWindow;
@@ -62,8 +65,9 @@ export function registerExportIpc() {
     );
 
     try {
-      const m = payload.pdfOptions?.margins ?? { top: 20, right: 20, bottom: 20, left: 20 };
-      const pageSize = payload.pdfOptions?.pageSize ?? 'A4';
+      const m = payload.pdfOptions?.margins ?? defaultAppSettings.pdfMargins;
+      const pageSize =
+        payload.pdfOptions?.pageSize ?? defaultAppSettings.pdfPageSize;
 
       const pdfBuffer = await exportWindow.webContents.printToPDF({
         printBackground: true,
@@ -71,10 +75,10 @@ export function registerExportIpc() {
         margins: {
           marginType: 'custom',
           // Electron expects inches; settings are stored in mm
-          top: m.top / 25.4,
-          right: m.right / 25.4,
-          bottom: m.bottom / 25.4,
-          left: m.left / 25.4,
+          top: m.top / MM_PER_INCH,
+          right: m.right / MM_PER_INCH,
+          bottom: m.bottom / MM_PER_INCH,
+          left: m.left / MM_PER_INCH,
         },
       });
 
