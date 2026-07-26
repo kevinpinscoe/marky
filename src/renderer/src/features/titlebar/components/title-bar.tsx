@@ -306,10 +306,10 @@ export function TitleBar({
 
   useEffect(() => {
     void window.marky.windowIsMaximized().then(setIsMaximized);
-    const interval = setInterval(() => {
-      void window.marky.windowIsMaximized().then(setIsMaximized);
-    }, 500);
+    return window.marky.onMaximizedChange(setIsMaximized);
+  }, []);
 
+  useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'F1') {
         e.preventDefault();
@@ -318,10 +318,7 @@ export function TitleBar({
     }
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onHelp]);
 
   const macControls = (
@@ -349,7 +346,9 @@ export function TitleBar({
         size="icon"
         className="h-7 w-7 rounded-full hover:bg-green-500/90 hover:text-white"
         onClick={() => window.marky.windowMaximize()}
-        aria-label={isMaximized ? t('titlebar.restore') : t('titlebar.maximize')}
+        aria-label={
+          isMaximized ? t('titlebar.restore') : t('titlebar.maximize')
+        }
       >
         {isMaximized ? (
           <Square className="size-3" />
@@ -376,7 +375,9 @@ export function TitleBar({
         size="icon"
         className="h-8 w-8 rounded-none hover:bg-accent"
         onClick={() => window.marky.windowMaximize()}
-        aria-label={isMaximized ? t('titlebar.restore') : t('titlebar.maximize')}
+        aria-label={
+          isMaximized ? t('titlebar.restore') : t('titlebar.maximize')
+        }
       >
         {isMaximized ? (
           <Square className="size-3.5" />

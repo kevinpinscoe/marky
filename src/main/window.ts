@@ -1,6 +1,7 @@
 import { BrowserWindow, screen } from 'electron';
 import { join } from 'node:path';
 import { applyNavigationPolicy } from './navigation';
+import { forwardMaximizedState } from './ipc/window';
 
 export function createMainWindow() {
   const display = screen.getPrimaryDisplay();
@@ -33,6 +34,7 @@ export function createMainWindow() {
   });
 
   applyNavigationPolicy(window);
+  forwardMaximizedState(window);
 
   return window;
 }
