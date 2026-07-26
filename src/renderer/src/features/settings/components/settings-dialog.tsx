@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Moon, Sun, X } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { cn } from '@renderer/lib/utils';
-import type { AppSettings, ExportFont, Locale, PdfPageSize } from '@shared/types';
+import type { ExportFont, Locale, PdfPageSize } from '@shared/types';
 import {
   fallbackFontOptions,
   loadFontOptions,
@@ -172,7 +172,7 @@ function FontField({
 
 export function SettingsDialog() {
   const { t } = useTranslation();
-  const { settings, isOpen, setSettings, closeDialog } = useSettingsStore();
+  const { settings, isOpen, updateSettings, closeDialog } = useSettingsStore();
   const [loadedFontChoices, setLoadedFontChoices] =
     useState<LoadedFontOptions | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
@@ -248,12 +248,6 @@ export function SettingsDialog() {
 
   if (!isOpen) return null;
 
-  function update(patch: Partial<AppSettings>) {
-    const next = { ...settings, ...patch };
-    setSettings(next);
-    void window.marky.setSettings(next);
-  }
-
   const marginLabels: Record<'top' | 'right' | 'bottom' | 'left', string> = {
     top: t('settings.marginTop'),
     right: t('settings.marginRight'),
@@ -302,7 +296,7 @@ export function SettingsDialog() {
                 className={inputClass}
                 value={settings.language}
                 onChange={(event) =>
-                  update({ language: event.target.value as Locale })
+                  updateSettings({ language: event.target.value as Locale })
                 }
               >
                 {languageOptions.map((option) => (
@@ -319,7 +313,7 @@ export function SettingsDialog() {
                 {(['light', 'dark'] as const).map((theme) => (
                   <button
                     key={theme}
-                    onClick={() => update({ theme })}
+                    onClick={() => updateSettings({ theme })}
                     className={cn(
                       'flex flex-1 items-center justify-center gap-2 rounded-xl border py-2 text-sm font-medium transition-colors',
                       settings.theme === theme
@@ -359,8 +353,8 @@ export function SettingsDialog() {
                 familyLabel={t('settings.family')}
                 sizeLabel={t('settings.size')}
                 sampleLabel={t('settings.sample')}
-                onChange={(editorFontFamily) => update({ editorFontFamily })}
-                onFontSizeChange={(editorFontSize) => update({ editorFontSize })}
+                onChange={(editorFontFamily) => updateSettings({ editorFontFamily })}
+                onFontSizeChange={(editorFontSize) => updateSettings({ editorFontSize })}
               />
 
               <FontField
@@ -375,8 +369,8 @@ export function SettingsDialog() {
                 familyLabel={t('settings.family')}
                 sizeLabel={t('settings.size')}
                 sampleLabel={t('settings.sample')}
-                onChange={(previewFontFamily) => update({ previewFontFamily })}
-                onFontSizeChange={(previewFontSize) => update({ previewFontSize })}
+                onChange={(previewFontFamily) => updateSettings({ previewFontFamily })}
+                onFontSizeChange={(previewFontSize) => updateSettings({ previewFontSize })}
               />
             </div>
           </Section>
@@ -390,7 +384,7 @@ export function SettingsDialog() {
                 className={inputClass}
                 value={settings.exportFont}
                 onChange={(event) =>
-                  update({ exportFont: event.target.value as ExportFont })
+                  updateSettings({ exportFont: event.target.value as ExportFont })
                 }
               >
                 {exportFontOptions.map((option) => (
@@ -407,7 +401,7 @@ export function SettingsDialog() {
                 className={inputClass}
                 value={settings.pdfPageSize}
                 onChange={(event) =>
-                  update({ pdfPageSize: event.target.value as PdfPageSize })
+                  updateSettings({ pdfPageSize: event.target.value as PdfPageSize })
                 }
               >
                 {pageSizeOptions.map((option) => (
@@ -433,7 +427,7 @@ export function SettingsDialog() {
                       className={inputClass}
                       value={settings.pdfMargins[side]}
                       onChange={(event) =>
-                        update({
+                        updateSettings({
                           pdfMargins: {
                             ...settings.pdfMargins,
                             [side]: Math.max(0, Number(event.target.value)),

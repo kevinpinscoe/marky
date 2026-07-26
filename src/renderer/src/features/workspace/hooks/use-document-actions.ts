@@ -111,26 +111,15 @@ export function useDocumentActions(
       const opened = await window.marky.openDocumentFromPath(path);
       if (opened) {
         setDocument(opened);
-        void window.marky.setSettings(addRecentFile(path));
+        addRecentFile(path);
         setNotice(t('notice.opened', { name: opened.name }), 'success');
       } else {
-        void window.marky.setSettings(removeRecentFile(path));
+        removeRecentFile(path);
         setNotice(t('notice.fileNotFound'), 'info');
       }
     },
     [addRecentFile, removeRecentFile, setDocument, setNotice, t],
   );
-
-  const removeRecentFileAction = useCallback(
-    (path: string) => {
-      void window.marky.setSettings(removeRecentFile(path));
-    },
-    [removeRecentFile],
-  );
-
-  const clearRecentFilesAction = useCallback(() => {
-    void window.marky.setSettings(clearRecentFiles());
-  }, [clearRecentFiles]);
 
   const handleMenuAction = useCallback(
     async (action: MenuAction) => {
@@ -148,7 +137,7 @@ export function useDocumentActions(
           if (opened) {
             setDocument(opened);
             if (opened.path) {
-              void window.marky.setSettings(addRecentFile(opened.path));
+              addRecentFile(opened.path);
             }
             setNotice(t('notice.opened', { name: opened.name }), 'success');
           }
@@ -194,7 +183,7 @@ export function useDocumentActions(
     exportDocument,
     handleMenuAction,
     openRecentFile,
-    removeRecentFile: removeRecentFileAction,
-    clearRecentFiles: clearRecentFilesAction,
+    removeRecentFile,
+    clearRecentFiles,
   };
 }

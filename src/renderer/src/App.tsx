@@ -68,6 +68,7 @@ export function App() {
 
   const settings = useSettingsStore((state) => state.settings);
   const setSettings = useSettingsStore((state) => state.setSettings);
+  const updateSettings = useSettingsStore((state) => state.updateSettings);
   const openDialog = useSettingsStore((state) => state.openDialog);
   const openHelp = useSettingsStore((state) => state.openHelp);
   const isSettingsOpen = useSettingsStore((state) => state.isOpen);
@@ -92,15 +93,12 @@ export function App() {
         void window.marky.getLocale().then((osLocale) => {
           const detected = detectClosestLocale(osLocale);
           if (detected !== 'en') {
-            const updated = { ...loaded, language: detected };
-            setSettings(updated);
-            void window.marky.setSettings(updated);
-            void window.marky.updateMenuLanguage(detected);
+            updateSettings({ language: detected });
           }
         });
       }
     });
-  }, [setSettings]);
+  }, [setSettings, updateSettings]);
 
   // Sync native menu language whenever settings.language changes
   useEffect(() => {
