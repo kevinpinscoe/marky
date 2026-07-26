@@ -11,8 +11,12 @@ import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { EditorView } from '@codemirror/view';
 import { TableProperties } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
+import { useTranslation } from '@renderer/i18n';
 import { useEditorStore } from '../store';
-import { editorStateExtension } from '../lib/formatting-extension';
+import {
+  computeStats,
+  editorStateExtension,
+} from '../lib/formatting-extension';
 import {
   getHoveredTableHeader,
   normalizeTableSpacing,
@@ -67,6 +71,7 @@ const theme = EditorView.theme({
 });
 
 export function EditorPane({ value, onChange, onReady }: EditorPaneProps) {
+  const { t } = useTranslation();
   const setFormatting = useEditorStore((state) => state.setFormatting);
   const setStats = useEditorStore((state) => state.setStats);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
@@ -90,12 +95,7 @@ export function EditorPane({ value, onChange, onReady }: EditorPaneProps) {
   const handleReady = useCallback(
     (view: EditorView) => {
       setEditorView(view);
-      const content = view.state.doc.toString();
-      const trimmed = content.trim();
-      setStats({
-        words: trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length,
-        characters: content.length,
-      });
+      setStats(computeStats(view.state.doc.toString()));
       onReady(view);
     },
     [onReady, setStats],
@@ -224,13 +224,13 @@ export function EditorPane({ value, onChange, onReady }: EditorPaneProps) {
             variant="outline"
             size="sm"
             className="pointer-events-auto h-8 gap-1.5 rounded-full border-border/80 bg-card/92 px-3 text-foreground/85 shadow-lg backdrop-blur"
-            aria-label="Normalize table spacing"
-            title="Normalize table spacing"
+            aria-label={t('toolbar.normalizeTableSpacing')}
+            title={t('toolbar.normalizeTableSpacing')}
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => handleNormalizeTable(tableHoverButton.tableFrom)}
           >
             <TableProperties className="size-4" />
-            <span>Align</span>
+            <span>{t('toolbar.align')}</span>
           </Button>
         </div>
       )}

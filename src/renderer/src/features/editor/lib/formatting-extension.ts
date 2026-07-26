@@ -3,7 +3,7 @@ import { EditorView } from '@codemirror/view';
 import type { EditorState } from '@codemirror/state';
 import type { FormattingState, DocumentStats } from '../store';
 
-function computeStats(content: string): DocumentStats {
+export function computeStats(content: string): DocumentStats {
   const trimmed = content.trim();
   return {
     words: trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length,

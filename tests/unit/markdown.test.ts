@@ -23,6 +23,38 @@ describe('renderMarkdown', () => {
     );
   });
 
+  it('keeps mailto and anchor links', () => {
+    expect(renderMarkdown('[mail](mailto:a@b.com)')).toContain(
+      'href="mailto:a@b.com"',
+    );
+    expect(renderMarkdown('[jump](#section)')).toContain('href="#section"');
+  });
+
+  it('drops javascript: hrefs', () => {
+    const html = renderMarkdown('[x](javascript:alert&#40;1&#41;)');
+    expect(html).not.toContain('javascript:');
+    expect(html).toContain('<a>x</a>');
+  });
+
+  it('drops javascript: hrefs regardless of case', () => {
+    expect(renderMarkdown('[x](JavaScript:alert&#40;1&#41;)')).toContain(
+      '<a>x</a>',
+    );
+  });
+
+  it('drops other executable schemes', () => {
+    expect(renderMarkdown('[x](vbscript:msgbox)')).not.toContain('vbscript:');
+    expect(renderMarkdown('[x](data:text/html,<b>hi</b>)')).not.toContain(
+      'href="data:',
+    );
+  });
+
+  it('keeps relative links', () => {
+    expect(renderMarkdown('[other](./notes.md)')).toContain(
+      'href="./notes.md"',
+    );
+  });
+
   it('renders unordered lists', () => {
     const md = '- one\n- two\n- three';
     const html = renderMarkdown(md);

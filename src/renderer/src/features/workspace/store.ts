@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { defaultDocument } from '@shared/default-document';
+import { basename } from '@renderer/lib/paths';
 import type { DocumentHandle, ViewMode } from '@shared/types';
 
 type NoticeTone = 'info' | 'success' | 'error';
@@ -42,9 +43,7 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
       document: {
         ...state.document,
         path,
-        name: path
-          ? (path.split(/[/\\]/).at(-1) ?? state.document.name)
-          : state.document.name,
+        name: path ? basename(path) : state.document.name,
       },
       savedContent: state.document.content,
     })),

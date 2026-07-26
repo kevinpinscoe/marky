@@ -2,13 +2,20 @@ import { dialog, ipcMain } from 'electron';
 import { basename } from 'node:path';
 import { readFile, writeFile } from 'node:fs/promises';
 import { ipcChannels } from '@shared/contracts';
-import type { SaveDocumentPayload } from '@shared/types';
+import type {
+  DocumentHandle,
+  SaveDocumentPayload,
+  SaveResult,
+} from '@shared/types';
 
 const markdownFilters = [
   { name: 'Markdown', extensions: ['md', 'markdown', 'txt'] },
 ];
 
-async function writeDocument(path: string, payload: SaveDocumentPayload) {
+async function writeDocument(
+  path: string,
+  payload: SaveDocumentPayload,
+): Promise<SaveResult> {
   await writeFile(path, payload.content, 'utf8');
 
   return {
@@ -18,38 +25,44 @@ async function writeDocument(path: string, payload: SaveDocumentPayload) {
 }
 
 export function registerDocumentIpc() {
-  ipcMain.handle(ipcChannels.openDocumentFromPath, async (_, path: string) => {
-    try {
+  ipcMain.handle(
+    ipcChannels.openDocumentFromPath,
+    async (_, path: string): Promise<DocumentHandle | null> => {
+      try {
+        const content = await readFile(path, 'utf8');
+        return { path, name: basename(path), content };
+      } catch {
+        return null;
+      }
+    },
+  );
+
+  ipcMain.handle(
+    ipcChannels.openDocument,
+    async (): Promise<DocumentHandle | null> => {
+      const result = await dialog.showOpenDialog({
+        properties: ['openFile'],
+        filters: markdownFilters,
+      });
+
+      if (result.canceled || result.filePaths.length === 0) {
+        return null;
+      }
+
+      const path = result.filePaths[0];
       const content = await readFile(path, 'utf8');
-      return { path, name: basename(path), content };
-    } catch {
-      return null;
-    }
-  });
 
-  ipcMain.handle(ipcChannels.openDocument, async () => {
-    const result = await dialog.showOpenDialog({
-      properties: ['openFile'],
-      filters: markdownFilters,
-    });
-
-    if (result.canceled || result.filePaths.length === 0) {
-      return null;
-    }
-
-    const path = result.filePaths[0];
-    const content = await readFile(path, 'utf8');
-
-    return {
-      path,
-      name: basename(path),
-      content,
-    };
-  });
+      return {
+        path,
+        name: basename(path),
+        content,
+      };
+    },
+  );
 
   ipcMain.handle(
     ipcChannels.saveDocument,
-    async (_, payload: SaveDocumentPayload) => {
+    async (_, payload: SaveDocumentPayload): Promise<SaveResult> => {
       if (payload.path) {
         return writeDocument(payload.path, payload);
       }
@@ -67,13 +80,23 @@ export function registerDocumentIpc() {
     },
   );
 
-  ipcMain.handle(ipcChannels.pickImage, async () => {
+  ipcMain.handle(ipcChannels.pickImage, async (): Promise<string | null> => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [
         {
           name: 'Images',
-          extensions: ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif', 'bmp', 'ico'],
+          extensions: [
+            'png',
+            'jpg',
+            'jpeg',
+            'gif',
+            'svg',
+            'webp',
+            'avif',
+            'bmp',
+            'ico',
+          ],
         },
       ],
     });
@@ -87,7 +110,7 @@ export function registerDocumentIpc() {
 
   ipcMain.handle(
     ipcChannels.saveDocumentAs,
-    async (_, payload: SaveDocumentPayload) => {
+    async (_, payload: SaveDocumentPayload): Promise<SaveResult> => {
       const result = await dialog.showSaveDialog({
         defaultPath: payload.suggestedName,
         filters: markdownFilters,

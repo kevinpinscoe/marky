@@ -20,6 +20,7 @@ export const ipcChannels = {
   windowMaximize: 'window:maximize',
   windowClose: 'window:close',
   windowIsMaximized: 'window:isMaximized',
+  windowMaximizedChanged: 'window:maximized-changed',
   settingsGet: 'settings:get',
   settingsSet: 'settings:set',
   getLocale: 'locale:get',
@@ -39,6 +40,7 @@ export type MarkyApi = {
   windowMaximize: () => void;
   windowClose: () => void;
   windowIsMaximized: () => Promise<boolean>;
+  onMaximizedChange: (listener: (isMaximized: boolean) => void) => () => void;
   getSettings: () => Promise<AppSettings>;
   setSettings: (settings: AppSettings) => Promise<void>;
   getLocale: () => Promise<string>;

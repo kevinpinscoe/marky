@@ -3,7 +3,8 @@ import type { TranslationKeys } from './types';
 export const en: TranslationKeys = {
   // Settings
   'settings.title': 'Settings',
-  'settings.subtitle': 'Tune the writing surface, preview, and export defaults.',
+  'settings.subtitle':
+    'Tune the writing surface, preview, and export defaults.',
   'settings.appearance': 'Appearance',
   'settings.language': 'Language',
   'settings.theme': 'Theme',
@@ -19,7 +20,8 @@ export const en: TranslationKeys = {
     'Best effort: when local font access is available, this list tries to stay monospaced.',
   'settings.previewFontHelper':
     'Applies to rendered prose and Mermaid diagram labels in the preview pane.',
-  'settings.editorPreviewText': '# Draft title\n- tighten the opening\n- keep the cadence calm',
+  'settings.editorPreviewText':
+    '# Draft title\n- tighten the opening\n- keep the cadence calm',
   'settings.previewPreviewText':
     'The preview should feel calm, readable, and close to the finished document.',
   'settings.fontHintLocalFiltered':
@@ -36,6 +38,9 @@ export const en: TranslationKeys = {
   'settings.marginRight': 'Right',
   'settings.marginBottom': 'Bottom',
   'settings.marginLeft': 'Left',
+  'settings.exportFontSystem': 'System sans-serif',
+  'settings.exportFontSerif': 'Georgia (serif)',
+  'settings.exportFontMono': 'Monospace',
 
   // Title bar
   'titlebar.open': 'Open',
@@ -51,6 +56,7 @@ export const en: TranslationKeys = {
   'titlebar.settings': 'Settings',
   'titlebar.keyboardShortcuts': 'Keyboard shortcuts',
   'titlebar.close': 'Close',
+  'titlebar.removeRecent': 'Remove {name} from recent files',
   'titlebar.minimize': 'Minimize',
   'titlebar.maximize': 'Maximize',
   'titlebar.restore': 'Restore',
@@ -115,6 +121,9 @@ export const en: TranslationKeys = {
   'toolbar.table': 'Table',
   'toolbar.chooseTableSize': 'Choose table size',
   'toolbar.columnsRows': '{columns} columns x {rows} rows',
+  'toolbar.insertTableSize': 'Insert {columns} columns and {rows} rows',
+  'toolbar.normalizeTableSpacing': 'Normalize table spacing',
+  'toolbar.align': 'Align',
 
   // Insert-asset dialog
   'insertAsset.insertLink': 'Insert link',
@@ -129,13 +138,17 @@ export const en: TranslationKeys = {
   'insertAsset.cancel': 'Cancel',
   'insertAsset.browse': 'Browse',
   'insertAsset.imagePathOrUrl': 'Path or URL',
-  'insertAsset.localImageHint': 'Use a URL or browse for a local image. Local images are resolved relative to the document folder.',
-  'insertAsset.warnUnsaved': 'Save the document first so local images can be displayed.',
-  'insertAsset.warnOutsideFolder': 'This image is outside the document folder and won\'t be displayed in the preview.',
+  'insertAsset.localImageHint':
+    'Use a URL or browse for a local image. Local images are resolved relative to the document folder.',
+  'insertAsset.warnUnsaved':
+    'Save the document first so local images can be displayed.',
+  'insertAsset.warnOutsideFolder':
+    "This image is outside the document folder and won't be displayed in the preview.",
 
   // Preview image placeholders
   'preview.imageUnsaved': 'Local image — save the document to display it.',
-  'preview.imageOutsideFolder': 'Image outside the document folder — can\'t be displayed.',
+  'preview.imageOutsideFolder':
+    "Image outside the document folder — can't be displayed.",
 
   // Document status
   'status.words': '{count} words',
@@ -150,17 +163,4 @@ export const en: TranslationKeys = {
   'notice.freshDraft': 'Started a fresh draft.',
   'notice.opened': 'Opened {name}.',
   'notice.fileNotFound': 'File not found — removed from recent list.',
-
-  // Menu
-  'menu.file': 'File',
-  'menu.new': 'New',
-  'menu.open': 'Open...',
-  'menu.save': 'Save',
-  'menu.saveAs': 'Save As...',
-  'menu.exportHtml': 'Export HTML...',
-  'menu.exportPdf': 'Export PDF...',
-  'menu.view': 'View',
-  'menu.editorOnly': 'Editor Only',
-  'menu.splitView': 'Split View',
-  'menu.previewOnly': 'Preview Only',
 };

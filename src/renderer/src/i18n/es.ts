@@ -3,7 +3,8 @@ import type { TranslationKeys } from './types';
 export const es: TranslationKeys = {
   // Configuración
   'settings.title': 'Configuración',
-  'settings.subtitle': 'Ajusta la superficie de escritura, la vista previa y los valores de exportación.',
+  'settings.subtitle':
+    'Ajusta la superficie de escritura, la vista previa y los valores de exportación.',
   'settings.appearance': 'Apariencia',
   'settings.language': 'Idioma',
   'settings.theme': 'Tema',
@@ -19,7 +20,8 @@ export const es: TranslationKeys = {
     'Mejor esfuerzo: cuando el acceso a fuentes locales está disponible, esta lista intenta mantenerse monoespacio.',
   'settings.previewFontHelper':
     'Se aplica a la prosa renderizada y las etiquetas de diagramas Mermaid en el panel de vista previa.',
-  'settings.editorPreviewText': '# Título del borrador\n- ajustar la apertura\n- mantener la cadencia calma',
+  'settings.editorPreviewText':
+    '# Título del borrador\n- ajustar la apertura\n- mantener la cadencia calma',
   'settings.previewPreviewText':
     'La vista previa debe sentirse calmada, legible y cercana al documento final.',
   'settings.fontHintLocalFiltered':
@@ -36,6 +38,9 @@ export const es: TranslationKeys = {
   'settings.marginRight': 'Derecha',
   'settings.marginBottom': 'Inferior',
   'settings.marginLeft': 'Izquierda',
+  'settings.exportFontSystem': 'Sans-serif del sistema',
+  'settings.exportFontSerif': 'Georgia (serif)',
+  'settings.exportFontMono': 'Monoespaciada',
 
   // Barra de título
   'titlebar.open': 'Abrir',
@@ -51,6 +56,7 @@ export const es: TranslationKeys = {
   'titlebar.settings': 'Configuración',
   'titlebar.keyboardShortcuts': 'Atajos de teclado',
   'titlebar.close': 'Cerrar',
+  'titlebar.removeRecent': 'Quitar {name} de los archivos recientes',
   'titlebar.minimize': 'Minimizar',
   'titlebar.maximize': 'Maximizar',
   'titlebar.restore': 'Restaurar',
@@ -115,6 +121,9 @@ export const es: TranslationKeys = {
   'toolbar.table': 'Tabla',
   'toolbar.chooseTableSize': 'Elegir tamaño de tabla',
   'toolbar.columnsRows': '{columns} columnas x {rows} filas',
+  'toolbar.insertTableSize': 'Insertar {columns} columnas y {rows} filas',
+  'toolbar.normalizeTableSpacing': 'Normalizar el espaciado de la tabla',
+  'toolbar.align': 'Alinear',
 
   // Diálogo de inserción
   'insertAsset.insertLink': 'Insertar enlace',
@@ -129,13 +138,17 @@ export const es: TranslationKeys = {
   'insertAsset.cancel': 'Cancelar',
   'insertAsset.browse': 'Explorar',
   'insertAsset.imagePathOrUrl': 'Ruta o URL',
-  'insertAsset.localImageHint': 'Usa una URL o busca una imagen local. Las imágenes locales se resuelven en relación a la carpeta del documento.',
-  'insertAsset.warnUnsaved': 'Guarda el documento primero para que las imágenes locales se puedan mostrar.',
-  'insertAsset.warnOutsideFolder': 'Esta imagen está fuera de la carpeta del documento y no se mostrará en la vista previa.',
+  'insertAsset.localImageHint':
+    'Usa una URL o busca una imagen local. Las imágenes locales se resuelven en relación a la carpeta del documento.',
+  'insertAsset.warnUnsaved':
+    'Guarda el documento primero para que las imágenes locales se puedan mostrar.',
+  'insertAsset.warnOutsideFolder':
+    'Esta imagen está fuera de la carpeta del documento y no se mostrará en la vista previa.',
 
   // Placeholders de imagen en la vista previa
   'preview.imageUnsaved': 'Imagen local — guarda el documento para mostrarla.',
-  'preview.imageOutsideFolder': 'Imagen fuera de la carpeta del documento — no se puede mostrar.',
+  'preview.imageOutsideFolder':
+    'Imagen fuera de la carpeta del documento — no se puede mostrar.',
 
   // Estado del documento
   'status.words': '{count} palabras',
@@ -149,18 +162,6 @@ export const es: TranslationKeys = {
   'notice.alreadyUnsaved': 'Ya estás editando un borrador sin guardar.',
   'notice.freshDraft': 'Nuevo borrador iniciado.',
   'notice.opened': '{name} abierto.',
-  'notice.fileNotFound': 'Archivo no encontrado — eliminado de la lista de recientes.',
-
-  // Menú
-  'menu.file': 'Archivo',
-  'menu.new': 'Nuevo',
-  'menu.open': 'Abrir...',
-  'menu.save': 'Guardar',
-  'menu.saveAs': 'Guardar como...',
-  'menu.exportHtml': 'Exportar HTML...',
-  'menu.exportPdf': 'Exportar PDF...',
-  'menu.view': 'Vista',
-  'menu.editorOnly': 'Solo Editor',
-  'menu.splitView': 'Vista Dividida',
-  'menu.previewOnly': 'Solo Vista Previa',
+  'notice.fileNotFound':
+    'Archivo no encontrado — eliminado de la lista de recientes.',
 };

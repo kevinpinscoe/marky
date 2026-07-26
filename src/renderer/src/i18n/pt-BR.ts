@@ -3,7 +3,8 @@ import type { TranslationKeys } from './types';
 export const ptBR: TranslationKeys = {
   // Configurações
   'settings.title': 'Configurações',
-  'settings.subtitle': 'Ajuste a superfície de escrita, pré-visualização e padrões de exportação.',
+  'settings.subtitle':
+    'Ajuste a superfície de escrita, pré-visualização e padrões de exportação.',
   'settings.appearance': 'Aparência',
   'settings.language': 'Idioma',
   'settings.theme': 'Tema',
@@ -19,7 +20,8 @@ export const ptBR: TranslationKeys = {
     'Melhor esforço: quando o acesso a fontes locais está disponível, esta lista tenta manter apenas fontes monoespaçadas.',
   'settings.previewFontHelper':
     'Aplica-se à prosa renderizada e rótulos de diagramas Mermaid no painel de pré-visualização.',
-  'settings.editorPreviewText': '# Título do rascunho\n- ajustar a abertura\n- manter a cadência calma',
+  'settings.editorPreviewText':
+    '# Título do rascunho\n- ajustar a abertura\n- manter a cadência calma',
   'settings.previewPreviewText':
     'A pré-visualização deve parecer calma, legível e próxima do documento final.',
   'settings.fontHintLocalFiltered':
@@ -36,6 +38,9 @@ export const ptBR: TranslationKeys = {
   'settings.marginRight': 'Direita',
   'settings.marginBottom': 'Inferior',
   'settings.marginLeft': 'Esquerda',
+  'settings.exportFontSystem': 'Sans-serif do sistema',
+  'settings.exportFontSerif': 'Georgia (serif)',
+  'settings.exportFontMono': 'Monoespaçada',
 
   // Barra de título
   'titlebar.open': 'Abrir',
@@ -51,6 +56,7 @@ export const ptBR: TranslationKeys = {
   'titlebar.settings': 'Configurações',
   'titlebar.keyboardShortcuts': 'Atalhos de teclado',
   'titlebar.close': 'Fechar',
+  'titlebar.removeRecent': 'Remover {name} dos arquivos recentes',
   'titlebar.minimize': 'Minimizar',
   'titlebar.maximize': 'Maximizar',
   'titlebar.restore': 'Restaurar',
@@ -115,6 +121,9 @@ export const ptBR: TranslationKeys = {
   'toolbar.table': 'Tabela',
   'toolbar.chooseTableSize': 'Escolha o tamanho da tabela',
   'toolbar.columnsRows': '{columns} colunas x {rows} linhas',
+  'toolbar.insertTableSize': 'Inserir {columns} colunas e {rows} linhas',
+  'toolbar.normalizeTableSpacing': 'Normalizar o espaçamento da tabela',
+  'toolbar.align': 'Alinhar',
 
   // Diálogo de inserção
   'insertAsset.insertLink': 'Inserir link',
@@ -129,13 +138,17 @@ export const ptBR: TranslationKeys = {
   'insertAsset.cancel': 'Cancelar',
   'insertAsset.browse': 'Procurar',
   'insertAsset.imagePathOrUrl': 'Caminho ou URL',
-  'insertAsset.localImageHint': 'Use uma URL ou procure uma imagem local. Imagens locais são resolvidas em relação à pasta do documento.',
-  'insertAsset.warnUnsaved': 'Salve o documento primeiro para que imagens locais possam ser exibidas.',
-  'insertAsset.warnOutsideFolder': 'Esta imagem está fora da pasta do documento e não será exibida na pré-visualização.',
+  'insertAsset.localImageHint':
+    'Use uma URL ou procure uma imagem local. Imagens locais são resolvidas em relação à pasta do documento.',
+  'insertAsset.warnUnsaved':
+    'Salve o documento primeiro para que imagens locais possam ser exibidas.',
+  'insertAsset.warnOutsideFolder':
+    'Esta imagem está fora da pasta do documento e não será exibida na pré-visualização.',
 
   // Placeholders de imagem na pré-visualização
   'preview.imageUnsaved': 'Imagem local — salve o documento para exibi-la.',
-  'preview.imageOutsideFolder': 'Imagem fora da pasta do documento — não pode ser exibida.',
+  'preview.imageOutsideFolder':
+    'Imagem fora da pasta do documento — não pode ser exibida.',
 
   // Status do documento
   'status.words': '{count} palavras',
@@ -149,18 +162,6 @@ export const ptBR: TranslationKeys = {
   'notice.alreadyUnsaved': 'Já editando um rascunho não salvo.',
   'notice.freshDraft': 'Novo rascunho iniciado.',
   'notice.opened': '{name} aberto.',
-  'notice.fileNotFound': 'Arquivo não encontrado — removido da lista de recentes.',
-
-  // Menu
-  'menu.file': 'Arquivo',
-  'menu.new': 'Novo',
-  'menu.open': 'Abrir...',
-  'menu.save': 'Salvar',
-  'menu.saveAs': 'Salvar como...',
-  'menu.exportHtml': 'Exportar HTML...',
-  'menu.exportPdf': 'Exportar PDF...',
-  'menu.view': 'Visualização',
-  'menu.editorOnly': 'Somente Editor',
-  'menu.splitView': 'Visualização Dividida',
-  'menu.previewOnly': 'Somente Visualização',
+  'notice.fileNotFound':
+    'Arquivo não encontrado — removido da lista de recentes.',
 };

@@ -2,14 +2,19 @@ import { create } from 'zustand';
 import { defaultAppSettings } from '@shared/settings';
 import type { AppSettings } from '@shared/types';
 
+const RECENT_FILES_LIMIT = 10;
+
 type SettingsStoreState = {
   settings: AppSettings;
   isOpen: boolean;
   isHelpOpen: boolean;
+  /** Replaces settings without writing them back — for the initial load. */
   setSettings: (settings: AppSettings) => void;
-  addRecentFile: (path: string) => AppSettings;
-  removeRecentFile: (path: string) => AppSettings;
-  clearRecentFiles: () => AppSettings;
+  /** Applies a change and persists the result. */
+  updateSettings: (patch: Partial<AppSettings>) => void;
+  addRecentFile: (path: string) => void;
+  removeRecentFile: (path: string) => void;
+  clearRecentFiles: () => void;
   openDialog: () => void;
   closeDialog: () => void;
   openHelp: () => void;
@@ -21,27 +26,27 @@ export const useSettingsStore = create<SettingsStoreState>((set, get) => ({
   isOpen: false,
   isHelpOpen: false,
   setSettings: (settings) => set({ settings }),
-  addRecentFile: (path) => {
-    const prev = get().settings.recentFiles;
-    const next: AppSettings = {
-      ...get().settings,
-      recentFiles: [path, ...prev.filter((p) => p !== path)].slice(0, 10),
-    };
+  updateSettings: (patch) => {
+    const next: AppSettings = { ...get().settings, ...patch };
     set({ settings: next });
-    return next;
+    void window.marky.setSettings(next);
+  },
+  addRecentFile: (path) => {
+    const previous = get().settings.recentFiles;
+    get().updateSettings({
+      recentFiles: [path, ...previous.filter((p) => p !== path)].slice(
+        0,
+        RECENT_FILES_LIMIT,
+      ),
+    });
   },
   removeRecentFile: (path) => {
-    const next: AppSettings = {
-      ...get().settings,
+    get().updateSettings({
       recentFiles: get().settings.recentFiles.filter((p) => p !== path),
-    };
-    set({ settings: next });
-    return next;
+    });
   },
   clearRecentFiles: () => {
-    const next: AppSettings = { ...get().settings, recentFiles: [] };
-    set({ settings: next });
-    return next;
+    get().updateSettings({ recentFiles: [] });
   },
   openDialog: () => set({ isOpen: true }),
   closeDialog: () => set({ isOpen: false }),

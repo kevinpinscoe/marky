@@ -1,6 +1,5 @@
 import type { EditorView } from '@codemirror/view';
-import type { EditorState } from '@codemirror/state';
-import { syntaxTree } from '@codemirror/language';
+import { resolveAncestor } from './syntax-tree';
 
 export type ToolbarActionId =
   | 'bold'
@@ -35,18 +34,6 @@ export type TableInsertPayload = {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/** Walk up the syntax tree from pos and return the first node whose type name
- *  matches one of the given names, or null if none found. */
-function findAncestor(state: EditorState, pos: number, ...typeNames: string[]) {
-  const tree = syntaxTree(state);
-  let cur = tree.resolveInner(pos, -1);
-  while (true) {
-    if (typeNames.includes(cur.type.name)) return cur;
-    if (!cur.parent) return null;
-    cur = cur.parent;
-  }
-}
 
 /** Replace the current selection with `transform(selectedText)`. */
 function updateSelection(
@@ -125,7 +112,7 @@ export function getSelectedText(view: EditorView) {
 
 export function isSelectionInsideLink(view: EditorView) {
   const pos = view.state.selection.main.head;
-  return Boolean(findAncestor(view.state, pos, 'Link'));
+  return Boolean(resolveAncestor(view.state, pos, ['Link']));
 }
 
 export function insertLink(view: EditorView, payload: LinkInsertPayload) {
@@ -156,7 +143,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
 
   switch (action) {
     case 'bold': {
-      const node = findAncestor(state, pos, 'StrongEmphasis');
+      const node = resolveAncestor(state, pos, ['StrongEmphasis']);
       if (node) {
         removeInlineMarkers(view, node.from, node.to, 2);
       } else {
@@ -166,7 +153,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'italic': {
-      const node = findAncestor(state, pos, 'Emphasis');
+      const node = resolveAncestor(state, pos, ['Emphasis']);
       if (node) {
         // EmphasisMark is always 1 char (* or _)
         removeInlineMarkers(view, node.from, node.to, 1);
@@ -177,7 +164,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'strike': {
-      const node = findAncestor(state, pos, 'Strikethrough');
+      const node = resolveAncestor(state, pos, ['Strikethrough']);
       if (node) {
         removeInlineMarkers(view, node.from, node.to, 2);
       } else {
@@ -187,7 +174,10 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'h1': {
-      const node = findAncestor(state, pos, 'ATXHeading1', 'SetextHeading1');
+      const node = resolveAncestor(state, pos, [
+        'ATXHeading1',
+        'SetextHeading1',
+      ]);
       if (node) {
         const line = state.doc.lineAt(node.from);
         view.dispatch({
@@ -208,7 +198,10 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'h2': {
-      const node = findAncestor(state, pos, 'ATXHeading2', 'SetextHeading2');
+      const node = resolveAncestor(state, pos, [
+        'ATXHeading2',
+        'SetextHeading2',
+      ]);
       if (node) {
         const line = state.doc.lineAt(node.from);
         view.dispatch({
@@ -229,7 +222,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'bullet': {
-      const node = findAncestor(state, pos, 'BulletList');
+      const node = resolveAncestor(state, pos, ['BulletList']);
       if (node) {
         const from = state.doc.lineAt(node.from).from;
         const to = state.doc.lineAt(node.to).to;
@@ -243,7 +236,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'ordered': {
-      const node = findAncestor(state, pos, 'OrderedList');
+      const node = resolveAncestor(state, pos, ['OrderedList']);
       if (node) {
         const from = state.doc.lineAt(node.from).from;
         const to = state.doc.lineAt(node.to).to;
@@ -278,7 +271,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'quote': {
-      const node = findAncestor(state, pos, 'Blockquote');
+      const node = resolveAncestor(state, pos, ['Blockquote']);
       if (node) {
         const from = state.doc.lineAt(node.from).from;
         const to = state.doc.lineAt(node.to).to;
@@ -292,7 +285,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'code': {
-      const fencedNode = findAncestor(state, pos, 'FencedCode');
+      const fencedNode = resolveAncestor(state, pos, ['FencedCode']);
       if (fencedNode) {
         const from = state.doc.lineAt(fencedNode.from).from;
         const to = state.doc.lineAt(fencedNode.to).to;
@@ -307,7 +300,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
         });
         view.focus();
       } else {
-        const inlineNode = findAncestor(state, pos, 'InlineCode');
+        const inlineNode = resolveAncestor(state, pos, ['InlineCode']);
         if (inlineNode) {
           const text = state.doc.sliceString(inlineNode.from, inlineNode.to);
           const markerLen = text.startsWith('``') ? 2 : 1;
@@ -322,7 +315,7 @@ export function applyToolbarAction(view: EditorView, action: ToolbarActionId) {
     }
 
     case 'link': {
-      const node = findAncestor(state, pos, 'Link');
+      const node = resolveAncestor(state, pos, ['Link']);
       if (node) {
         const fullText = state.doc.sliceString(node.from, node.to);
         const match = /^\[([^\]]*)\]/.exec(fullText);

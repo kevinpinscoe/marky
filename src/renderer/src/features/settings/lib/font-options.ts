@@ -10,7 +10,12 @@ export type LoadedFontOptions = {
   editorListIsFiltered: boolean;
 };
 
-const genericFamilies = new Set(['serif', 'sans-serif', 'monospace', 'system-ui']);
+const genericFamilies = new Set([
+  'serif',
+  'sans-serif',
+  'monospace',
+  'system-ui',
+]);
 
 const serifPattern =
   /\b(serif|georgia|times|garamond|palatino|cambria|baskerville|merriweather|charter)\b/i;
@@ -56,7 +61,11 @@ function uniqueFamilies(families: string[]) {
   ).sort((left, right) => left.localeCompare(right));
 }
 
-function withPinnedFamilies(families: string[], pinned: string[], current: string) {
+function withPinnedFamilies(
+  families: string[],
+  pinned: string[],
+  current: string,
+) {
   const normalizedCurrent = normalizeFamily(current);
 
   return Array.from(
@@ -175,9 +184,7 @@ export async function loadFontOptions(current: {
   return {
     editor: toOptions(
       withPinnedFamilies(
-        editorFamilies.length > 0
-          ? editorFamilies
-          : editorFallbackFamilies,
+        editorFamilies.length > 0 ? editorFamilies : editorFallbackFamilies,
         ['monospace'],
         current.editorFontFamily,
       ),
@@ -219,8 +226,8 @@ export function toPreviewFontFamilyCss(family: string) {
     return normalized;
   }
 
-  const genericFallback = serifPattern.test(normalized) ? 'serif' : 'sans-serif';
+  const genericFallback = serifPattern.test(normalized)
+    ? 'serif'
+    : 'sans-serif';
   return `${quoteFamily(normalized)}, ${genericFallback}`;
 }
-
-

@@ -11,9 +11,13 @@ if (gitCheck.status !== 0 || !existsSync('.git')) {
   process.exit(0);
 }
 
-const husky = spawnSync(process.execPath, [resolve('node_modules/husky/bin.js')], {
-  cwd: process.cwd(),
-  stdio: 'inherit',
-});
+const husky = spawnSync(
+  process.execPath,
+  [resolve('node_modules/husky/bin.js')],
+  {
+    cwd: process.cwd(),
+    stdio: 'inherit',
+  },
+);
 
 process.exit(husky.status ?? 0);

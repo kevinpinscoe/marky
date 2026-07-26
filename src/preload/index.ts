@@ -24,6 +24,20 @@ const api: MarkyApi = {
   windowMaximize: () => ipcRenderer.send(ipcChannels.windowMaximize),
   windowClose: () => ipcRenderer.send(ipcChannels.windowClose),
   windowIsMaximized: () => ipcRenderer.invoke(ipcChannels.windowIsMaximized),
+  onMaximizedChange: (listener: (isMaximized: boolean) => void) => {
+    const subscription = (
+      _event: Electron.IpcRendererEvent,
+      isMaximized: boolean,
+    ) => listener(isMaximized);
+    ipcRenderer.on(ipcChannels.windowMaximizedChanged, subscription);
+
+    return () => {
+      ipcRenderer.removeListener(
+        ipcChannels.windowMaximizedChanged,
+        subscription,
+      );
+    };
+  },
   onMenuAction: (listener: (action: MenuAction) => void) => {
     const subscription = (
       _event: Electron.IpcRendererEvent,

@@ -19,9 +19,18 @@ async function readSettings(): Promise<AppSettings> {
 }
 
 export function registerSettingsIpc() {
-  ipcMain.handle(ipcChannels.settingsGet, () => readSettings());
+  ipcMain.handle(ipcChannels.settingsGet, (): Promise<AppSettings> =>
+    readSettings(),
+  );
 
-  ipcMain.handle(ipcChannels.settingsSet, async (_, settings: AppSettings) => {
-    await writeFile(settingsPath(), JSON.stringify(settings, null, 2), 'utf-8');
-  });
+  ipcMain.handle(
+    ipcChannels.settingsSet,
+    async (_, settings: AppSettings): Promise<void> => {
+      await writeFile(
+        settingsPath(),
+        JSON.stringify(settings, null, 2),
+        'utf-8',
+      );
+    },
+  );
 }

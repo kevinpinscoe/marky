@@ -1,5 +1,7 @@
-import { BrowserWindow, shell, screen } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 import { join } from 'node:path';
+import { applyNavigationPolicy } from './navigation';
+import { forwardMaximizedState } from './ipc/window';
 
 export function createMainWindow() {
   const display = screen.getPrimaryDisplay();
@@ -31,10 +33,8 @@ export function createMainWindow() {
     window.show();
   });
 
-  window.webContents.setWindowOpenHandler(({ url }) => {
-    void shell.openExternal(url);
-    return { action: 'deny' };
-  });
+  applyNavigationPolicy(window);
+  forwardMaximizedState(window);
 
   return window;
 }

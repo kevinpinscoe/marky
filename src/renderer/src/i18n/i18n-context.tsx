@@ -48,7 +48,10 @@ function translate(
 
   if (vars) {
     for (const [varName, varValue] of Object.entries(vars)) {
-      value = value.replace(new RegExp(`\\{${varName}\\}`, 'g'), String(varValue));
+      value = value.replace(
+        new RegExp(`\\{${varName}\\}`, 'g'),
+        String(varValue),
+      );
     }
   }
 

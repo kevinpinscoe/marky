@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useWorkspaceStore, selectIsDirty } from '@renderer/features/workspace/store';
+import {
+  useWorkspaceStore,
+  selectIsDirty,
+} from '@renderer/features/workspace/store';
 
 describe('useWorkspaceStore', () => {
   beforeEach(() => {

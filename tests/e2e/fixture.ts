@@ -1,4 +1,8 @@
-import { test as base, type ElectronApplication, type Page } from '@playwright/test';
+import {
+  test as base,
+  type ElectronApplication,
+  type Page,
+} from '@playwright/test';
 import { _electron as electron } from 'playwright';
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
@@ -27,10 +31,7 @@ export const test = base.extend<MarkyFixtures, MarkyWorkerFixtures>({
     // eslint-disable-next-line no-empty-pattern
     async ({}, use) => {
       const app = await electron.launch({
-        args: [
-          ...(process.env.CI ? ['--no-sandbox'] : []),
-          getMainEntry(),
-        ],
+        args: [...(process.env.CI ? ['--no-sandbox'] : []), getMainEntry()],
         env: { ...process.env, MARKY_FORCE_LOCALE: 'en' },
       });
       await use(app);
@@ -44,7 +45,9 @@ export const test = base.extend<MarkyFixtures, MarkyWorkerFixtures>({
       const window = await app.firstWindow();
       await window.waitForLoadState('domcontentloaded');
       // Wait for React to fully mount before running tests
-      await window.locator('header').waitFor({ state: 'visible', timeout: 10_000 });
+      await window
+        .locator('header')
+        .waitFor({ state: 'visible', timeout: 10_000 });
       await use(window);
     },
     { scope: 'worker' },
@@ -65,7 +68,9 @@ export const test = base.extend<MarkyFixtures, MarkyWorkerFixtures>({
         });
         await window.reload();
         await window.waitForLoadState('domcontentloaded');
-        await window.locator('header').waitFor({ state: 'visible', timeout: 10_000 });
+        await window
+          .locator('header')
+          .waitFor({ state: 'visible', timeout: 10_000 });
       }
 
       await use();

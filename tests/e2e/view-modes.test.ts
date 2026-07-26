@@ -40,7 +40,9 @@ test.describe('view modes', () => {
     await expect(window.locator('.app-preview-pane')).toBeVisible();
   });
 
-  test('active view mode button is visually distinguished', async ({ window }) => {
+  test('active view mode button is visually distinguished', async ({
+    window,
+  }) => {
     await window.locator('button[aria-label="Split"]').click();
     const splitBtn = window.locator('button[aria-label="Split"]');
     // The active button uses the "subtle" variant which applies bg-secondary

@@ -10,7 +10,9 @@ test.describe('settings dialog', () => {
   test('contains language selector', async ({ window }) => {
     await window.locator('button[aria-label="Settings"]').click();
     // The language select has the current value "en" for English
-    const langSelect = window.locator('select').filter({ has: window.locator('option[value="en"]') });
+    const langSelect = window
+      .locator('select')
+      .filter({ has: window.locator('option[value="en"]') });
     await expect(langSelect).toBeVisible();
     await window.keyboard.press('Escape');
   });

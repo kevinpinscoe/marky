@@ -29,8 +29,12 @@ export type TranslationKeys = {
   'settings.marginRight': string;
   'settings.marginBottom': string;
   'settings.marginLeft': string;
+  'settings.exportFontSystem': string;
+  'settings.exportFontSerif': string;
+  'settings.exportFontMono': string;
 
   // ── Title bar ────────────────────────────────────────────────────
+  'titlebar.removeRecent': string;
   'titlebar.open': string;
   'titlebar.save': string;
   'titlebar.saveCopy': string;
@@ -108,6 +112,9 @@ export type TranslationKeys = {
   'toolbar.table': string;
   'toolbar.chooseTableSize': string;
   'toolbar.columnsRows': string;
+  'toolbar.insertTableSize': string;
+  'toolbar.normalizeTableSpacing': string;
+  'toolbar.align': string;
 
   // ── Insert-asset dialog ──────────────────────────────────────────
   'insertAsset.insertLink': string;
@@ -144,16 +151,5 @@ export type TranslationKeys = {
   'notice.opened': string;
   'notice.fileNotFound': string;
 
-  // ── Menu (main process) ──────────────────────────────────────────
-  'menu.file': string;
-  'menu.new': string;
-  'menu.open': string;
-  'menu.save': string;
-  'menu.saveAs': string;
-  'menu.exportHtml': string;
-  'menu.exportPdf': string;
-  'menu.view': string;
-  'menu.editorOnly': string;
-  'menu.splitView': string;
-  'menu.previewOnly': string;
+  // Native menu labels live in src/main/menu.ts
 };

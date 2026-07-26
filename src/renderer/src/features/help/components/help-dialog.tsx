@@ -1,39 +1,37 @@
-import { useEffect } from 'react';
-import { X } from 'lucide-react';
-import { Button } from '@renderer/components/ui/button';
+import { Modal } from '@renderer/components/ui/modal';
 import { useSettingsStore } from '@renderer/features/settings/store';
 import { useTranslation } from '@renderer/i18n';
+import { isMac, modKey as mod } from '@renderer/lib/platform';
+import { shortcutDisplay } from '@renderer/features/editor/lib/formatting-shortcuts';
+import type { ToolbarActionId } from '@renderer/features/editor/lib/toolbar-actions';
 import type { TranslationKeys } from '@renderer/i18n';
-
-const noDrag = {
-  WebkitAppRegion: 'no-drag' as React.CSSProperties['WebkitAppRegion'],
-};
 
 type ShortcutEntry = {
   keys: string;
   labelKey: keyof TranslationKeys;
 };
 
-const isMac =
-  typeof navigator !== 'undefined' &&
-  (navigator.platform.toLowerCase().includes('mac') ||
-    navigator.userAgent.includes('Mac'));
-
-const mod = isMac ? '⌘' : 'Ctrl';
-
-const formattingShortcuts: ShortcutEntry[] = [
-  { keys: `${mod}+B`, labelKey: 'help.bold' },
-  { keys: `${mod}+I`, labelKey: 'help.italic' },
-  { keys: `${mod}+Shift+X`, labelKey: 'help.strikethrough' },
-  { keys: `${mod}+1`, labelKey: 'help.heading1' },
-  { keys: `${mod}+2`, labelKey: 'help.heading2' },
-  { keys: `${mod}+Shift+7`, labelKey: 'help.orderedList' },
-  { keys: `${mod}+Shift+8`, labelKey: 'help.bulletList' },
-  { keys: `${mod}+Shift+9`, labelKey: 'help.taskList' },
-  { keys: `${mod}+Shift+.`, labelKey: 'help.blockquote' },
-  { keys: `${mod}+E`, labelKey: 'help.codeBlock' },
-  { keys: `${mod}+K`, labelKey: 'help.link' },
+// Labels are the help dialog's own; the key combos come from the editor.
+const formattingLabels: Array<{
+  id: ToolbarActionId;
+  labelKey: keyof TranslationKeys;
+}> = [
+  { id: 'bold', labelKey: 'help.bold' },
+  { id: 'italic', labelKey: 'help.italic' },
+  { id: 'strike', labelKey: 'help.strikethrough' },
+  { id: 'h1', labelKey: 'help.heading1' },
+  { id: 'h2', labelKey: 'help.heading2' },
+  { id: 'ordered', labelKey: 'help.orderedList' },
+  { id: 'bullet', labelKey: 'help.bulletList' },
+  { id: 'task', labelKey: 'help.taskList' },
+  { id: 'quote', labelKey: 'help.blockquote' },
+  { id: 'code', labelKey: 'help.codeBlock' },
+  { id: 'link', labelKey: 'help.link' },
 ];
+
+const formattingShortcuts: ShortcutEntry[] = formattingLabels.map(
+  ({ id, labelKey }) => ({ keys: shortcutDisplay[id] ?? '', labelKey }),
+);
 
 const tableShortcuts: ShortcutEntry[] = [
   { keys: 'Tab', labelKey: 'help.nextCell' },
@@ -117,67 +115,32 @@ export function HelpDialog() {
   const isHelpOpen = useSettingsStore((s) => s.isHelpOpen);
   const closeHelp = useSettingsStore((s) => s.closeHelp);
 
-  useEffect(() => {
-    if (!isHelpOpen) return;
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        closeHelp();
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isHelpOpen, closeHelp]);
-
   if (!isHelpOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 backdrop-blur-sm"
-      onClick={closeHelp}
-      style={noDrag}
+    <Modal
+      title={t('help.title')}
+      subtitle={t('help.subtitle')}
+      className="w-[460px]"
+      scrollableBody
+      bodyClassName="space-y-5"
+      onClose={closeHelp}
     >
-      <div
-        className="relative flex max-h-[calc(100vh-1.5rem)] w-[460px] max-w-[calc(100vw-1.5rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-        style={noDrag}
-      >
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <div>
-            <h2 className="text-sm font-semibold tracking-wide">
-              {t('help.title')}
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t('help.subtitle')}
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 rounded-full"
-            aria-label={t('titlebar.close')}
-            onClick={closeHelp}
-          >
-            <X className="size-4" />
-          </Button>
-        </div>
-
-        <div className="themed-scrollbar min-h-0 space-y-5 overflow-y-auto px-5 py-5 focus:outline-none" tabIndex={0} ref={(el) => el?.focus()}>
-          <ShortcutSection title={t('help.formatting')} entries={formattingShortcuts} />
-          <div className="border-t border-border" />
-          <ShortcutSection
-            title={t('help.tableNavigation')}
-            entries={tableShortcuts}
-          />
-          <div className="border-t border-border" />
-          <ShortcutSection title={t('help.editor')} entries={editorShortcuts} />
-          <div className="border-t border-border" />
-          <ShortcutSection title={t('help.file')} entries={fileShortcuts} />
-          <div className="border-t border-border" />
-          <ShortcutSection title={t('help.view')} entries={viewShortcuts} />
-        </div>
-      </div>
-    </div>
+      <ShortcutSection
+        title={t('help.formatting')}
+        entries={formattingShortcuts}
+      />
+      <div className="border-t border-border" />
+      <ShortcutSection
+        title={t('help.tableNavigation')}
+        entries={tableShortcuts}
+      />
+      <div className="border-t border-border" />
+      <ShortcutSection title={t('help.editor')} entries={editorShortcuts} />
+      <div className="border-t border-border" />
+      <ShortcutSection title={t('help.file')} entries={fileShortcuts} />
+      <div className="border-t border-border" />
+      <ShortcutSection title={t('help.view')} entries={viewShortcuts} />
+    </Modal>
   );
 }
