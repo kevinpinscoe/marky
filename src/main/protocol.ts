@@ -6,7 +6,8 @@ export const LOCAL_ASSET_SCHEME = 'local-asset';
 
 function isWithinDirectory(filePath: string, dir: string): boolean {
   const normalizedFile = normalize(filePath);
-  const normalizedDir = normalize(dir) + (process.platform === 'win32' ? '\\' : '/');
+  const normalizedDir =
+    normalize(dir) + (process.platform === 'win32' ? '\\' : '/');
   return normalizedFile.startsWith(normalizedDir);
 }
 

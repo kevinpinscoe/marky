@@ -96,13 +96,13 @@ npm run preview
 
 Run these from the project root:
 
-| Command | What it does |
-| --- | --- |
-| `npm run build` | Type-check the project and build it with `electron-vite` |
-| `npm run build:win` | Build Windows packages |
-| `npm run build:mac` | Build a macOS DMG |
-| `npm run build:linux` | Build Linux AppImage and Flatpak packages |
-| `npm run build:all` | Build packages for all supported platforms |
+| Command               | What it does                                             |
+| --------------------- | -------------------------------------------------------- |
+| `npm run build`       | Type-check the project and build it with `electron-vite` |
+| `npm run build:win`   | Build Windows packages                                   |
+| `npm run build:mac`   | Build a macOS DMG                                        |
+| `npm run build:linux` | Build Linux AppImage and Flatpak packages                |
+| `npm run build:all`   | Build packages for all supported platforms               |
 
 ### Platform notes
 
@@ -202,5 +202,3 @@ Packaging expects app icons in `build/`:
 ## In short
 
 Marky is a writing-first Markdown desktop app: local, offline-friendly, modular, and intentionally simple in the places that matter. If that sounds like your kind of tool, contributions are very welcome.
-
-

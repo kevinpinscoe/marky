@@ -1,7 +1,8 @@
 import type { ExportFont } from '@shared/types';
 
 const fontFamilies: Record<ExportFont, string> = {
-  system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+  system:
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
   serif: 'Georgia, "Times New Roman", serif',
   mono: '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
 };

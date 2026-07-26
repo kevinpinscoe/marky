@@ -11,39 +11,40 @@ import type { ViewMode } from '@shared/types';
  * when the preview scroll would otherwise trigger a reverse sync.
  */
 export function useScrollSync(
-    editorViewRef: RefObject<EditorView | null>,
-    previewRef: RefObject<HTMLElement | null>,
-    viewMode: ViewMode,
+  editorViewRef: RefObject<EditorView | null>,
+  previewRef: RefObject<HTMLElement | null>,
+  viewMode: ViewMode,
 ) {
-    useEffect(() => {
-        if (viewMode !== 'split') return;
+  useEffect(() => {
+    if (viewMode !== 'split') return;
 
-        const editorView = editorViewRef.current;
-        const previewElement = previewRef.current;
-        if (!editorView || !previewElement) return;
+    const editorView = editorViewRef.current;
+    const previewElement = previewRef.current;
+    if (!editorView || !previewElement) return;
 
-        const scroller = editorView.scrollDOM;
-        let isSyncing = false;
+    const scroller = editorView.scrollDOM;
+    let isSyncing = false;
 
-        function handleEditorScroll() {
-            if (isSyncing || !previewElement) return;
+    function handleEditorScroll() {
+      if (isSyncing || !previewElement) return;
 
-            const maxScroll = scroller.scrollHeight - scroller.clientHeight;
-            if (maxScroll <= 0) return;
+      const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+      if (maxScroll <= 0) return;
 
-            const ratio = scroller.scrollTop / maxScroll;
-            const previewMax = previewElement.scrollHeight - previewElement.clientHeight;
+      const ratio = scroller.scrollTop / maxScroll;
+      const previewMax =
+        previewElement.scrollHeight - previewElement.clientHeight;
 
-            isSyncing = true;
-            previewElement.scrollTop = ratio * previewMax;
-            requestAnimationFrame(() => {
-                isSyncing = false;
-            });
-        }
+      isSyncing = true;
+      previewElement.scrollTop = ratio * previewMax;
+      requestAnimationFrame(() => {
+        isSyncing = false;
+      });
+    }
 
-        scroller.addEventListener('scroll', handleEditorScroll, { passive: true });
-        return () => {
-            scroller.removeEventListener('scroll', handleEditorScroll);
-        };
-    }, [editorViewRef, previewRef, viewMode]);
+    scroller.addEventListener('scroll', handleEditorScroll, { passive: true });
+    return () => {
+      scroller.removeEventListener('scroll', handleEditorScroll);
+    };
+  }, [editorViewRef, previewRef, viewMode]);
 }

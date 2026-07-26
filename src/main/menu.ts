@@ -134,7 +134,10 @@ export function createAppMenu(window: BrowserWindow, locale: Locale = 'en') {
             label: 'Developer',
             submenu: [
               { role: 'reload' as const, accelerator: 'CmdOrCtrl+R' },
-              { role: 'forceReload' as const, accelerator: 'CmdOrCtrl+Shift+R' },
+              {
+                role: 'forceReload' as const,
+                accelerator: 'CmdOrCtrl+Shift+R',
+              },
               {
                 role: 'toggleDevTools' as const,
                 accelerator: 'CmdOrCtrl+Shift+I',

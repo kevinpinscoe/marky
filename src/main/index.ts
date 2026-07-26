@@ -10,7 +10,10 @@ import { registerLocaleIpc } from './ipc/locale';
 import { LOCAL_ASSET_SCHEME, registerLocalAssetProtocol } from './protocol';
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: LOCAL_ASSET_SCHEME, privileges: { supportFetchAPI: true, stream: true } },
+  {
+    scheme: LOCAL_ASSET_SCHEME,
+    privileges: { supportFetchAPI: true, stream: true },
+  },
 ]);
 
 let mainWindow: ReturnType<typeof createMainWindow> | null = null;

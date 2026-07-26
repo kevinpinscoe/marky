@@ -31,7 +31,6 @@ import { useTranslation } from '@renderer/i18n';
 import { useDismissOnOutside } from '@renderer/lib/use-dismiss-on-outside';
 import type { TranslationKeys } from '@renderer/i18n';
 
-
 const toolbarActions: Array<{
   id: ToolbarActionId;
   labelKey: keyof TranslationKeys;
@@ -39,16 +38,36 @@ const toolbarActions: Array<{
   formattingKey?: keyof FormattingState;
 }> = [
   { id: 'bold', labelKey: 'toolbar.bold', icon: Type, formattingKey: 'bold' },
-  { id: 'italic', labelKey: 'toolbar.italic', icon: SquarePen, formattingKey: 'italic' },
+  {
+    id: 'italic',
+    labelKey: 'toolbar.italic',
+    icon: SquarePen,
+    formattingKey: 'italic',
+  },
   {
     id: 'strike',
     labelKey: 'toolbar.strikethrough',
     icon: Strikethrough,
     formattingKey: 'strikethrough',
   },
-  { id: 'h1', labelKey: 'toolbar.heading1', icon: Heading1, formattingKey: 'heading1' },
-  { id: 'h2', labelKey: 'toolbar.heading2', icon: Heading2, formattingKey: 'heading2' },
-  { id: 'bullet', labelKey: 'toolbar.bullets', icon: List, formattingKey: 'bulletList' },
+  {
+    id: 'h1',
+    labelKey: 'toolbar.heading1',
+    icon: Heading1,
+    formattingKey: 'heading1',
+  },
+  {
+    id: 'h2',
+    labelKey: 'toolbar.heading2',
+    icon: Heading2,
+    formattingKey: 'heading2',
+  },
+  {
+    id: 'bullet',
+    labelKey: 'toolbar.bullets',
+    icon: List,
+    formattingKey: 'bulletList',
+  },
   {
     id: 'ordered',
     labelKey: 'toolbar.ordered',
@@ -56,8 +75,18 @@ const toolbarActions: Array<{
     formattingKey: 'orderedList',
   },
   { id: 'task', labelKey: 'toolbar.tasks', icon: ListChecks },
-  { id: 'quote', labelKey: 'toolbar.quote', icon: Quote, formattingKey: 'blockquote' },
-  { id: 'code', labelKey: 'toolbar.codeBlock', icon: FileCode2, formattingKey: 'code' },
+  {
+    id: 'quote',
+    labelKey: 'toolbar.quote',
+    icon: Quote,
+    formattingKey: 'blockquote',
+  },
+  {
+    id: 'code',
+    labelKey: 'toolbar.codeBlock',
+    icon: FileCode2,
+    formattingKey: 'code',
+  },
   { id: 'link', labelKey: 'toolbar.link', icon: Link2, formattingKey: 'link' },
   { id: 'image', labelKey: 'toolbar.image', icon: Image },
   { id: 'table', labelKey: 'toolbar.table', icon: FileText },

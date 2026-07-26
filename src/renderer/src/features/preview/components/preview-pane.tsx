@@ -106,7 +106,10 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
   const previewFontSize = useSettingsStore(
     (state) => state.settings.previewFontSize,
   );
-  const html = useMemo(() => renderMarkdown(markdown, documentPath), [markdown, documentPath]);
+  const html = useMemo(
+    () => renderMarkdown(markdown, documentPath),
+    [markdown, documentPath],
+  );
 
   useEffect(() => {
     ensureMermaid(theme, previewFontFamily, previewFontSize);
@@ -118,25 +121,32 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
 
     let cancelled = false;
 
-    const images = Array.from(container.querySelectorAll<HTMLImageElement>('img'));
+    const images = Array.from(
+      container.querySelectorAll<HTMLImageElement>('img'),
+    );
 
     for (const img of images) {
       const src = img.getAttribute('src') ?? '';
       const isLocalAsset = src.startsWith('local-asset://');
-      const isUnresolved = !src.startsWith('http://') &&
+      const isUnresolved =
+        !src.startsWith('http://') &&
         !src.startsWith('https://') &&
         !src.startsWith('data:') &&
         !isLocalAsset &&
         src.length > 0;
 
       if (isUnresolved || isLocalAsset) {
-        img.addEventListener('error', () => {
-          if (cancelled) return;
-          const message = isUnresolved
-            ? t('preview.imageUnsaved')
-            : t('preview.imageOutsideFolder');
-          img.replaceWith(createImagePlaceholder(message));
-        }, { once: true });
+        img.addEventListener(
+          'error',
+          () => {
+            if (cancelled) return;
+            const message = isUnresolved
+              ? t('preview.imageUnsaved')
+              : t('preview.imageOutsideFolder');
+            img.replaceWith(createImagePlaceholder(message));
+          },
+          { once: true },
+        );
       }
     }
 

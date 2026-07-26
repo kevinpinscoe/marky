@@ -24,7 +24,9 @@ test.describe('help dialog', () => {
     await scrollable.evaluate((el) => (el.scrollTop = el.scrollHeight));
 
     // Use a scoped locator to avoid matching the titlebar Save button
-    await expect(dialog.locator('span:has-text("Save")').filter({ hasText: /^Save$/ })).toBeVisible();
+    await expect(
+      dialog.locator('span:has-text("Save")').filter({ hasText: /^Save$/ }),
+    ).toBeVisible();
     await window.keyboard.press('Escape');
   });
 
