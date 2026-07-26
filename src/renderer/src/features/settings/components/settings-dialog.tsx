@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Moon, Sun, X } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { cn } from '@renderer/lib/utils';
@@ -175,6 +175,11 @@ export function SettingsDialog() {
   const { settings, isOpen, setSettings, closeDialog } = useSettingsStore();
   const [loadedFontChoices, setLoadedFontChoices] =
     useState<LoadedFontOptions | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) scrollAreaRef.current?.focus();
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -285,7 +290,11 @@ export function SettingsDialog() {
           </Button>
         </div>
 
-        <div className="themed-scrollbar min-h-0 space-y-6 overflow-y-auto px-5 py-5 focus:outline-none" tabIndex={0} ref={(el) => el?.focus()}>
+        <div
+          className="themed-scrollbar min-h-0 space-y-6 overflow-y-auto px-5 py-5 focus:outline-none"
+          tabIndex={0}
+          ref={scrollAreaRef}
+        >
           <Section title={t('settings.appearance')}>
             <div>
               <p className={labelClass}>{t('settings.language')}</p>

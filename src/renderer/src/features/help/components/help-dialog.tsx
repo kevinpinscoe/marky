@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { useSettingsStore } from '@renderer/features/settings/store';
@@ -116,6 +116,11 @@ export function HelpDialog() {
   const { t } = useTranslation();
   const isHelpOpen = useSettingsStore((s) => s.isHelpOpen);
   const closeHelp = useSettingsStore((s) => s.closeHelp);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isHelpOpen) scrollAreaRef.current?.focus();
+  }, [isHelpOpen]);
 
   useEffect(() => {
     if (!isHelpOpen) return;
@@ -163,7 +168,11 @@ export function HelpDialog() {
           </Button>
         </div>
 
-        <div className="themed-scrollbar min-h-0 space-y-5 overflow-y-auto px-5 py-5 focus:outline-none" tabIndex={0} ref={(el) => el?.focus()}>
+        <div
+          className="themed-scrollbar min-h-0 space-y-5 overflow-y-auto px-5 py-5 focus:outline-none"
+          tabIndex={0}
+          ref={scrollAreaRef}
+        >
           <ShortcutSection title={t('help.formatting')} entries={formattingShortcuts} />
           <div className="border-t border-border" />
           <ShortcutSection
