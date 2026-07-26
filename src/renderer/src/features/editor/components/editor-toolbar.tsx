@@ -25,8 +25,8 @@ import {
   type ToolbarActionId,
 } from '../lib/toolbar-actions';
 import { useEditorStore, type FormattingState } from '../store';
+import { shortcutDisplay } from '../lib/formatting-shortcuts';
 import { useTranslation } from '@renderer/i18n';
-import { modKey as mod } from '@renderer/lib/platform';
 import { useDismissOnOutside } from '@renderer/lib/use-dismiss-on-outside';
 import type { TranslationKeys } from '@renderer/i18n';
 
@@ -34,33 +34,30 @@ import type { TranslationKeys } from '@renderer/i18n';
 const toolbarActions: Array<{
   id: ToolbarActionId;
   labelKey: keyof TranslationKeys;
-  shortcut?: string;
   icon: typeof Type;
   formattingKey?: keyof FormattingState;
 }> = [
-  { id: 'bold', labelKey: 'toolbar.bold', shortcut: `${mod}+B`, icon: Type, formattingKey: 'bold' },
-  { id: 'italic', labelKey: 'toolbar.italic', shortcut: `${mod}+I`, icon: SquarePen, formattingKey: 'italic' },
+  { id: 'bold', labelKey: 'toolbar.bold', icon: Type, formattingKey: 'bold' },
+  { id: 'italic', labelKey: 'toolbar.italic', icon: SquarePen, formattingKey: 'italic' },
   {
     id: 'strike',
     labelKey: 'toolbar.strikethrough',
-    shortcut: `${mod}+Shift+X`,
     icon: Strikethrough,
     formattingKey: 'strikethrough',
   },
-  { id: 'h1', labelKey: 'toolbar.heading1', shortcut: `${mod}+1`, icon: Heading1, formattingKey: 'heading1' },
-  { id: 'h2', labelKey: 'toolbar.heading2', shortcut: `${mod}+2`, icon: Heading2, formattingKey: 'heading2' },
-  { id: 'bullet', labelKey: 'toolbar.bullets', shortcut: `${mod}+Shift+8`, icon: List, formattingKey: 'bulletList' },
+  { id: 'h1', labelKey: 'toolbar.heading1', icon: Heading1, formattingKey: 'heading1' },
+  { id: 'h2', labelKey: 'toolbar.heading2', icon: Heading2, formattingKey: 'heading2' },
+  { id: 'bullet', labelKey: 'toolbar.bullets', icon: List, formattingKey: 'bulletList' },
   {
     id: 'ordered',
     labelKey: 'toolbar.ordered',
-    shortcut: `${mod}+Shift+7`,
     icon: ListOrdered,
     formattingKey: 'orderedList',
   },
-  { id: 'task', labelKey: 'toolbar.tasks', shortcut: `${mod}+Shift+9`, icon: ListChecks },
-  { id: 'quote', labelKey: 'toolbar.quote', shortcut: `${mod}+Shift+.`, icon: Quote, formattingKey: 'blockquote' },
-  { id: 'code', labelKey: 'toolbar.codeBlock', shortcut: `${mod}+E`, icon: FileCode2, formattingKey: 'code' },
-  { id: 'link', labelKey: 'toolbar.link', shortcut: `${mod}+K`, icon: Link2, formattingKey: 'link' },
+  { id: 'task', labelKey: 'toolbar.tasks', icon: ListChecks },
+  { id: 'quote', labelKey: 'toolbar.quote', icon: Quote, formattingKey: 'blockquote' },
+  { id: 'code', labelKey: 'toolbar.codeBlock', icon: FileCode2, formattingKey: 'code' },
+  { id: 'link', labelKey: 'toolbar.link', icon: Link2, formattingKey: 'link' },
   { id: 'image', labelKey: 'toolbar.image', icon: Image },
   { id: 'table', labelKey: 'toolbar.table', icon: FileText },
 ];
@@ -232,13 +229,14 @@ export function EditorToolbar({
 
   return (
     <div className="flex flex-1 flex-wrap items-center gap-1">
-      {toolbarActions.map(({ id, labelKey, shortcut, icon: Icon, formattingKey }) => {
+      {toolbarActions.map(({ id, labelKey, icon: Icon, formattingKey }) => {
         if (id === 'table') {
           return <TablePickerButton key={id} editorViewRef={editorViewRef} />;
         }
 
         const label = t(labelKey);
         const isActive = formattingKey ? formatting[formattingKey] : false;
+        const shortcut = shortcutDisplay[id];
         const tooltip = shortcut ? `${label} (${shortcut})` : label;
         return (
           <Button

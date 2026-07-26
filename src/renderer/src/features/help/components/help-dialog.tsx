@@ -2,6 +2,8 @@ import { Modal } from '@renderer/components/ui/modal';
 import { useSettingsStore } from '@renderer/features/settings/store';
 import { useTranslation } from '@renderer/i18n';
 import { isMac, modKey as mod } from '@renderer/lib/platform';
+import { shortcutDisplay } from '@renderer/features/editor/lib/formatting-shortcuts';
+import type { ToolbarActionId } from '@renderer/features/editor/lib/toolbar-actions';
 import type { TranslationKeys } from '@renderer/i18n';
 
 type ShortcutEntry = {
@@ -9,19 +11,27 @@ type ShortcutEntry = {
   labelKey: keyof TranslationKeys;
 };
 
-const formattingShortcuts: ShortcutEntry[] = [
-  { keys: `${mod}+B`, labelKey: 'help.bold' },
-  { keys: `${mod}+I`, labelKey: 'help.italic' },
-  { keys: `${mod}+Shift+X`, labelKey: 'help.strikethrough' },
-  { keys: `${mod}+1`, labelKey: 'help.heading1' },
-  { keys: `${mod}+2`, labelKey: 'help.heading2' },
-  { keys: `${mod}+Shift+7`, labelKey: 'help.orderedList' },
-  { keys: `${mod}+Shift+8`, labelKey: 'help.bulletList' },
-  { keys: `${mod}+Shift+9`, labelKey: 'help.taskList' },
-  { keys: `${mod}+Shift+.`, labelKey: 'help.blockquote' },
-  { keys: `${mod}+E`, labelKey: 'help.codeBlock' },
-  { keys: `${mod}+K`, labelKey: 'help.link' },
+// Labels are the help dialog's own; the key combos come from the editor.
+const formattingLabels: Array<{
+  id: ToolbarActionId;
+  labelKey: keyof TranslationKeys;
+}> = [
+  { id: 'bold', labelKey: 'help.bold' },
+  { id: 'italic', labelKey: 'help.italic' },
+  { id: 'strike', labelKey: 'help.strikethrough' },
+  { id: 'h1', labelKey: 'help.heading1' },
+  { id: 'h2', labelKey: 'help.heading2' },
+  { id: 'ordered', labelKey: 'help.orderedList' },
+  { id: 'bullet', labelKey: 'help.bulletList' },
+  { id: 'task', labelKey: 'help.taskList' },
+  { id: 'quote', labelKey: 'help.blockquote' },
+  { id: 'code', labelKey: 'help.codeBlock' },
+  { id: 'link', labelKey: 'help.link' },
 ];
+
+const formattingShortcuts: ShortcutEntry[] = formattingLabels.map(
+  ({ id, labelKey }) => ({ keys: shortcutDisplay[id] ?? '', labelKey }),
+);
 
 const tableShortcuts: ShortcutEntry[] = [
   { keys: 'Tab', labelKey: 'help.nextCell' },
