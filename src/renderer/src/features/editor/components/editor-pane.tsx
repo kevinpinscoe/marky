@@ -12,7 +12,10 @@ import { EditorView } from '@codemirror/view';
 import { TableProperties } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { useEditorStore } from '../store';
-import { editorStateExtension } from '../lib/formatting-extension';
+import {
+  computeStats,
+  editorStateExtension,
+} from '../lib/formatting-extension';
 import {
   getHoveredTableHeader,
   normalizeTableSpacing,
@@ -90,12 +93,7 @@ export function EditorPane({ value, onChange, onReady }: EditorPaneProps) {
   const handleReady = useCallback(
     (view: EditorView) => {
       setEditorView(view);
-      const content = view.state.doc.toString();
-      const trimmed = content.trim();
-      setStats({
-        words: trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length,
-        characters: content.length,
-      });
+      setStats(computeStats(view.state.doc.toString()));
       onReady(view);
     },
     [onReady, setStats],
