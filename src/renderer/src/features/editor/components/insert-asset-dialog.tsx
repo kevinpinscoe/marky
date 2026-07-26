@@ -3,6 +3,7 @@ import { FolderOpen, TriangleAlert, X } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { useTranslation } from '@renderer/i18n';
 import { relativeToFile } from '@renderer/lib/paths';
+import { noDrag } from '@renderer/lib/window-region';
 
 export type InsertAssetDialogState = {
   type: 'link' | 'image';
@@ -32,9 +33,6 @@ const inputClass =
   'w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring';
 
 const labelClass = 'mb-1 block text-xs font-medium text-muted-foreground';
-const noDrag = {
-  WebkitAppRegion: 'no-drag' as React.CSSProperties['WebkitAppRegion'],
-};
 
 function isLocalPath(value: string): boolean {
   if (!value.trim()) return false;

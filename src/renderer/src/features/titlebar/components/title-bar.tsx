@@ -26,6 +26,7 @@ import { basename, dirname } from '@renderer/lib/paths';
 import type { ViewMode } from '@shared/types';
 import { useTranslation } from '@renderer/i18n';
 import type { TranslationKeys } from '@renderer/i18n';
+import { drag, noDrag } from '@renderer/lib/window-region';
 
 interface TitleBarProps {
   documentName: string;
@@ -57,12 +58,6 @@ const viewOptionKeys: Array<{
   { mode: 'preview', labelKey: 'titlebar.viewPreview', icon: PanelRight },
 ];
 
-const drag = {
-  WebkitAppRegion: 'drag' as React.CSSProperties['WebkitAppRegion'],
-};
-const noDrag = {
-  WebkitAppRegion: 'no-drag' as React.CSSProperties['WebkitAppRegion'],
-};
 
 function ExportDropdown({
   onExportPdf,

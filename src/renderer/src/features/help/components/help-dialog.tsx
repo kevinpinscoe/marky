@@ -5,10 +5,8 @@ import { useSettingsStore } from '@renderer/features/settings/store';
 import { useTranslation } from '@renderer/i18n';
 import { isMac, modKey as mod } from '@renderer/lib/platform';
 import type { TranslationKeys } from '@renderer/i18n';
+import { noDrag } from '@renderer/lib/window-region';
 
-const noDrag = {
-  WebkitAppRegion: 'no-drag' as React.CSSProperties['WebkitAppRegion'],
-};
 
 type ShortcutEntry = {
   keys: string;

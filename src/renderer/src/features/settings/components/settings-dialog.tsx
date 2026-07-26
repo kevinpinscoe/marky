@@ -13,6 +13,7 @@ import {
 } from '../lib/font-options';
 import { useSettingsStore } from '../store';
 import { useTranslation } from '@renderer/i18n';
+import { noDrag } from '@renderer/lib/window-region';
 
 const exportFontOptions: Array<{ value: ExportFont; label: string }> = [
   { value: 'system', label: 'System sans-serif' },
@@ -43,9 +44,6 @@ const inputClass =
 
 const labelClass = 'mb-1 block text-xs font-medium text-muted-foreground';
 const subLabelClass = 'mb-1 block text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/75';
-const noDrag = {
-  WebkitAppRegion: 'no-drag' as React.CSSProperties['WebkitAppRegion'],
-};
 
 function Section({
   title,
