@@ -73,8 +73,21 @@ function ensureMermaid(
   }
 }
 
+// Keyed by theme + fonts + source, so every keystroke inside a diagram adds an
+// entry holding a full SVG. Keep only the most recent ones.
+const MERMAID_CACHE_LIMIT = 50;
 const mermaidCache = new Map<string, string>();
 let mermaidSeq = 0;
+
+function cacheMermaidSvg(key: string, svg: string) {
+  mermaidCache.set(key, svg);
+
+  while (mermaidCache.size > MERMAID_CACHE_LIMIT) {
+    const oldest = mermaidCache.keys().next().value;
+    if (oldest === undefined) break;
+    mermaidCache.delete(oldest);
+  }
+}
 
 function createImagePlaceholder(message: string): HTMLElement {
   const placeholder = document.createElement('div');
@@ -148,7 +161,7 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
               source,
             );
             svg = result.svg;
-            mermaidCache.set(cacheKey, svg);
+            cacheMermaidSvg(cacheKey, svg);
           }
 
           if (cancelled) return;
