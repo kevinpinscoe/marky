@@ -3,13 +3,11 @@ import type { EditorView } from '@codemirror/view';
 import { cn } from '@renderer/lib/utils';
 import { TitleBar } from '@renderer/features/titlebar/components/title-bar';
 import { EditorPane } from '@renderer/features/editor/components/editor-pane';
-import {
-  EditorToolbar,
-  type EditorInsertRequest,
-} from '@renderer/features/editor/components/editor-toolbar';
+import { EditorToolbar } from '@renderer/features/editor/components/editor-toolbar';
 import {
   InsertAssetDialog,
   type InsertAssetPayload,
+  type InsertAssetRequest,
 } from '@renderer/features/editor/components/insert-asset-dialog';
 import { PreviewPane } from '@renderer/features/preview/components/preview-pane';
 import { DocumentStatus } from '@renderer/features/workspace/components/document-status';
@@ -33,7 +31,7 @@ import { I18nProvider } from '@renderer/i18n';
 export function App() {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
-  const [insertDialog, setInsertDialog] = useState<EditorInsertRequest | null>(
+  const [insertDialog, setInsertDialog] = useState<InsertAssetRequest | null>(
     null,
   );
 
@@ -86,7 +84,7 @@ export function App() {
 
   const canCreateNewDocument = activeDocument.path !== null;
 
-  function handleInsertRequest(request: EditorInsertRequest) {
+  function handleInsertRequest(request: InsertAssetRequest) {
     setInsertDialog(request);
   }
 

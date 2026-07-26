@@ -5,10 +5,12 @@ import { Modal } from '@renderer/components/ui/modal';
 import { useTranslation } from '@renderer/i18n';
 import { relativeToFile } from '@renderer/lib/paths';
 
-export type InsertAssetDialogState = {
+export type InsertAssetRequest = {
   type: 'link' | 'image';
   initialText: string;
-} | null;
+};
+
+export type InsertAssetDialogState = InsertAssetRequest | null;
 
 export type InsertAssetPayload =
   | {

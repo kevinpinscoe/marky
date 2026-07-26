@@ -24,6 +24,7 @@ import {
   isSelectionInsideLink,
   type ToolbarActionId,
 } from '../lib/toolbar-actions';
+import type { InsertAssetRequest } from './insert-asset-dialog';
 import { useEditorStore, type FormattingState } from '../store';
 import { shortcutDisplay } from '../lib/formatting-shortcuts';
 import { useTranslation } from '@renderer/i18n';
@@ -65,14 +66,9 @@ const toolbarActions: Array<{
 const tablePickerColumns = 6;
 const tablePickerRows = 4;
 
-export type EditorInsertRequest = {
-  type: 'link' | 'image';
-  initialText: string;
-};
-
 type EditorToolbarProps = {
   editorViewRef: RefObject<EditorView | null>;
-  onRequestInsert: (request: EditorInsertRequest) => void;
+  onRequestInsert: (request: InsertAssetRequest) => void;
 };
 
 type TableSize = {
