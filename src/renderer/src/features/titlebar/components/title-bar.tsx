@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { cn } from '@renderer/lib/utils';
+import { basename, dirname } from '@renderer/lib/paths';
 import type { Platform, ViewMode } from '@shared/types';
 import { useTranslation } from '@renderer/i18n';
 import type { TranslationKeys } from '@renderer/i18n';
@@ -137,16 +138,6 @@ function ExportDropdown({
   );
 }
 
-function getBasename(filePath: string) {
-  return filePath.replace(/\\/g, '/').split('/').at(-1) ?? filePath;
-}
-
-function getDirname(filePath: string) {
-  const normalized = filePath.replace(/\\/g, '/');
-  const idx = normalized.lastIndexOf('/');
-  return idx > 0 ? normalized.slice(0, idx) : '';
-}
-
 function SplitOpenButton({
   recentFiles,
   onOpen,
@@ -223,10 +214,10 @@ function SplitOpenButton({
                     }}
                   >
                     <span className="truncate text-sm text-foreground/85 leading-none">
-                      {getBasename(filePath)}
+                      {basename(filePath)}
                     </span>
                     <span className="truncate text-xs text-muted-foreground leading-none">
-                      {getDirname(filePath)}
+                      {dirname(filePath)}
                     </span>
                   </button>
                   <button
@@ -235,7 +226,7 @@ function SplitOpenButton({
                       e.stopPropagation();
                       onRemoveRecent(filePath);
                     }}
-                    aria-label={`Remove ${getBasename(filePath)} from recent files`}
+                    aria-label={`Remove ${basename(filePath)} from recent files`}
                   >
                     <X className="size-3.5" />
                   </button>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { FolderOpen, TriangleAlert, X } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { useTranslation } from '@renderer/i18n';
+import { relativeToFile } from '@renderer/lib/paths';
 
 export type InsertAssetDialogState = {
   type: 'link' | 'image';
@@ -49,32 +50,8 @@ function isOutsideDocumentFolder(
   absoluteImagePath: string,
   documentPath: string,
 ): boolean {
-  const relative = toRelativePath(absoluteImagePath, documentPath);
+  const relative = relativeToFile(absoluteImagePath, documentPath);
   return relative === absoluteImagePath;
-}
-
-function toRelativePath(
-  absoluteImagePath: string,
-  documentPath: string,
-): string {
-  const sep = documentPath.includes('\\') ? '\\' : '/';
-  const docDir =
-    documentPath.substring(
-      0,
-      Math.max(
-        documentPath.lastIndexOf('/'),
-        documentPath.lastIndexOf('\\'),
-      ),
-    ) + sep;
-
-  const normalizedImage = absoluteImagePath.replace(/\\/g, '/');
-  const normalizedDir = docDir.replace(/\\/g, '/');
-
-  if (normalizedImage.startsWith(normalizedDir)) {
-    return normalizedImage.substring(normalizedDir.length);
-  }
-
-  return absoluteImagePath;
 }
 
 export function InsertAssetDialog({
@@ -156,7 +133,7 @@ function InsertAssetDialogContent({
     if (!picked) return;
 
     if (documentPath) {
-      setUrl(toRelativePath(picked, documentPath));
+      setUrl(relativeToFile(picked, documentPath));
     } else {
       setUrl(picked);
     }

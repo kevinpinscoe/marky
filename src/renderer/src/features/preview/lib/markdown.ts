@@ -6,6 +6,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import type { Root } from 'hast';
 import { visit } from 'unist-util-visit';
+import { dirname } from '@renderer/lib/paths';
 
 function isRelativePath(src: string): boolean {
   try {
@@ -81,12 +82,8 @@ function createProcessor(baseDir?: string) {
 const defaultProcessor = createProcessor();
 
 export function renderMarkdown(markdown: string, documentPath?: string | null) {
-  if (documentPath) {
-    const lastSep = Math.max(
-      documentPath.lastIndexOf('/'),
-      documentPath.lastIndexOf('\\'),
-    );
-    const baseDir = documentPath.substring(0, lastSep);
+  const baseDir = documentPath ? dirname(documentPath) : '';
+  if (baseDir) {
     return createProcessor(baseDir).processSync(markdown).toString();
   }
   return defaultProcessor.processSync(markdown).toString();
