@@ -150,17 +150,4 @@ export const ptBR: TranslationKeys = {
   'notice.freshDraft': 'Novo rascunho iniciado.',
   'notice.opened': '{name} aberto.',
   'notice.fileNotFound': 'Arquivo não encontrado — removido da lista de recentes.',
-
-  // Menu
-  'menu.file': 'Arquivo',
-  'menu.new': 'Novo',
-  'menu.open': 'Abrir...',
-  'menu.save': 'Salvar',
-  'menu.saveAs': 'Salvar como...',
-  'menu.exportHtml': 'Exportar HTML...',
-  'menu.exportPdf': 'Exportar PDF...',
-  'menu.view': 'Visualização',
-  'menu.editorOnly': 'Somente Editor',
-  'menu.splitView': 'Visualização Dividida',
-  'menu.previewOnly': 'Somente Visualização',
 };

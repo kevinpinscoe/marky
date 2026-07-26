@@ -144,16 +144,5 @@ export type TranslationKeys = {
   'notice.opened': string;
   'notice.fileNotFound': string;
 
-  // ── Menu (main process) ──────────────────────────────────────────
-  'menu.file': string;
-  'menu.new': string;
-  'menu.open': string;
-  'menu.save': string;
-  'menu.saveAs': string;
-  'menu.exportHtml': string;
-  'menu.exportPdf': string;
-  'menu.view': string;
-  'menu.editorOnly': string;
-  'menu.splitView': string;
-  'menu.previewOnly': string;
+  // Native menu labels live in src/main/menu.ts
 };

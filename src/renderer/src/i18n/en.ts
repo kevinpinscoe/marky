@@ -150,17 +150,4 @@ export const en: TranslationKeys = {
   'notice.freshDraft': 'Started a fresh draft.',
   'notice.opened': 'Opened {name}.',
   'notice.fileNotFound': 'File not found — removed from recent list.',
-
-  // Menu
-  'menu.file': 'File',
-  'menu.new': 'New',
-  'menu.open': 'Open...',
-  'menu.save': 'Save',
-  'menu.saveAs': 'Save As...',
-  'menu.exportHtml': 'Export HTML...',
-  'menu.exportPdf': 'Export PDF...',
-  'menu.view': 'View',
-  'menu.editorOnly': 'Editor Only',
-  'menu.splitView': 'Split View',
-  'menu.previewOnly': 'Preview Only',
 };

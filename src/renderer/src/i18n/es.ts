@@ -150,17 +150,4 @@ export const es: TranslationKeys = {
   'notice.freshDraft': 'Nuevo borrador iniciado.',
   'notice.opened': '{name} abierto.',
   'notice.fileNotFound': 'Archivo no encontrado — eliminado de la lista de recientes.',
-
-  // Menú
-  'menu.file': 'Archivo',
-  'menu.new': 'Nuevo',
-  'menu.open': 'Abrir...',
-  'menu.save': 'Guardar',
-  'menu.saveAs': 'Guardar como...',
-  'menu.exportHtml': 'Exportar HTML...',
-  'menu.exportPdf': 'Exportar PDF...',
-  'menu.view': 'Vista',
-  'menu.editorOnly': 'Solo Editor',
-  'menu.splitView': 'Vista Dividida',
-  'menu.previewOnly': 'Solo Vista Previa',
 };
