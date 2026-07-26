@@ -19,9 +19,8 @@ async function readSettings(): Promise<AppSettings> {
 }
 
 export function registerSettingsIpc() {
-  ipcMain.handle(
-    ipcChannels.settingsGet,
-    (): Promise<AppSettings> => readSettings(),
+  ipcMain.handle(ipcChannels.settingsGet, (): Promise<AppSettings> =>
+    readSettings(),
   );
 
   ipcMain.handle(
