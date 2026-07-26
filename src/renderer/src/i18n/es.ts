@@ -38,6 +38,9 @@ export const es: TranslationKeys = {
   'settings.marginRight': 'Derecha',
   'settings.marginBottom': 'Inferior',
   'settings.marginLeft': 'Izquierda',
+  'settings.exportFontSystem': 'Sans-serif del sistema',
+  'settings.exportFontSerif': 'Georgia (serif)',
+  'settings.exportFontMono': 'Monoespaciada',
 
   // Barra de título
   'titlebar.open': 'Abrir',
@@ -53,6 +56,7 @@ export const es: TranslationKeys = {
   'titlebar.settings': 'Configuración',
   'titlebar.keyboardShortcuts': 'Atajos de teclado',
   'titlebar.close': 'Cerrar',
+  'titlebar.removeRecent': 'Quitar {name} de los archivos recientes',
   'titlebar.minimize': 'Minimizar',
   'titlebar.maximize': 'Maximizar',
   'titlebar.restore': 'Restaurar',
@@ -117,6 +121,9 @@ export const es: TranslationKeys = {
   'toolbar.table': 'Tabla',
   'toolbar.chooseTableSize': 'Elegir tamaño de tabla',
   'toolbar.columnsRows': '{columns} columnas x {rows} filas',
+  'toolbar.insertTableSize': 'Insertar {columns} columnas y {rows} filas',
+  'toolbar.normalizeTableSpacing': 'Normalizar el espaciado de la tabla',
+  'toolbar.align': 'Alinear',
 
   // Diálogo de inserción
   'insertAsset.insertLink': 'Insertar enlace',

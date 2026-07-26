@@ -12,12 +12,15 @@ import {
   type LoadedFontOptions,
 } from '../lib/font-options';
 import { useSettingsStore } from '../store';
-import { useTranslation } from '@renderer/i18n';
+import { useTranslation, type TranslationKeys } from '@renderer/i18n';
 
-const exportFontOptions: Array<{ value: ExportFont; label: string }> = [
-  { value: 'system', label: 'System sans-serif' },
-  { value: 'serif', label: 'Georgia (serif)' },
-  { value: 'mono', label: 'Monospace' },
+const exportFontOptions: Array<{
+  value: ExportFont;
+  labelKey: keyof TranslationKeys;
+}> = [
+  { value: 'system', labelKey: 'settings.exportFontSystem' },
+  { value: 'serif', labelKey: 'settings.exportFontSerif' },
+  { value: 'mono', labelKey: 'settings.exportFontMono' },
 ];
 
 const fontSizeOptions = [12, 13, 14, 15, 16, 18, 20, 22, 24].map((value) => ({
@@ -353,7 +356,7 @@ export function SettingsDialog() {
           >
             {exportFontOptions.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {t(option.labelKey)}
               </option>
             ))}
           </select>

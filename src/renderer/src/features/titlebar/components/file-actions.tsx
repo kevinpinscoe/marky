@@ -151,7 +151,9 @@ export function SplitOpenButton({
                       e.stopPropagation();
                       onRemoveRecent(filePath);
                     }}
-                    aria-label={`Remove ${basename(filePath)} from recent files`}
+                    aria-label={t('titlebar.removeRecent', {
+                      name: basename(filePath),
+                    })}
                   >
                     <X className="size-3.5" />
                   </button>

@@ -183,7 +183,10 @@ function TablePickerButton({
                               ? 'border-primary/45 bg-primary/20'
                               : 'border-border/60 bg-card/55 hover:bg-secondary/70',
                           )}
-                          aria-label={`Insert ${size.columns} columns and ${size.rows} rows`}
+                          aria-label={t('toolbar.insertTableSize', {
+                            columns: size.columns,
+                            rows: size.rows,
+                          })}
                           onMouseEnter={() => setHoveredSize(size)}
                           onFocus={() => setHoveredSize(size)}
                           onClick={() => handleInsert(size)}
