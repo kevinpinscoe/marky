@@ -1,10 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { createExportDocument } from '@renderer/features/export/lib/export-document';
-import {
-  renderMermaidInHtml,
-  substituteMermaidSvgs,
-} from '@renderer/features/export/lib/render-mermaid';
-import { renderMarkdown } from '@renderer/features/preview/lib/markdown';
+import { buildExportHtml } from '@renderer/features/export/lib/build-export-html';
 import { useWorkspaceStore } from '@renderer/features/workspace/store';
 import { useSettingsStore } from '@renderer/features/settings/store';
 import { useTranslation } from '@renderer/i18n';
@@ -64,13 +59,10 @@ export function useDocumentActions(
 
   const exportDocument = useCallback(
     async (kind: 'html' | 'pdf') => {
-      const baseHtml = renderMarkdown(activeDocument.content);
-      const substituted = substituteMermaidSvgs(baseHtml, previewRef.current);
-      const bodyHtml = await renderMermaidInHtml(substituted);
-      const htmlDocument = createExportDocument(
-        activeDocument.name,
-        bodyHtml,
+      const htmlDocument = await buildExportHtml(
+        activeDocument,
         settings.exportFont,
+        previewRef.current,
       );
 
       const payload = {
@@ -96,14 +88,7 @@ export function useDocumentActions(
         );
       }
     },
-    [
-      activeDocument.content,
-      activeDocument.name,
-      previewRef,
-      setNotice,
-      settings,
-      t,
-    ],
+    [activeDocument, previewRef, setNotice, settings, t],
   );
 
   const openRecentFile = useCallback(
