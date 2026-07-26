@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 import type { EditorView } from '@codemirror/view';
 import {
   FileCode2,
@@ -26,14 +26,10 @@ import {
 } from '../lib/toolbar-actions';
 import { useEditorStore, type FormattingState } from '../store';
 import { useTranslation } from '@renderer/i18n';
+import { modKey as mod } from '@renderer/lib/platform';
+import { useDismissOnOutside } from '@renderer/lib/use-dismiss-on-outside';
 import type { TranslationKeys } from '@renderer/i18n';
 
-const isMac =
-  typeof navigator !== 'undefined' &&
-  (navigator.platform.toLowerCase().includes('mac') ||
-    navigator.userAgent.includes('Mac'));
-
-const mod = isMac ? '⌘' : 'Ctrl';
 
 const toolbarActions: Array<{
   id: ToolbarActionId;
@@ -97,30 +93,10 @@ function TablePickerButton({
   const [hoveredSize, setHoveredSize] = useState<TableSize | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (!open) return;
-
-    function handleClickOutside(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setOpen(false);
-        setHoveredSize(null);
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setOpen(false);
-        setHoveredSize(null);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
+  useDismissOnOutside(ref, open, () => {
+    setOpen(false);
+    setHoveredSize(null);
+  });
 
   function handleToggle() {
     setOpen((current) => !current);

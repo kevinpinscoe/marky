@@ -20,21 +20,12 @@ import {
 } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { cn } from '@renderer/lib/utils';
+import { isMac } from '@renderer/lib/platform';
+import { useDismissOnOutside } from '@renderer/lib/use-dismiss-on-outside';
 import { basename, dirname } from '@renderer/lib/paths';
-import type { Platform, ViewMode } from '@shared/types';
+import type { ViewMode } from '@shared/types';
 import { useTranslation } from '@renderer/i18n';
 import type { TranslationKeys } from '@renderer/i18n';
-
-function getPlatform(): Platform {
-  const platform = navigator.platform.toLowerCase();
-  if (platform.includes('mac') || navigator.userAgent.includes('Mac')) {
-    return 'macos';
-  }
-  if (platform.includes('linux')) {
-    return 'linux';
-  }
-  return 'windows';
-}
 
 interface TitleBarProps {
   documentName: string;
@@ -84,16 +75,7 @@ function ExportDropdown({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open]);
+  useDismissOnOutside(ref, open, () => setOpen(false));
 
   return (
     <div ref={ref} className="relative" style={noDrag}>
@@ -155,16 +137,7 @@ function SplitOpenButton({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open]);
+  useDismissOnOutside(ref, open, () => setOpen(false));
 
   return (
     <div ref={ref} className="relative" style={noDrag}>
@@ -263,16 +236,7 @@ function SplitSaveButton({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open]);
+  useDismissOnOutside(ref, open, () => setOpen(false));
 
   return (
     <div ref={ref} className="relative" style={noDrag}>
@@ -338,8 +302,6 @@ export function TitleBar({
   onViewModeChange,
 }: TitleBarProps) {
   const { t } = useTranslation();
-  const platform = getPlatform();
-  const isMac = platform === 'macos';
   const [isMaximized, setIsMaximized] = useState(false);
 
   useEffect(() => {

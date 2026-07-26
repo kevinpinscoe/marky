@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
 import { useSettingsStore } from '@renderer/features/settings/store';
 import { useTranslation } from '@renderer/i18n';
+import { isMac, modKey as mod } from '@renderer/lib/platform';
 import type { TranslationKeys } from '@renderer/i18n';
 
 const noDrag = {
@@ -13,13 +14,6 @@ type ShortcutEntry = {
   keys: string;
   labelKey: keyof TranslationKeys;
 };
-
-const isMac =
-  typeof navigator !== 'undefined' &&
-  (navigator.platform.toLowerCase().includes('mac') ||
-    navigator.userAgent.includes('Mac'));
-
-const mod = isMac ? '⌘' : 'Ctrl';
 
 const formattingShortcuts: ShortcutEntry[] = [
   { keys: `${mod}+B`, labelKey: 'help.bold' },
@@ -173,7 +167,10 @@ export function HelpDialog() {
           tabIndex={0}
           ref={scrollAreaRef}
         >
-          <ShortcutSection title={t('help.formatting')} entries={formattingShortcuts} />
+          <ShortcutSection
+            title={t('help.formatting')}
+            entries={formattingShortcuts}
+          />
           <div className="border-t border-border" />
           <ShortcutSection
             title={t('help.tableNavigation')}
