@@ -92,9 +92,6 @@ const toolbarActions: Array<{
   { id: 'table', labelKey: 'toolbar.table', icon: FileText },
 ];
 
-const tablePickerColumns = 6;
-const tablePickerRows = 4;
-
 type EditorToolbarProps = {
   editorViewRef: RefObject<EditorView | null>;
   onRequestInsert: (request: InsertAssetRequest) => void;
@@ -104,6 +101,51 @@ type TableSize = {
   columns: number;
   rows: number;
 };
+
+const tablePickerColumns = 6;
+const tablePickerRows = 4;
+
+/** Row-major, so a single map renders the grid in reading order. */
+const tablePickerSizes: TableSize[] = Array.from(
+  { length: tablePickerRows * tablePickerColumns },
+  (_, index) => ({
+    columns: (index % tablePickerColumns) + 1,
+    rows: Math.floor(index / tablePickerColumns) + 1,
+  }),
+);
+
+function TablePickerCell({
+  size,
+  isSelected,
+  onHover,
+  onSelect,
+}: {
+  size: TableSize;
+  isSelected: boolean;
+  onHover: (size: TableSize) => void;
+  onSelect: (size: TableSize) => void;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        'h-8 w-8 rounded-[0.35rem] border transition-colors',
+        isSelected
+          ? 'border-primary/45 bg-primary/20'
+          : 'border-border/60 bg-card/55 hover:bg-secondary/70',
+      )}
+      aria-label={t('toolbar.insertTableSize', {
+        columns: size.columns,
+        rows: size.rows,
+      })}
+      onMouseEnter={() => onHover(size)}
+      onFocus={() => onHover(size)}
+      onClick={() => onSelect(size)}
+    />
+  );
+}
 
 function TablePickerButton({
   editorViewRef,
@@ -161,40 +203,19 @@ function TablePickerButton({
                 }}
                 onMouseLeave={() => setHoveredSize(null)}
               >
-                {Array.from({ length: tablePickerRows }).map((_, rowIndex) =>
-                  Array.from({ length: tablePickerColumns }).map(
-                    (__, columnIndex) => {
-                      const size = {
-                        columns: columnIndex + 1,
-                        rows: rowIndex + 1,
-                      };
-                      const isSelected =
-                        hoveredSize !== null &&
-                        columnIndex < hoveredSize.columns &&
-                        rowIndex < hoveredSize.rows;
-
-                      return (
-                        <button
-                          key={`${rowIndex}-${columnIndex}`}
-                          type="button"
-                          className={cn(
-                            'h-8 w-8 rounded-[0.35rem] border transition-colors',
-                            isSelected
-                              ? 'border-primary/45 bg-primary/20'
-                              : 'border-border/60 bg-card/55 hover:bg-secondary/70',
-                          )}
-                          aria-label={t('toolbar.insertTableSize', {
-                            columns: size.columns,
-                            rows: size.rows,
-                          })}
-                          onMouseEnter={() => setHoveredSize(size)}
-                          onFocus={() => setHoveredSize(size)}
-                          onClick={() => handleInsert(size)}
-                        />
-                      );
-                    },
-                  ),
-                )}
+                {tablePickerSizes.map((size) => (
+                  <TablePickerCell
+                    key={`${size.rows}-${size.columns}`}
+                    size={size}
+                    isSelected={
+                      hoveredSize !== null &&
+                      size.columns <= hoveredSize.columns &&
+                      size.rows <= hoveredSize.rows
+                    }
+                    onHover={setHoveredSize}
+                    onSelect={handleInsert}
+                  />
+                ))}
               </div>
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-4xl font-semibold tracking-tight text-foreground/35">
                 {hoveredSize
