@@ -1,7 +1,8 @@
-import { syntaxTree } from '@codemirror/language';
 import type { EditorState } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
 import type { SyntaxNode } from '@lezer/common';
+import { findAncestor, resolveAncestorNearby } from './syntax-tree';
+import { splitTableCells } from './table-syntax';
 
 type TableAlignment = 'none' | 'left' | 'center' | 'right';
 
@@ -26,104 +27,25 @@ export type HoveredTableHeader = {
   bottom: number;
 };
 
-function findAncestor(node: SyntaxNode | null, names: string[]) {
-  let current = node;
-
-  while (current) {
-    if (names.includes(current.type.name)) {
-      return current;
-    }
-    current = current.parent;
-  }
-
-  return null;
-}
-
 function findTableContext(state: EditorState, position: number) {
-  const tree = syntaxTree(state);
-  const probes = Array.from(
-    new Set(
-      [position, position - 1, position + 1].filter(
-        (probe) => probe >= 0 && probe <= state.doc.length,
-      ),
-    ),
-  );
-
-  for (const probe of probes) {
-    const resolved = tree.resolveInner(probe, -1);
-    const tableNode = findAncestor(resolved, ['Table']);
-    if (tableNode) {
-      return { tableNode };
-    }
-  }
-
-  return null;
+  const tableNode = resolveAncestorNearby(state, position, ['Table']);
+  return tableNode ? { tableNode } : null;
 }
 
 function findTableHeaderContext(state: EditorState, position: number) {
-  const tree = syntaxTree(state);
-  const probes = Array.from(
-    new Set(
-      [position, position - 1, position + 1].filter(
-        (probe) => probe >= 0 && probe <= state.doc.length,
-      ),
-    ),
-  );
-
-  for (const probe of probes) {
-    const resolved = tree.resolveInner(probe, -1);
-    const headerNode = findAncestor(resolved, ['TableHeader']);
-    if (!headerNode) {
-      continue;
-    }
-
-    const tableNode = findAncestor(headerNode, ['Table']);
-    if (tableNode) {
-      return { tableNode };
-    }
+  const headerNode = resolveAncestorNearby(state, position, ['TableHeader']);
+  if (!headerNode) {
+    return null;
   }
 
-  return null;
+  const tableNode = findAncestor(headerNode, ['Table']);
+  return tableNode ? { tableNode } : null;
 }
 
 function splitTableLine(lineText: string) {
-  const pipePositions: number[] = [];
-  let escaped = false;
-
-  for (let index = 0; index < lineText.length; index += 1) {
-    const char = lineText[index];
-    if (escaped) {
-      escaped = false;
-      continue;
-    }
-    if (char === '\\') {
-      escaped = true;
-      continue;
-    }
-    if (char === '|') {
-      pipePositions.push(index);
-    }
-  }
-
-  if (pipePositions.length < 2) {
-    return [];
-  }
-
-  const boundaries: number[] = [];
-  if (pipePositions[0] > 0) {
-    boundaries.push(-1);
-  }
-  boundaries.push(...pipePositions);
-  if (pipePositions.at(-1)! < lineText.length - 1) {
-    boundaries.push(lineText.length);
-  }
-
-  const cells: string[] = [];
-  for (let index = 0; index < boundaries.length - 1; index += 1) {
-    cells.push(lineText.slice(boundaries[index] + 1, boundaries[index + 1]));
-  }
-
-  return cells;
+  return splitTableCells(lineText).map(({ start, end }) =>
+    lineText.slice(start, end),
+  );
 }
 
 function parseTableRow(state: EditorState, node: SyntaxNode) {
