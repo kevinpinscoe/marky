@@ -8,8 +8,11 @@ import {
 } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { languages } from '@codemirror/language-data';
+import { syntaxHighlighting } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
 import { TableProperties } from 'lucide-react';
+import { markyHighlightStyle } from '../lib/highlight-style';
 import { Button } from '@renderer/components/ui/button';
 import { useTranslation } from '@renderer/i18n';
 import { useEditorStore } from '../store';
@@ -82,7 +85,8 @@ export function EditorPane({ value, onChange, onReady }: EditorPaneProps) {
 
   const extensions = useMemo(
     () => [
-      markdown({ base: markdownLanguage }),
+      markdown({ base: markdownLanguage, codeLanguages: languages }),
+      syntaxHighlighting(markyHighlightStyle),
       tableNavigationExtension,
       formattingKeymap,
       EditorView.lineWrapping,
