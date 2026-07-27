@@ -64,6 +64,19 @@ function exportStyles(font: ExportFont) {
     padding: 0.2em 0.4em;
   }
   pre code { background: transparent; border: none; padding: 0; font-size: inherit; }
+  /* Static, theme-independent code highlighting (GitHub-light palette). */
+  .hljs-comment, .hljs-quote { color: #6e7781; font-style: italic; }
+  .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-doctag { color: #cf222e; }
+  .hljs-string, .hljs-meta .hljs-string, .hljs-regexp { color: #0a3069; }
+  .hljs-title, .hljs-title.function_, .hljs-section { color: #8250df; }
+  .hljs-type, .hljs-title.class_, .hljs-built_in, .hljs-class .hljs-title { color: #953800; }
+  .hljs-number, .hljs-symbol, .hljs-bullet { color: #0550ae; }
+  .hljs-params, .hljs-attr, .hljs-attribute, .hljs-variable, .hljs-template-variable, .hljs-meta { color: #953800; }
+  .hljs-name, .hljs-tag { color: #116329; }
+  .hljs-deletion { color: #82071e; background: #ffebe9; }
+  .hljs-addition { color: #116329; background: #dafbe1; }
+  .hljs-emphasis { font-style: italic; }
+  .hljs-strong { font-weight: 700; }
   table {
     width: 100%;
     border-collapse: collapse;
