@@ -27,3 +27,42 @@ test.describe('theme switching', () => {
     await window.keyboard.press('Escape');
   });
 });
+
+test.describe('color theme switching', () => {
+  const readColorTheme = (window: import('@playwright/test').Page) =>
+    window.evaluate(() =>
+      document.documentElement.getAttribute('data-color-theme'),
+    );
+
+  test('applies the selected color theme to the document', async ({
+    window,
+  }) => {
+    await window.locator('button[aria-label="Settings"]').click();
+    await window.locator('button:has-text("Jade")').click();
+    expect(await readColorTheme(window)).toBe('jade');
+
+    // Restore default so later tests start from Amethyst.
+    await window.locator('button:has-text("Amethyst")').click();
+    expect(await readColorTheme(window)).toBe('amethyst');
+    await window.keyboard.press('Escape');
+  });
+
+  test('persists the color theme across a reload', async ({ window }) => {
+    await window.locator('button[aria-label="Settings"]').click();
+    await window.locator('button:has-text("Sapphire")').click();
+    await window.keyboard.press('Escape');
+
+    await window.reload();
+    await window.waitForLoadState('domcontentloaded');
+    await window
+      .locator('header')
+      .waitFor({ state: 'visible', timeout: 10_000 });
+
+    expect(await readColorTheme(window)).toBe('sapphire');
+
+    // Restore default.
+    await window.locator('button[aria-label="Settings"]').click();
+    await window.locator('button:has-text("Amethyst")').click();
+    await window.keyboard.press('Escape');
+  });
+});

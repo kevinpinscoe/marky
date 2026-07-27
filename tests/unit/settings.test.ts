@@ -22,6 +22,15 @@ describe('mergeAppSettings', () => {
     expect(result.language).toBe(defaultAppSettings.language);
   });
 
+  it('preserves an explicit colorTheme and defaults it otherwise', () => {
+    expect(mergeAppSettings({ colorTheme: 'sapphire' }).colorTheme).toBe(
+      'sapphire',
+    );
+    expect(mergeAppSettings({ theme: 'dark' }).colorTheme).toBe(
+      defaultAppSettings.colorTheme,
+    );
+  });
+
   it('deep-merges pdfMargins', () => {
     const result = mergeAppSettings({ pdfMargins: { top: 50 } as never });
     expect(result.pdfMargins).toEqual({
@@ -51,5 +60,6 @@ describe('defaultAppSettings', () => {
     expect(defaultAppSettings.editorFontFamily).toBe('IBM Plex Mono');
     expect(defaultAppSettings.previewFontFamily).toBe('IBM Plex Sans');
     expect(defaultAppSettings.pdfPageSize).toBe('A4');
+    expect(defaultAppSettings.colorTheme).toBe('amethyst');
   });
 });
