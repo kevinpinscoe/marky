@@ -10,6 +10,7 @@ export const ptBR: TranslationKeys = {
   'settings.theme': 'Tema',
   'settings.light': 'Claro',
   'settings.dark': 'Escuro',
+  'settings.colorTheme': 'Tema de cor',
   'settings.writing': 'Escrita',
   'settings.editorFont': 'Fonte do editor',
   'settings.previewFont': 'Fonte da pré-visualização',

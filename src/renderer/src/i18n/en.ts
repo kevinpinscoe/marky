@@ -10,6 +10,7 @@ export const en: TranslationKeys = {
   'settings.theme': 'Theme',
   'settings.light': 'Light',
   'settings.dark': 'Dark',
+  'settings.colorTheme': 'Color theme',
   'settings.writing': 'Writing',
   'settings.editorFont': 'Editor font',
   'settings.previewFont': 'Preview font',
