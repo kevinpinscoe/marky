@@ -1,13 +1,22 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import {
   toEditorFontFamilyCss,
   toPreviewFontFamilyCss,
 } from '../lib/font-options';
 import { useSettingsStore } from '../store';
 
-/** Reflects the appearance settings onto the document element. */
+/**
+ * Reflects the appearance settings onto the document element.
+ *
+ * Uses layout effects so the theme class and CSS variables land on `<html>`
+ * before any component's passive effect reads computed styles. Passive effects
+ * run child-before-parent, so a plain effect here (this hook lives at the app
+ * root) would apply the theme *after* the preview re-renders — leaving Mermaid
+ * diagrams drawn with the previous palette's variables.
+ */
 export function useAppearance() {
   const theme = useSettingsStore((state) => state.settings.theme);
+  const colorTheme = useSettingsStore((state) => state.settings.colorTheme);
   const editorFontFamily = useSettingsStore(
     (state) => state.settings.editorFontFamily,
   );
@@ -21,12 +30,17 @@ export function useAppearance() {
     (state) => state.settings.previewFontSize,
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = globalThis.document.documentElement;
     root.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const root = globalThis.document.documentElement;
+    root.setAttribute('data-color-theme', colorTheme);
+  }, [colorTheme]);
+
+  useLayoutEffect(() => {
     const root = globalThis.document.documentElement;
     root.style.setProperty(
       '--editor-font-family',

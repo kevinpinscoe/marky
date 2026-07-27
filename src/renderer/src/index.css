@@ -5,8 +5,60 @@
 @tailwind utilities;
 
 @layer base {
+
   :root {
     color-scheme: light;
+    --radius: 1.35rem;
+    --editor-font-family: 'IBM Plex Mono', monospace;
+    --editor-font-size: 16px;
+    --preview-font-family: 'IBM Plex Sans', sans-serif;
+    --preview-font-size: 16px;
+    --app-shell-overlay:
+      radial-gradient(
+        circle at top,
+        hsl(var(--primary) / 0.16),
+        transparent 40%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(var(--secondary) / 0.55),
+        hsl(var(--background))
+      );
+    --app-grain-opacity: 0.5;
+    --texture-grain: radial-gradient(
+      circle at 1px 1px,
+      hsl(var(--primary) / 0.09) 1px,
+      transparent 0
+    );
+    --shadow-panel: 0 18px 44px hsl(var(--primary) / 0.16);
+  }
+
+  .dark {
+    color-scheme: dark;
+    --app-shell-overlay:
+      radial-gradient(
+        circle at top,
+        hsl(var(--primary) / 0.3),
+        transparent 44%
+      ),
+      linear-gradient(
+        180deg,
+        hsl(var(--background) / 0.2),
+        hsl(var(--background))
+      );
+    --app-grain-opacity: 0.2;
+    --texture-grain: radial-gradient(
+      circle at 1px 1px,
+      hsl(var(--primary) / 0.08) 1px,
+      transparent 0
+    );
+    --shadow-panel: 0 18px 44px hsl(var(--primary) / 0.2);
+  }
+
+/* ==== LIGHT THEMES ==== */
+
+  :root,
+  :root[data-color-theme='amethyst'] {
     --background: 264 58% 97%;
     --foreground: 268 24% 18%;
     --card: 270 100% 99%;
@@ -37,28 +89,16 @@
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(var(--primary) / 0.07);
     --editor-selection: hsl(var(--primary) / 0.22);
-    --editor-font-family: 'IBM Plex Mono', monospace;
-    --editor-font-size: 16px;
-    --preview-font-family: 'IBM Plex Sans', sans-serif;
-    --preview-font-size: 16px;
-    --app-shell-overlay:
-      radial-gradient(
-        circle at top,
-        rgba(169, 133, 246, 0.18),
-        transparent 38%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(238, 230, 255, 0.95),
-        rgba(247, 243, 255, 0.99)
-      );
-    --app-grain-opacity: 0.5;
-    --texture-grain: radial-gradient(
-      circle at 1px 1px,
-      rgba(112, 83, 173, 0.09) 1px,
-      transparent 0
-    );
-    --shadow-panel: 0 18px 44px hsl(var(--primary) / 0.16);
+    --syntax-foreground: 268 24% 18%;
+    --syntax-comment: 250 18% 46%;
+    --syntax-string: 45 85% 32%;
+    --syntax-keyword: 330 72% 42%;
+    --syntax-function: 142 58% 30%;
+    --syntax-class: 182 62% 30%;
+    --syntax-constant: 258 60% 50%;
+    --syntax-parameter: 28 82% 40%;
+    --syntax-error: 0 70% 46%;
+    --syntax-tag: 330 72% 42%;
     --mermaid-primary-color: #dbcafc;
     --mermaid-primary-text-color: #382457;
     --mermaid-primary-border-color: #8663d1;
@@ -66,55 +106,302 @@
     --mermaid-secondary-color: #eee5ff;
     --mermaid-tertiary-color: #f8f4ff;
     --mermaid-edge-label-background: #f8f4ff;
-    --radius: 1.35rem;
   }
 
-  .dark {
-    color-scheme: dark;
-    --background: 270 36% 9%;
-    --foreground: 272 38% 89%;
-    --card: 270 30% 12%;
-    --card-foreground: 272 38% 89%;
-    --primary: 269 82% 74%;
-    --primary-foreground: 270 40% 11%;
-    --secondary: 271 23% 18%;
-    --secondary-foreground: 271 31% 82%;
-    --muted: 270 20% 15%;
-    --muted-foreground: 270 15% 63%;
-    --accent: 276 26% 22%;
-    --accent-foreground: 273 36% 86%;
+  :root[data-color-theme='rose'] {
+    --background: 344 58% 97%;
+    --foreground: 268 24% 18%;
+    --card: 350 100% 99%;
+    --card-foreground: 268 24% 18%;
+    --primary: 349 52% 49%;
+    --primary-foreground: 350 100% 99%;
+    --secondary: 345 50% 92%;
+    --secondary-foreground: 348 28% 28%;
+    --muted: 344 42% 94%;
+    --muted-foreground: 346 14% 44%;
+    --accent: 356 58% 90%;
+    --accent-foreground: 350 31% 27%;
+    --destructive: 353 70% 54%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 347 31% 84%;
+    --input: 347 31% 84%;
+    --ring: 349 52% 49%;
+    --editor-surface: 347 80% 98%;
+    --editor-surface-elevated: 350 100% 99%;
+    --preview-surface: 344 56% 96%;
+    --scrollbar-track: 344 42% 92%;
+    --scrollbar-thumb: 348 31% 74%;
+    --scrollbar-thumb-hover: 349 40% 63%;
+    --scrollbar-corner: 344 42% 92%;
+    --success-soft: 149 48% 92%;
+    --success-foreground: 150 49% 30%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(var(--primary) / 0.07);
+    --editor-selection: hsl(var(--primary) / 0.22);
+    --syntax-foreground: 268 24% 18%;
+    --syntax-comment: 330 18% 46%;
+    --syntax-string: 45 85% 32%;
+    --syntax-keyword: 330 72% 42%;
+    --syntax-function: 142 58% 30%;
+    --syntax-class: 182 62% 30%;
+    --syntax-constant: 258 60% 50%;
+    --syntax-parameter: 28 82% 40%;
+    --syntax-error: 0 70% 46%;
+    --syntax-tag: 330 72% 42%;
+    --mermaid-primary-color: #fccada;
+    --mermaid-primary-text-color: #572432;
+    --mermaid-primary-border-color: #d16389;
+    --mermaid-line-color: #d16389;
+    --mermaid-secondary-color: #ffe5ed;
+    --mermaid-tertiary-color: #fff4f7;
+    --mermaid-edge-label-background: #fff4f7;
+  }
+
+  :root[data-color-theme='jade'] {
+    --background: 184 58% 97%;
+    --foreground: 268 24% 18%;
+    --card: 190 100% 99%;
+    --card-foreground: 268 24% 18%;
+    --primary: 189 52% 49%;
+    --primary-foreground: 190 100% 99%;
+    --secondary: 185 50% 92%;
+    --secondary-foreground: 188 28% 28%;
+    --muted: 184 42% 94%;
+    --muted-foreground: 186 14% 44%;
+    --accent: 196 58% 90%;
+    --accent-foreground: 190 31% 27%;
+    --destructive: 353 70% 54%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 187 31% 84%;
+    --input: 187 31% 84%;
+    --ring: 189 52% 49%;
+    --editor-surface: 187 80% 98%;
+    --editor-surface-elevated: 190 100% 99%;
+    --preview-surface: 184 56% 96%;
+    --scrollbar-track: 184 42% 92%;
+    --scrollbar-thumb: 188 31% 74%;
+    --scrollbar-thumb-hover: 189 40% 63%;
+    --scrollbar-corner: 184 42% 92%;
+    --success-soft: 149 48% 92%;
+    --success-foreground: 150 49% 30%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(var(--primary) / 0.07);
+    --editor-selection: hsl(var(--primary) / 0.22);
+    --syntax-foreground: 268 24% 18%;
+    --syntax-comment: 170 18% 46%;
+    --syntax-string: 45 85% 32%;
+    --syntax-keyword: 330 72% 42%;
+    --syntax-function: 142 58% 30%;
+    --syntax-class: 182 62% 30%;
+    --syntax-constant: 258 60% 50%;
+    --syntax-parameter: 28 82% 40%;
+    --syntax-error: 0 70% 46%;
+    --syntax-tag: 330 72% 42%;
+    --mermaid-primary-color: #cafcfc;
+    --mermaid-primary-text-color: #245457;
+    --mermaid-primary-border-color: #63d1d0;
+    --mermaid-line-color: #63d1d0;
+    --mermaid-secondary-color: #e5ffff;
+    --mermaid-tertiary-color: #f4ffff;
+    --mermaid-edge-label-background: #f4ffff;
+  }
+
+  :root[data-color-theme='amber'] {
+    --background: 74 58% 97%;
+    --foreground: 268 24% 18%;
+    --card: 80 100% 99%;
+    --card-foreground: 268 24% 18%;
+    --primary: 79 52% 49%;
+    --primary-foreground: 80 100% 99%;
+    --secondary: 75 50% 92%;
+    --secondary-foreground: 78 28% 28%;
+    --muted: 74 42% 94%;
+    --muted-foreground: 76 14% 44%;
+    --accent: 86 58% 90%;
+    --accent-foreground: 80 31% 27%;
+    --destructive: 353 70% 54%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 77 31% 84%;
+    --input: 77 31% 84%;
+    --ring: 79 52% 49%;
+    --editor-surface: 77 80% 98%;
+    --editor-surface-elevated: 80 100% 99%;
+    --preview-surface: 74 56% 96%;
+    --scrollbar-track: 74 42% 92%;
+    --scrollbar-thumb: 78 31% 74%;
+    --scrollbar-thumb-hover: 79 40% 63%;
+    --scrollbar-corner: 74 42% 92%;
+    --success-soft: 149 48% 92%;
+    --success-foreground: 150 49% 30%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(var(--primary) / 0.07);
+    --editor-selection: hsl(var(--primary) / 0.22);
+    --syntax-foreground: 268 24% 18%;
+    --syntax-comment: 60 18% 46%;
+    --syntax-string: 45 85% 32%;
+    --syntax-keyword: 330 72% 42%;
+    --syntax-function: 142 58% 30%;
+    --syntax-class: 182 62% 30%;
+    --syntax-constant: 258 60% 50%;
+    --syntax-parameter: 28 82% 40%;
+    --syntax-error: 0 70% 46%;
+    --syntax-tag: 330 72% 42%;
+    --mermaid-primary-color: #f3fcca;
+    --mermaid-primary-text-color: #4b5724;
+    --mermaid-primary-border-color: #c0d163;
+    --mermaid-line-color: #c0d163;
+    --mermaid-secondary-color: #faffe5;
+    --mermaid-tertiary-color: #fdfff4;
+    --mermaid-edge-label-background: #fdfff4;
+  }
+
+  :root[data-color-theme='coral'] {
+    --background: 24 58% 97%;
+    --foreground: 268 24% 18%;
+    --card: 30 100% 99%;
+    --card-foreground: 268 24% 18%;
+    --primary: 29 52% 49%;
+    --primary-foreground: 30 100% 99%;
+    --secondary: 25 50% 92%;
+    --secondary-foreground: 28 28% 28%;
+    --muted: 24 42% 94%;
+    --muted-foreground: 26 14% 44%;
+    --accent: 36 58% 90%;
+    --accent-foreground: 30 31% 27%;
+    --destructive: 353 70% 54%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 27 31% 84%;
+    --input: 27 31% 84%;
+    --ring: 29 52% 49%;
+    --editor-surface: 27 80% 98%;
+    --editor-surface-elevated: 30 100% 99%;
+    --preview-surface: 24 56% 96%;
+    --scrollbar-track: 24 42% 92%;
+    --scrollbar-thumb: 28 31% 74%;
+    --scrollbar-thumb-hover: 29 40% 63%;
+    --scrollbar-corner: 24 42% 92%;
+    --success-soft: 149 48% 92%;
+    --success-foreground: 150 49% 30%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(var(--primary) / 0.07);
+    --editor-selection: hsl(var(--primary) / 0.22);
+    --syntax-foreground: 268 24% 18%;
+    --syntax-comment: 10 18% 46%;
+    --syntax-string: 45 85% 32%;
+    --syntax-keyword: 330 72% 42%;
+    --syntax-function: 142 58% 30%;
+    --syntax-class: 182 62% 30%;
+    --syntax-constant: 258 60% 50%;
+    --syntax-parameter: 28 82% 40%;
+    --syntax-error: 0 70% 46%;
+    --syntax-tag: 330 72% 42%;
+    --mermaid-primary-color: #fcdbca;
+    --mermaid-primary-text-color: #573824;
+    --mermaid-primary-border-color: #d18663;
+    --mermaid-line-color: #d18663;
+    --mermaid-secondary-color: #ffeee5;
+    --mermaid-tertiary-color: #fff8f4;
+    --mermaid-edge-label-background: #fff8f4;
+  }
+
+  :root[data-color-theme='sapphire'] {
+    --background: 224 58% 97%;
+    --foreground: 268 24% 18%;
+    --card: 230 100% 99%;
+    --card-foreground: 268 24% 18%;
+    --primary: 229 52% 49%;
+    --primary-foreground: 230 100% 99%;
+    --secondary: 225 50% 92%;
+    --secondary-foreground: 228 28% 28%;
+    --muted: 224 42% 94%;
+    --muted-foreground: 226 14% 44%;
+    --accent: 236 58% 90%;
+    --accent-foreground: 230 31% 27%;
+    --destructive: 353 70% 54%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 227 31% 84%;
+    --input: 227 31% 84%;
+    --ring: 229 52% 49%;
+    --editor-surface: 227 80% 98%;
+    --editor-surface-elevated: 230 100% 99%;
+    --preview-surface: 224 56% 96%;
+    --scrollbar-track: 224 42% 92%;
+    --scrollbar-thumb: 228 31% 74%;
+    --scrollbar-thumb-hover: 229 40% 63%;
+    --scrollbar-corner: 224 42% 92%;
+    --success-soft: 149 48% 92%;
+    --success-foreground: 150 49% 30%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(var(--primary) / 0.07);
+    --editor-selection: hsl(var(--primary) / 0.22);
+    --syntax-foreground: 268 24% 18%;
+    --syntax-comment: 210 18% 46%;
+    --syntax-string: 45 85% 32%;
+    --syntax-keyword: 330 72% 42%;
+    --syntax-function: 142 58% 30%;
+    --syntax-class: 182 62% 30%;
+    --syntax-constant: 258 60% 50%;
+    --syntax-parameter: 28 82% 40%;
+    --syntax-error: 0 70% 46%;
+    --syntax-tag: 330 72% 42%;
+    --mermaid-primary-color: #cadafc;
+    --mermaid-primary-text-color: #243257;
+    --mermaid-primary-border-color: #6389d1;
+    --mermaid-line-color: #6389d1;
+    --mermaid-secondary-color: #e5edff;
+    --mermaid-tertiary-color: #f4f7ff;
+    --mermaid-edge-label-background: #f4f7ff;
+  }
+
+/* ==== DARK THEMES ==== */
+
+  .dark,
+  .dark[data-color-theme='amethyst'] {
+    --background: 245 14% 12%;
+    --foreground: 60 30% 96%;
+    --card: 245 14% 19%;
+    --card-foreground: 60 30% 96%;
+    --primary: 250 100% 75%;
+    --primary-foreground: 250 40% 12%;
+    --secondary: 245 14% 22%;
+    --secondary-foreground: 60 20% 85%;
+    --muted: 245 14% 20%;
+    --muted-foreground: 244 25% 55%;
+    --accent: 245 14% 25%;
+    --accent-foreground: 60 20% 88%;
     --destructive: 353 74% 61%;
     --destructive-foreground: 0 0% 100%;
-    --border: 270 18% 25%;
-    --input: 270 18% 25%;
-    --ring: 269 82% 74%;
-    --editor-surface: 271 31% 11%;
-    --editor-surface-elevated: 273 32% 14%;
-    --preview-surface: 270 27% 10%;
-    --scrollbar-track: 271 22% 16%;
-    --scrollbar-thumb: 270 26% 36%;
-    --scrollbar-thumb-hover: 269 42% 56%;
-    --scrollbar-corner: 271 22% 16%;
+    --border: 245 14% 28%;
+    --input: 245 14% 28%;
+    --ring: 250 100% 75%;
+    --editor-surface: 245 14% 15%;
+    --editor-surface-elevated: 245 14% 18%;
+    --preview-surface: 245 14% 13%;
+    --scrollbar-track: 245 14% 21%;
+    --scrollbar-thumb: 245 14% 35%;
+    --scrollbar-thumb-hover: 250 45% 56%;
+    --scrollbar-corner: 245 14% 21%;
     --success-soft: 151 38% 18%;
     --success-foreground: 149 47% 76%;
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
-    --editor-active-line: hsl(var(--primary) / 0.1);
-    --editor-selection: hsl(var(--primary) / 0.24);
-    --app-shell-overlay:
-      radial-gradient(
-        circle at top,
-        rgba(150, 112, 235, 0.32),
-        transparent 44%
-      ),
-      linear-gradient(180deg, rgba(58, 38, 104, 0.16), rgba(16, 12, 26, 0.92));
-    --app-grain-opacity: 0.2;
-    --texture-grain: radial-gradient(
-      circle at 1px 1px,
-      rgba(155, 127, 220, 0.08) 1px,
-      transparent 0
-    );
-    --shadow-panel: 0 18px 44px hsl(var(--primary) / 0.2);
+    --editor-active-line: hsl(244 25% 25%);
+    --editor-selection: hsl(245 15% 30%);
+    --syntax-foreground: 60 30% 96%;
+    --syntax-comment: 244 25% 55%;
+    --syntax-string: 60 100% 75%;
+    --syntax-keyword: 330 100% 75%;
+    --syntax-function: 115 100% 75%;
+    --syntax-class: 170 100% 75%;
+    --syntax-constant: 250 100% 75%;
+    --syntax-parameter: 35 100% 75%;
+    --syntax-error: 10 100% 75%;
+    --syntax-tag: 330 100% 75%;
     --mermaid-primary-color: #382553;
     --mermaid-primary-text-color: #eadfff;
     --mermaid-primary-border-color: #b293f4;
@@ -123,6 +410,257 @@
     --mermaid-tertiary-color: #181123;
     --mermaid-edge-label-background: #181123;
   }
+
+  .dark[data-color-theme='rose'] {
+    --background: 289 14% 12%;
+    --foreground: 60 30% 96%;
+    --card: 289 14% 19%;
+    --card-foreground: 60 30% 96%;
+    --primary: 330 100% 75%;
+    --primary-foreground: 330 40% 12%;
+    --secondary: 289 14% 22%;
+    --secondary-foreground: 60 20% 85%;
+    --muted: 289 14% 20%;
+    --muted-foreground: 288 25% 55%;
+    --accent: 289 14% 25%;
+    --accent-foreground: 60 20% 88%;
+    --destructive: 353 74% 61%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 289 14% 28%;
+    --input: 289 14% 28%;
+    --ring: 330 100% 75%;
+    --editor-surface: 289 14% 15%;
+    --editor-surface-elevated: 289 14% 18%;
+    --preview-surface: 289 14% 13%;
+    --scrollbar-track: 289 14% 21%;
+    --scrollbar-thumb: 289 14% 35%;
+    --scrollbar-thumb-hover: 330 45% 56%;
+    --scrollbar-corner: 289 14% 21%;
+    --success-soft: 151 38% 18%;
+    --success-foreground: 149 47% 76%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(289 25% 25%);
+    --editor-selection: hsl(290 15% 30%);
+    --syntax-foreground: 60 30% 96%;
+    --syntax-comment: 288 25% 55%;
+    --syntax-string: 60 100% 75%;
+    --syntax-keyword: 330 100% 75%;
+    --syntax-function: 115 100% 75%;
+    --syntax-class: 170 100% 75%;
+    --syntax-constant: 250 100% 75%;
+    --syntax-parameter: 35 100% 75%;
+    --syntax-error: 10 100% 75%;
+    --syntax-tag: 330 100% 75%;
+    --mermaid-primary-color: #532530;
+    --mermaid-primary-text-color: #ffdfe9;
+    --mermaid-primary-border-color: #f493b4;
+    --mermaid-line-color: #f493b4;
+    --mermaid-secondary-color: #35181f;
+    --mermaid-tertiary-color: #231116;
+    --mermaid-edge-label-background: #231116;
+  }
+
+  .dark[data-color-theme='jade'] {
+    --background: 169 14% 12%;
+    --foreground: 60 30% 96%;
+    --card: 169 14% 19%;
+    --card-foreground: 60 30% 96%;
+    --primary: 170 100% 75%;
+    --primary-foreground: 170 40% 12%;
+    --secondary: 169 14% 22%;
+    --secondary-foreground: 60 20% 85%;
+    --muted: 169 14% 20%;
+    --muted-foreground: 168 25% 55%;
+    --accent: 169 14% 25%;
+    --accent-foreground: 60 20% 88%;
+    --destructive: 353 74% 61%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 169 14% 28%;
+    --input: 169 14% 28%;
+    --ring: 170 100% 75%;
+    --editor-surface: 169 14% 15%;
+    --editor-surface-elevated: 169 14% 18%;
+    --preview-surface: 169 14% 13%;
+    --scrollbar-track: 169 14% 21%;
+    --scrollbar-thumb: 169 14% 35%;
+    --scrollbar-thumb-hover: 170 45% 56%;
+    --scrollbar-corner: 169 14% 21%;
+    --success-soft: 151 38% 18%;
+    --success-foreground: 149 47% 76%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(169 25% 25%);
+    --editor-selection: hsl(170 15% 30%);
+    --syntax-foreground: 60 30% 96%;
+    --syntax-comment: 168 25% 55%;
+    --syntax-string: 60 100% 75%;
+    --syntax-keyword: 330 100% 75%;
+    --syntax-function: 115 100% 75%;
+    --syntax-class: 170 100% 75%;
+    --syntax-constant: 250 100% 75%;
+    --syntax-parameter: 35 100% 75%;
+    --syntax-error: 10 100% 75%;
+    --syntax-tag: 330 100% 75%;
+    --mermaid-primary-color: #254f53;
+    --mermaid-primary-text-color: #dfffff;
+    --mermaid-primary-border-color: #93f4f3;
+    --mermaid-line-color: #93f4f3;
+    --mermaid-secondary-color: #183335;
+    --mermaid-tertiary-color: #112223;
+    --mermaid-edge-label-background: #112223;
+  }
+
+  .dark[data-color-theme='amber'] {
+    --background: 49 14% 12%;
+    --foreground: 60 30% 96%;
+    --card: 49 14% 19%;
+    --card-foreground: 60 30% 96%;
+    --primary: 60 100% 75%;
+    --primary-foreground: 60 40% 12%;
+    --secondary: 49 14% 22%;
+    --secondary-foreground: 60 20% 85%;
+    --muted: 49 14% 20%;
+    --muted-foreground: 48 25% 55%;
+    --accent: 49 14% 25%;
+    --accent-foreground: 60 20% 88%;
+    --destructive: 353 74% 61%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 49 14% 28%;
+    --input: 49 14% 28%;
+    --ring: 60 100% 75%;
+    --editor-surface: 49 14% 15%;
+    --editor-surface-elevated: 49 14% 18%;
+    --preview-surface: 49 14% 13%;
+    --scrollbar-track: 49 14% 21%;
+    --scrollbar-thumb: 49 14% 35%;
+    --scrollbar-thumb-hover: 60 45% 56%;
+    --scrollbar-corner: 49 14% 21%;
+    --success-soft: 151 38% 18%;
+    --success-foreground: 149 47% 76%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(49 25% 25%);
+    --editor-selection: hsl(50 15% 30%);
+    --syntax-foreground: 60 30% 96%;
+    --syntax-comment: 48 25% 55%;
+    --syntax-string: 60 100% 75%;
+    --syntax-keyword: 330 100% 75%;
+    --syntax-function: 115 100% 75%;
+    --syntax-class: 170 100% 75%;
+    --syntax-constant: 250 100% 75%;
+    --syntax-parameter: 35 100% 75%;
+    --syntax-error: 10 100% 75%;
+    --syntax-tag: 330 100% 75%;
+    --mermaid-primary-color: #485325;
+    --mermaid-primary-text-color: #f9ffdf;
+    --mermaid-primary-border-color: #e5f493;
+    --mermaid-line-color: #e5f493;
+    --mermaid-secondary-color: #2e3518;
+    --mermaid-tertiary-color: #1f2311;
+    --mermaid-edge-label-background: #1f2311;
+  }
+
+  .dark[data-color-theme='coral'] {
+    --background: 355 14% 12%;
+    --foreground: 60 30% 96%;
+    --card: 355 14% 19%;
+    --card-foreground: 60 30% 96%;
+    --primary: 10 100% 75%;
+    --primary-foreground: 10 40% 12%;
+    --secondary: 355 14% 22%;
+    --secondary-foreground: 60 20% 85%;
+    --muted: 355 14% 20%;
+    --muted-foreground: 356 25% 55%;
+    --accent: 355 14% 25%;
+    --accent-foreground: 60 20% 88%;
+    --destructive: 353 74% 61%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 355 14% 28%;
+    --input: 355 14% 28%;
+    --ring: 10 100% 75%;
+    --editor-surface: 355 14% 15%;
+    --editor-surface-elevated: 355 14% 18%;
+    --preview-surface: 355 14% 13%;
+    --scrollbar-track: 355 14% 21%;
+    --scrollbar-thumb: 355 14% 35%;
+    --scrollbar-thumb-hover: 10 45% 56%;
+    --scrollbar-corner: 355 14% 21%;
+    --success-soft: 151 38% 18%;
+    --success-foreground: 149 47% 76%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(356 25% 25%);
+    --editor-selection: hsl(355 15% 30%);
+    --syntax-foreground: 60 30% 96%;
+    --syntax-comment: 356 25% 55%;
+    --syntax-string: 60 100% 75%;
+    --syntax-keyword: 330 100% 75%;
+    --syntax-function: 115 100% 75%;
+    --syntax-class: 170 100% 75%;
+    --syntax-constant: 250 100% 75%;
+    --syntax-parameter: 35 100% 75%;
+    --syntax-error: 10 100% 75%;
+    --syntax-tag: 330 100% 75%;
+    --mermaid-primary-color: #533825;
+    --mermaid-primary-text-color: #ffeadf;
+    --mermaid-primary-border-color: #f4b293;
+    --mermaid-line-color: #f4b293;
+    --mermaid-secondary-color: #352418;
+    --mermaid-tertiary-color: #231811;
+    --mermaid-edge-label-background: #231811;
+  }
+
+  .dark[data-color-theme='sapphire'] {
+    --background: 210 15% 2%;
+    --foreground: 60 30% 96%;
+    --card: 210 15% 9%;
+    --card-foreground: 60 30% 96%;
+    --primary: 210 100% 75%;
+    --primary-foreground: 210 40% 12%;
+    --secondary: 210 15% 12%;
+    --secondary-foreground: 60 20% 85%;
+    --muted: 210 15% 10%;
+    --muted-foreground: 211 25% 55%;
+    --accent: 210 15% 15%;
+    --accent-foreground: 60 20% 88%;
+    --destructive: 353 74% 61%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 15% 18%;
+    --input: 210 15% 18%;
+    --ring: 210 100% 75%;
+    --editor-surface: 210 15% 5%;
+    --editor-surface-elevated: 210 15% 8%;
+    --preview-surface: 210 15% 3%;
+    --scrollbar-track: 210 15% 11%;
+    --scrollbar-thumb: 210 15% 25%;
+    --scrollbar-thumb-hover: 210 45% 56%;
+    --scrollbar-corner: 210 15% 11%;
+    --success-soft: 151 38% 18%;
+    --success-foreground: 149 47% 76%;
+    --editor-text: hsl(var(--foreground));
+    --editor-cursor: hsl(var(--primary));
+    --editor-active-line: hsl(210 25% 25%);
+    --editor-selection: hsl(209 15% 30%);
+    --syntax-foreground: 60 30% 96%;
+    --syntax-comment: 211 25% 55%;
+    --syntax-string: 60 100% 75%;
+    --syntax-keyword: 330 100% 75%;
+    --syntax-function: 115 100% 75%;
+    --syntax-class: 170 100% 75%;
+    --syntax-constant: 250 100% 75%;
+    --syntax-parameter: 35 100% 75%;
+    --syntax-error: 10 100% 75%;
+    --syntax-tag: 330 100% 75%;
+    --mermaid-primary-color: #253053;
+    --mermaid-primary-text-color: #dfe9ff;
+    --mermaid-primary-border-color: #93b4f4;
+    --mermaid-line-color: #93b4f4;
+    --mermaid-secondary-color: #181f35;
+    --mermaid-tertiary-color: #111623;
+    --mermaid-edge-label-background: #111623;
+  }
+
 
   * {
     @apply border-border;
@@ -351,5 +889,78 @@
   .preview-prose blockquote {
     @apply rounded-2xl py-1 pr-4;
     background: hsl(var(--secondary) / 0.36);
+  }
+
+  /* Fenced-code syntax highlighting (highlight.js classes -> theme palette). */
+  .preview-prose code.hljs {
+    color: hsl(var(--syntax-foreground));
+  }
+
+  .preview-prose .hljs-comment,
+  .preview-prose .hljs-quote {
+    color: hsl(var(--syntax-comment));
+    font-style: italic;
+  }
+
+  .preview-prose .hljs-keyword,
+  .preview-prose .hljs-selector-tag,
+  .preview-prose .hljs-literal,
+  .preview-prose .hljs-doctag {
+    color: hsl(var(--syntax-keyword));
+  }
+
+  .preview-prose .hljs-string,
+  .preview-prose .hljs-meta .hljs-string,
+  .preview-prose .hljs-regexp {
+    color: hsl(var(--syntax-string));
+  }
+
+  .preview-prose .hljs-title,
+  .preview-prose .hljs-title.function_,
+  .preview-prose .hljs-section {
+    color: hsl(var(--syntax-function));
+  }
+
+  .preview-prose .hljs-type,
+  .preview-prose .hljs-title.class_,
+  .preview-prose .hljs-built_in,
+  .preview-prose .hljs-class .hljs-title {
+    color: hsl(var(--syntax-class));
+  }
+
+  .preview-prose .hljs-number,
+  .preview-prose .hljs-symbol,
+  .preview-prose .hljs-bullet {
+    color: hsl(var(--syntax-constant));
+  }
+
+  .preview-prose .hljs-params,
+  .preview-prose .hljs-attr,
+  .preview-prose .hljs-attribute,
+  .preview-prose .hljs-variable,
+  .preview-prose .hljs-template-variable,
+  .preview-prose .hljs-meta {
+    color: hsl(var(--syntax-parameter));
+  }
+
+  .preview-prose .hljs-name,
+  .preview-prose .hljs-tag {
+    color: hsl(var(--syntax-tag));
+  }
+
+  .preview-prose .hljs-deletion {
+    color: hsl(var(--syntax-error));
+  }
+
+  .preview-prose .hljs-addition {
+    color: hsl(var(--syntax-function));
+  }
+
+  .preview-prose .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .preview-prose .hljs-strong {
+    font-weight: 700;
   }
 }
