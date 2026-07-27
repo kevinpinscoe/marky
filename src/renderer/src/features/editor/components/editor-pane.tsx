@@ -10,9 +10,13 @@ import CodeMirror from '@uiw/react-codemirror';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { syntaxHighlighting } from '@codemirror/language';
+import { mermaidLanguageDescription } from 'codemirror-lang-mermaid';
 import { EditorView } from '@codemirror/view';
 import { TableProperties } from 'lucide-react';
 import { markyHighlightStyle } from '../lib/highlight-style';
+import { mermaidHighlightStyle } from '../lib/mermaid-highlight';
+
+const codeLanguages = [mermaidLanguageDescription, ...languages];
 import { Button } from '@renderer/components/ui/button';
 import { useTranslation } from '@renderer/i18n';
 import { useEditorStore } from '../store';
@@ -85,8 +89,9 @@ export function EditorPane({ value, onChange, onReady }: EditorPaneProps) {
 
   const extensions = useMemo(
     () => [
-      markdown({ base: markdownLanguage, codeLanguages: languages }),
+      markdown({ base: markdownLanguage, codeLanguages }),
       syntaxHighlighting(markyHighlightStyle),
+      syntaxHighlighting(mermaidHighlightStyle),
       tableNavigationExtension,
       formattingKeymap,
       EditorView.lineWrapping,
