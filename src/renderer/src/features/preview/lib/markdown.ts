@@ -3,6 +3,7 @@ import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import remarkRehype from 'remark-rehype';
+import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
 import type { Root } from 'hast';
 import { visit } from 'unist-util-visit';
@@ -70,7 +71,10 @@ function createProcessor(baseDir?: string) {
     .use(remarkGfm)
     .use(remarkBreaks)
     .use(remarkRehype)
-    .use(rehypeDropUnsafeLinks());
+    .use(rehypeDropUnsafeLinks())
+    // Mermaid blocks are rendered by the preview/export, so leave them as plain
+    // text; unknown languages are ignored rather than throwing.
+    .use(rehypeHighlight, { plainText: ['mermaid'], ignoreMissing: true });
 
   if (baseDir) {
     pipeline.use(rehypeResolveLocalImages(baseDir));

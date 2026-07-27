@@ -62,10 +62,11 @@ let initializedConfigKey: string | null = null;
 
 function ensureMermaid(
   theme: MermaidTheme,
+  colorTheme: string,
   previewFontFamily: string,
   previewFontSize: number,
 ) {
-  const configKey = `${theme}:${previewFontFamily}:${previewFontSize}`;
+  const configKey = `${theme}:${colorTheme}:${previewFontFamily}:${previewFontSize}`;
 
   if (initializedConfigKey !== configKey) {
     mermaid.initialize(getMermaidConfig(previewFontFamily, previewFontSize));
@@ -100,6 +101,7 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
   const theme = useSettingsStore((state) => state.settings.theme);
+  const colorTheme = useSettingsStore((state) => state.settings.colorTheme);
   const previewFontFamily = useSettingsStore(
     (state) => state.settings.previewFontFamily,
   );
@@ -112,7 +114,7 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
   );
 
   useEffect(() => {
-    ensureMermaid(theme, previewFontFamily, previewFontSize);
+    ensureMermaid(theme, colorTheme, previewFontFamily, previewFontSize);
 
     const container = containerRef.current;
     if (!container) return;
@@ -160,7 +162,7 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
         if (!parent) return;
 
         const source = block.textContent ?? '';
-        const cacheKey = `${theme}:${previewFontFamily}:${previewFontSize}:${source}`;
+        const cacheKey = `${theme}:${colorTheme}:${previewFontFamily}:${previewFontSize}:${source}`;
 
         try {
           let svg = mermaidCache.get(cacheKey);
@@ -194,7 +196,7 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
     return () => {
       cancelled = true;
     };
-  }, [html, previewFontFamily, previewFontSize, theme, t]);
+  }, [html, previewFontFamily, previewFontSize, theme, colorTheme, t]);
 
   return <div ref={containerRef} className="preview-prose dark:prose-invert" />;
 }
