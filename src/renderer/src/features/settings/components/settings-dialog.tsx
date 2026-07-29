@@ -275,12 +275,20 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel>{t('settings.theme')}</FieldLabel>
-          <div className="flex gap-2">
+          <FieldLabel id="settings-theme-label">
+            {t('settings.theme')}
+          </FieldLabel>
+          <div
+            className="flex gap-2"
+            role="group"
+            aria-labelledby="settings-theme-label"
+          >
             {(['light', 'dark'] as const).map((theme) => (
               <button
                 key={theme}
+                type="button"
                 onClick={() => updateSettings({ theme })}
+                aria-pressed={settings.theme === theme}
                 className={cn(
                   'flex flex-1 items-center justify-center gap-2 rounded-xl border py-2 text-sm font-medium transition-colors',
                   settings.theme === theme
@@ -300,8 +308,14 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel>{t('settings.colorTheme')}</FieldLabel>
-          <div className="grid grid-cols-3 gap-2">
+          <FieldLabel id="settings-color-theme-label">
+            {t('settings.colorTheme')}
+          </FieldLabel>
+          <div
+            className="grid grid-cols-3 gap-2"
+            role="group"
+            aria-labelledby="settings-color-theme-label"
+          >
             {THEMES.map((option) => (
               <button
                 key={option.name}
@@ -420,8 +434,14 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel>{t('settings.pdfMargins')}</FieldLabel>
-          <div className="grid grid-cols-2 gap-2">
+          <FieldLabel id="settings-pdf-margins-label">
+            {t('settings.pdfMargins')}
+          </FieldLabel>
+          <div
+            className="grid grid-cols-2 gap-2"
+            role="group"
+            aria-labelledby="settings-pdf-margins-label"
+          >
             {(['top', 'right', 'bottom', 'left'] as const).map((side) => (
               <div key={side}>
                 <SubLabel htmlFor={`settings-margin-${side}`}>
