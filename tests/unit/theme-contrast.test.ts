@@ -7,9 +7,14 @@ import { describe, it, expect } from 'vitest';
  * must keep body text and syntax tokens legible against its own surfaces,
  * with the very dark Sapphire background explicitly covered.
  */
-const css = readFileSync(
-  resolve('src/renderer/src/index.css'),
-  'utf-8',
+/**
+ * Newlines are normalised before matching. The repository has no .gitattributes,
+ * so this file arrives CRLF on a Windows checkout and every selector lookup
+ * below would miss, failing the whole suite with "missing CSS block".
+ */
+const css = readFileSync(resolve('src/renderer/src/index.css'), 'utf-8').replace(
+  /\r\n/g,
+  '\n',
 );
 
 const THEMES = ['amethyst', 'rose', 'jade', 'amber', 'coral', 'sapphire'];
@@ -62,10 +67,10 @@ function contrast(a: Rgb, b: Rgb): number {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-function blockVars(selector: string): Record<string, string> {
-  const idx = css.indexOf(selector);
-  if (idx === -1) throw new Error(`missing CSS block for ${selector}`);
-  const open = css.indexOf('{', idx);
+function blockVars(selector: RegExp): Record<string, string> {
+  const match = selector.exec(css);
+  if (!match) throw new Error(`missing CSS block for ${selector}`);
+  const open = css.indexOf('{', match.index);
   const close = css.indexOf('}', open);
   const vars: Record<string, string> = {};
   for (const line of css.slice(open + 1, close).split('\n')) {
@@ -75,15 +80,18 @@ function blockVars(selector: string): Record<string, string> {
   return vars;
 }
 
-function selectorFor(mode: 'light' | 'dark', name: string): string {
-  if (mode === 'dark') {
-    return name === 'amethyst'
-      ? `.dark,\n  .dark[data-color-theme='amethyst']`
-      : `.dark[data-color-theme='${name}']`;
-  }
+/**
+ * Matched as a pattern rather than a literal so reindenting index.css cannot
+ * quietly break the lookup.
+ */
+function selectorFor(mode: 'light' | 'dark', name: string): RegExp {
+  const base = mode === 'dark' ? '\\.dark' : ':root';
+  const attribute = `\\[data-color-theme='${name}'\\]`;
+
+  // Amethyst is also the default, so it heads a two-selector rule.
   return name === 'amethyst'
-    ? `:root,\n  :root[data-color-theme='amethyst']`
-    : `:root[data-color-theme='${name}']`;
+    ? new RegExp(`${base},\\s*${base}${attribute}`)
+    : new RegExp(`${base}${attribute}`);
 }
 
 describe('theme contrast (WCAG)', () => {
