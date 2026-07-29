@@ -257,6 +257,24 @@ function collapsedPairs(): string[] {
   return found.sort();
 }
 
+/**
+ * Non-colour cues from highlight-style.ts. A pair whose two tokens carry
+ * different cues stays tellable apart even when the colours collapse, so it is
+ * not the same risk as a pair distinguished by hue alone.
+ *
+ * Keep in step with markyHighlightStyle: a cue removed there without being
+ * removed here would overstate how safe the palette is.
+ */
+const NON_COLOUR_CUES: Record<string, string> = {
+  comment: 'italic',
+  error: 'wavy underline',
+};
+
+function isMitigated(pair: string): boolean {
+  const [a, b] = pair.split(' ').at(-1)!.split('/');
+  return (NON_COLOUR_CUES[a] ?? '') !== (NON_COLOUR_CUES[b] ?? '');
+}
+
 describe('syntax colours under colour vision deficiency', () => {
   const collapsed = collapsedPairs();
 
@@ -267,5 +285,20 @@ describe('syntax colours under colour vision deficiency', () => {
   it('has no stale entries, so the known list shrinks deliberately', () => {
     const seen = new Set(collapsed);
     expect([...KNOWN].filter((pair) => !seen.has(pair))).toEqual([]);
+  });
+
+  // The count that actually matters. Everything else in KNOWN survives on
+  // italics or a wavy underline; these are distinguishable by hue alone, so a
+  // reader with colour vision deficiency has nothing else to go on.
+  it('adds no colour-only collapse beyond the recorded 42', () => {
+    const bare = collapsed.filter((pair) => !isMitigated(pair));
+    expect(bare.length).toBeLessThanOrEqual(42);
+  });
+
+  it('keeps error distinguishable by something other than hue', () => {
+    const bareErrors = collapsed
+      .filter((pair) => pair.includes('error'))
+      .filter((pair) => !isMitigated(pair));
+    expect(bareErrors).toEqual([]);
   });
 });
