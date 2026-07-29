@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import {
+  FieldHint,
+  FieldLabel,
+  SectionHeading,
+  SubLabel,
+  inputClass,
+} from '@renderer/components/ui/field';
 import { Modal } from '@renderer/components/ui/modal';
 import { cn } from '@renderer/lib/utils';
 import type { ExportFont, Locale, PdfPageSize } from '@shared/types';
@@ -42,13 +49,6 @@ const languageOptions: Array<{ value: Locale; label: string }> = [
   { value: 'es', label: 'Español' },
 ];
 
-const inputClass =
-  'w-full rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring';
-
-const labelClass = 'mb-1 block text-xs font-medium text-muted-foreground';
-const subLabelClass =
-  'mb-1 block text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/75';
-
 function Section({
   title,
   children,
@@ -58,9 +58,7 @@ function Section({
 }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-        {title}
-      </h3>
+      <SectionHeading>{title}</SectionHeading>
       {children}
     </div>
   );
@@ -120,10 +118,10 @@ function FontField({
 
   return (
     <div className="space-y-2">
-      <label className={labelClass}>{label}</label>
-      <div className="grid grid-cols-[minmax(0,1fr)_6.5rem] gap-2">
+      <FieldLabel>{label}</FieldLabel>
+      <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] gap-2">
         <div className="min-w-0">
-          <span className={subLabelClass}>{familyLabel}</span>
+          <SubLabel>{familyLabel}</SubLabel>
           <select
             className={inputClass}
             value={value}
@@ -137,7 +135,7 @@ function FontField({
           </select>
         </div>
         <div>
-          <span className={subLabelClass}>{sizeLabel}</span>
+          <SubLabel>{sizeLabel}</SubLabel>
           <select
             className={inputClass}
             aria-label={`${label} size`}
@@ -152,11 +150,9 @@ function FontField({
           </select>
         </div>
       </div>
-      <p className="text-xs leading-5 text-muted-foreground">{helper}</p>
+      <FieldHint>{helper}</FieldHint>
       <div className="rounded-2xl border border-border/80 bg-background/70 p-3 shadow-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">
-          {sampleLabel}
-        </p>
+        <SubLabel className="mb-0">{sampleLabel}</SubLabel>
         <p
           className="mt-2 whitespace-pre-wrap text-foreground/90"
           style={{
@@ -249,7 +245,7 @@ export function SettingsDialog() {
     >
       <Section title={t('settings.appearance')}>
         <div>
-          <p className={labelClass}>{t('settings.language')}</p>
+          <FieldLabel>{t('settings.language')}</FieldLabel>
           <select
             className={inputClass}
             value={settings.language}
@@ -266,7 +262,7 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <p className={labelClass}>{t('settings.theme')}</p>
+          <FieldLabel>{t('settings.theme')}</FieldLabel>
           <div className="flex gap-2">
             {(['light', 'dark'] as const).map((theme) => (
               <button
@@ -291,7 +287,7 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <p className={labelClass}>{t('settings.colorTheme')}</p>
+          <FieldLabel>{t('settings.colorTheme')}</FieldLabel>
           <div className="grid grid-cols-3 gap-2">
             {THEMES.map((option) => (
               <button
@@ -320,9 +316,7 @@ export function SettingsDialog() {
       <div className="border-t border-border" />
 
       <Section title={t('settings.writing')}>
-        <p className="text-xs leading-5 text-muted-foreground">
-          {fontLibraryHint}
-        </p>
+        <FieldHint>{fontLibraryHint}</FieldHint>
 
         <div className="space-y-4">
           <FontField
@@ -373,7 +367,7 @@ export function SettingsDialog() {
 
       <Section title={t('settings.export')}>
         <div>
-          <label className={labelClass}>{t('settings.documentFont')}</label>
+          <FieldLabel>{t('settings.documentFont')}</FieldLabel>
           <select
             className={inputClass}
             value={settings.exportFont}
@@ -390,7 +384,7 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <label className={labelClass}>{t('settings.pdfPageSize')}</label>
+          <FieldLabel>{t('settings.pdfPageSize')}</FieldLabel>
           <select
             className={inputClass}
             value={settings.pdfPageSize}
@@ -407,13 +401,11 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <p className={labelClass}>{t('settings.pdfMargins')}</p>
+          <FieldLabel>{t('settings.pdfMargins')}</FieldLabel>
           <div className="grid grid-cols-2 gap-2">
             {(['top', 'right', 'bottom', 'left'] as const).map((side) => (
               <div key={side}>
-                <label className="mb-0.5 block text-xs text-muted-foreground">
-                  {marginLabels[side]}
-                </label>
+                <SubLabel>{marginLabels[side]}</SubLabel>
                 <input
                   type="number"
                   min={0}
