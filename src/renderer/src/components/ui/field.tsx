@@ -34,12 +34,14 @@ type LabelProps = {
    * Binds a real <label> to this control. Omit when the label heads a group
    * of controls (button rows, margin grids) that no single id can stand for —
    * a label pointing at nothing helps nobody, so those render as plain text.
+   * Give those an `id` instead and point the group's `aria-labelledby` at it.
    */
   htmlFor?: string;
+  id?: string;
   className?: string;
 };
 
-export function FieldLabel({ children, htmlFor, className }: LabelProps) {
+export function FieldLabel({ children, htmlFor, id, className }: LabelProps) {
   const classes = cn(
     'mb-1 block text-label font-medium text-foreground/90',
     className,
@@ -47,16 +49,20 @@ export function FieldLabel({ children, htmlFor, className }: LabelProps) {
 
   if (htmlFor) {
     return (
-      <label className={classes} htmlFor={htmlFor}>
+      <label className={classes} htmlFor={htmlFor} id={id}>
         {children}
       </label>
     );
   }
 
-  return <p className={classes}>{children}</p>;
+  return (
+    <p className={classes} id={id}>
+      {children}
+    </p>
+  );
 }
 
-export function SubLabel({ children, htmlFor, className }: LabelProps) {
+export function SubLabel({ children, htmlFor, id, className }: LabelProps) {
   const classes = cn(
     'mb-1 block text-sub font-medium text-muted-foreground',
     className,
@@ -64,13 +70,17 @@ export function SubLabel({ children, htmlFor, className }: LabelProps) {
 
   if (htmlFor) {
     return (
-      <label className={classes} htmlFor={htmlFor}>
+      <label className={classes} htmlFor={htmlFor} id={id}>
         {children}
       </label>
     );
   }
 
-  return <span className={classes}>{children}</span>;
+  return (
+    <span className={classes} id={id}>
+      {children}
+    </span>
+  );
 }
 
 export function FieldHint({
