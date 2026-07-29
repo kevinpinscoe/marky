@@ -34,12 +34,30 @@ type LabelProps = {
    * Binds a real <label> to this control. Omit when the label heads a group
    * of controls (button rows, margin grids) that no single id can stand for —
    * a label pointing at nothing helps nobody, so those render as plain text.
+   * Give those an `id` instead and point the group's `aria-labelledby` at it.
    */
   htmlFor?: string;
+  id?: string;
+  /**
+   * Set on a label that names a group through `aria-labelledby`. The group
+   * already carries the text as its accessible name, so leaving the label in
+   * the tree as well makes screen readers say it twice — once as loose text,
+   * then again on entering the group.
+   *
+   * Safe to hide: the accessible name computation still reads hidden elements
+   * referenced by `aria-labelledby`.
+   */
+  'aria-hidden'?: boolean;
   className?: string;
 };
 
-export function FieldLabel({ children, htmlFor, className }: LabelProps) {
+export function FieldLabel({
+  children,
+  htmlFor,
+  id,
+  className,
+  'aria-hidden': ariaHidden,
+}: LabelProps) {
   const classes = cn(
     'mb-1 block text-label font-medium text-foreground/90',
     className,
@@ -47,16 +65,20 @@ export function FieldLabel({ children, htmlFor, className }: LabelProps) {
 
   if (htmlFor) {
     return (
-      <label className={classes} htmlFor={htmlFor}>
+      <label className={classes} htmlFor={htmlFor} id={id}>
         {children}
       </label>
     );
   }
 
-  return <p className={classes}>{children}</p>;
+  return (
+    <p className={classes} id={id} aria-hidden={ariaHidden}>
+      {children}
+    </p>
+  );
 }
 
-export function SubLabel({ children, htmlFor, className }: LabelProps) {
+export function SubLabel({ children, htmlFor, id, className }: LabelProps) {
   const classes = cn(
     'mb-1 block text-sub font-medium text-muted-foreground',
     className,
@@ -64,13 +86,17 @@ export function SubLabel({ children, htmlFor, className }: LabelProps) {
 
   if (htmlFor) {
     return (
-      <label className={classes} htmlFor={htmlFor}>
+      <label className={classes} htmlFor={htmlFor} id={id}>
         {children}
       </label>
     );
   }
 
-  return <span className={classes}>{children}</span>;
+  return (
+    <span className={classes} id={id}>
+      {children}
+    </span>
+  );
 }
 
 export function FieldHint({

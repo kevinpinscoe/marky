@@ -57,6 +57,10 @@ export const es: TranslationKeys = {
   'titlebar.settings': 'Configuración',
   'titlebar.keyboardShortcuts': 'Atajos de teclado',
   'titlebar.close': 'Cerrar',
+
+  // Landmark regions
+  'region.editor': 'Editor',
+  'region.preview': 'Vista previa',
   'titlebar.removeRecent': 'Quitar {name} de los archivos recientes',
   'titlebar.minimize': 'Minimizar',
   'titlebar.maximize': 'Maximizar',

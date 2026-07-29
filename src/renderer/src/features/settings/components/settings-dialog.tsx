@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import {
   FieldHint,
@@ -115,14 +115,23 @@ function FontField({
   onFontSizeChange: (value: number) => void;
 }) {
   const availableFontSizes = ensureSelectedFontSize(fontSizeOptions, fontSize);
+  // Rendered once per font, so the ids have to be unique per instance.
+  const fieldId = useId();
+  const familyId = `${fieldId}-family`;
+  const sizeId = `${fieldId}-size`;
 
   return (
-    <div className="space-y-2">
-      <FieldLabel>{label}</FieldLabel>
+    <div
+      className="space-y-2"
+      role="group"
+      aria-labelledby={`${fieldId}-label`}
+    >
+      <FieldLabel id={`${fieldId}-label`} aria-hidden>{label}</FieldLabel>
       <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] gap-2">
         <div className="min-w-0">
-          <SubLabel>{familyLabel}</SubLabel>
+          <SubLabel htmlFor={familyId}>{familyLabel}</SubLabel>
           <select
+            id={familyId}
             className={inputClass}
             value={value}
             onChange={(event) => onChange(event.target.value)}
@@ -135,8 +144,9 @@ function FontField({
           </select>
         </div>
         <div>
-          <SubLabel>{sizeLabel}</SubLabel>
+          <SubLabel htmlFor={sizeId}>{sizeLabel}</SubLabel>
           <select
+            id={sizeId}
             className={inputClass}
             aria-label={`${label} size`}
             value={fontSize}
@@ -245,8 +255,11 @@ export function SettingsDialog() {
     >
       <Section title={t('settings.appearance')}>
         <div>
-          <FieldLabel>{t('settings.language')}</FieldLabel>
+          <FieldLabel htmlFor="settings-language">
+            {t('settings.language')}
+          </FieldLabel>
           <select
+            id="settings-language"
             className={inputClass}
             value={settings.language}
             onChange={(event) =>
@@ -262,12 +275,20 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel>{t('settings.theme')}</FieldLabel>
-          <div className="flex gap-2">
+          <FieldLabel id="settings-theme-label" aria-hidden>
+            {t('settings.theme')}
+          </FieldLabel>
+          <div
+            className="flex gap-2"
+            role="group"
+            aria-labelledby="settings-theme-label"
+          >
             {(['light', 'dark'] as const).map((theme) => (
               <button
                 key={theme}
+                type="button"
                 onClick={() => updateSettings({ theme })}
+                aria-pressed={settings.theme === theme}
                 className={cn(
                   'flex flex-1 items-center justify-center gap-2 rounded-xl border py-2 text-sm font-medium transition-colors',
                   settings.theme === theme
@@ -287,8 +308,14 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel>{t('settings.colorTheme')}</FieldLabel>
-          <div className="grid grid-cols-3 gap-2">
+          <FieldLabel id="settings-color-theme-label" aria-hidden>
+            {t('settings.colorTheme')}
+          </FieldLabel>
+          <div
+            className="grid grid-cols-3 gap-2"
+            role="group"
+            aria-labelledby="settings-color-theme-label"
+          >
             {THEMES.map((option) => (
               <button
                 key={option.name}
@@ -367,8 +394,11 @@ export function SettingsDialog() {
 
       <Section title={t('settings.export')}>
         <div>
-          <FieldLabel>{t('settings.documentFont')}</FieldLabel>
+          <FieldLabel htmlFor="settings-export-font">
+            {t('settings.documentFont')}
+          </FieldLabel>
           <select
+            id="settings-export-font"
             className={inputClass}
             value={settings.exportFont}
             onChange={(event) =>
@@ -384,8 +414,11 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel>{t('settings.pdfPageSize')}</FieldLabel>
+          <FieldLabel htmlFor="settings-pdf-page-size">
+            {t('settings.pdfPageSize')}
+          </FieldLabel>
           <select
+            id="settings-pdf-page-size"
             className={inputClass}
             value={settings.pdfPageSize}
             onChange={(event) =>
@@ -401,12 +434,21 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel>{t('settings.pdfMargins')}</FieldLabel>
-          <div className="grid grid-cols-2 gap-2">
+          <FieldLabel id="settings-pdf-margins-label" aria-hidden>
+            {t('settings.pdfMargins')}
+          </FieldLabel>
+          <div
+            className="grid grid-cols-2 gap-2"
+            role="group"
+            aria-labelledby="settings-pdf-margins-label"
+          >
             {(['top', 'right', 'bottom', 'left'] as const).map((side) => (
               <div key={side}>
-                <SubLabel>{marginLabels[side]}</SubLabel>
+                <SubLabel htmlFor={`settings-margin-${side}`}>
+                  {marginLabels[side]}
+                </SubLabel>
                 <input
+                  id={`settings-margin-${side}`}
                   type="number"
                   min={0}
                   max={100}

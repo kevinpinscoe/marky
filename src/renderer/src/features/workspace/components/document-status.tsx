@@ -21,18 +21,29 @@ export function DocumentStatus() {
     <div className="flex items-center gap-4 pr-2 text-sm text-muted-foreground">
       <span>{t('status.words', { count: stats.words })}</span>
       <span>{t('status.characters', { count: stats.characters })}</span>
-      {notice && (
-        <span
-          className={cn(
-            'notice-pill',
-            notice.tone === 'success' && 'notice-pill-success',
-            notice.tone === 'error' && 'notice-pill-error',
-            notice.tone === 'info' && 'notice-pill-info',
-          )}
-        >
-          {notice.message}
-        </span>
-      )}
+      {/*
+        Always rendered, even when empty: a live region has to be in the
+        document before its content changes, otherwise the message that
+        creates it is the one nobody hears.
+
+        Polite for every tone, including errors. These are transient
+        confirmations that clear themselves after a moment, so interrupting
+        whatever the user is reading costs more than it conveys.
+      */}
+      <span role="status" aria-live="polite">
+        {notice && (
+          <span
+            className={cn(
+              'notice-pill',
+              notice.tone === 'success' && 'notice-pill-success',
+              notice.tone === 'error' && 'notice-pill-error',
+              notice.tone === 'info' && 'notice-pill-info',
+            )}
+          >
+            {notice.message}
+          </span>
+        )}
+      </span>
       <Eye className="size-4" />
     </div>
   );

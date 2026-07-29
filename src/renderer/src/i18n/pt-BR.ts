@@ -57,6 +57,10 @@ export const ptBR: TranslationKeys = {
   'titlebar.settings': 'Configurações',
   'titlebar.keyboardShortcuts': 'Atalhos de teclado',
   'titlebar.close': 'Fechar',
+
+  // Landmark regions
+  'region.editor': 'Editor',
+  'region.preview': 'Pré-visualização',
   'titlebar.removeRecent': 'Remover {name} dos arquivos recentes',
   'titlebar.minimize': 'Minimizar',
   'titlebar.maximize': 'Maximizar',
