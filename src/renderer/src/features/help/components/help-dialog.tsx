@@ -1,3 +1,4 @@
+import { SectionHeading } from '@renderer/components/ui/field';
 import { Modal } from '@renderer/components/ui/modal';
 import { useSettingsStore } from '@renderer/features/settings/store';
 import { useTranslation } from '@renderer/i18n';
@@ -68,7 +69,7 @@ const viewShortcuts: ShortcutEntry[] = [
 
 function Kbd({ children }: { children: string }) {
   return (
-    <kbd className="inline-flex items-center justify-center rounded-md border border-border/80 bg-muted/60 px-1.5 py-0.5 font-mono text-[11px] font-medium leading-none text-foreground/80 shadow-sm">
+    <kbd className="inline-flex items-center justify-center rounded-md border border-border/80 bg-muted/60 px-1.5 py-0.5 font-mono text-sub font-medium leading-none text-foreground/80 shadow-sm">
       {children}
     </kbd>
   );
@@ -98,9 +99,7 @@ function ShortcutSection({
 }) {
   return (
     <div className="space-y-1">
-      <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-        {title}
-      </h3>
+      <SectionHeading>{title}</SectionHeading>
       <div className="divide-y divide-border/50">
         {entries.map((entry) => (
           <ShortcutRow key={entry.labelKey} entry={entry} />

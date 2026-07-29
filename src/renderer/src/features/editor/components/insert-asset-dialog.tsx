@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FolderOpen, TriangleAlert } from 'lucide-react';
 import { Button } from '@renderer/components/ui/button';
+import {
+  FieldHint,
+  FieldLabel,
+  inputClass,
+} from '@renderer/components/ui/field';
 import { Modal } from '@renderer/components/ui/modal';
 import { useTranslation } from '@renderer/i18n';
 import { relativeToFile } from '@renderer/lib/paths';
@@ -30,11 +35,6 @@ type InsertAssetDialogProps = {
   onClose: () => void;
   onInsert: (payload: InsertAssetPayload) => void;
 };
-
-const inputClass =
-  'w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring';
-
-const labelClass = 'mb-1 block text-xs font-medium text-muted-foreground';
 
 function isLocalPath(value: string): boolean {
   if (!value.trim()) return false;
@@ -163,9 +163,7 @@ function InsertAssetDialogContent({
     <Modal title={title} className="w-full max-w-md" onClose={onClose}>
       <form className="space-y-4 px-5 py-5" onSubmit={handleSubmit}>
         <div>
-          <label className={labelClass} htmlFor="insert-asset-url">
-            {urlLabel}
-          </label>
+          <FieldLabel htmlFor="insert-asset-url">{urlLabel}</FieldLabel>
           <div className={isImage ? 'flex gap-2' : ''}>
             <input
               id="insert-asset-url"
@@ -194,12 +192,12 @@ function InsertAssetDialogContent({
             )}
           </div>
           {isImage && (
-            <p className="mt-1.5 text-xs text-muted-foreground">
+            <FieldHint className="mt-1.5">
               {t('insertAsset.localImageHint')}
-            </p>
+            </FieldHint>
           )}
           {imageWarning && (
-            <p className="mt-1.5 flex items-start gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+            <p className="mt-1.5 flex items-start gap-1.5 text-hint text-amber-600 dark:text-amber-400">
               <TriangleAlert className="mt-px size-3.5 shrink-0" />
               <span>{imageWarning}</span>
             </p>
@@ -207,9 +205,7 @@ function InsertAssetDialogContent({
         </div>
 
         <div>
-          <label className={labelClass} htmlFor="insert-asset-text">
-            {textLabel}
-          </label>
+          <FieldLabel htmlFor="insert-asset-text">{textLabel}</FieldLabel>
           <input
             id="insert-asset-text"
             type="text"
