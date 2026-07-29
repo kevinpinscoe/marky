@@ -38,10 +38,26 @@ type LabelProps = {
    */
   htmlFor?: string;
   id?: string;
+  /**
+   * Set on a label that names a group through `aria-labelledby`. The group
+   * already carries the text as its accessible name, so leaving the label in
+   * the tree as well makes screen readers say it twice — once as loose text,
+   * then again on entering the group.
+   *
+   * Safe to hide: the accessible name computation still reads hidden elements
+   * referenced by `aria-labelledby`.
+   */
+  'aria-hidden'?: boolean;
   className?: string;
 };
 
-export function FieldLabel({ children, htmlFor, id, className }: LabelProps) {
+export function FieldLabel({
+  children,
+  htmlFor,
+  id,
+  className,
+  'aria-hidden': ariaHidden,
+}: LabelProps) {
   const classes = cn(
     'mb-1 block text-label font-medium text-foreground/90',
     className,
@@ -56,7 +72,7 @@ export function FieldLabel({ children, htmlFor, id, className }: LabelProps) {
   }
 
   return (
-    <p className={classes} id={id}>
+    <p className={classes} id={id} aria-hidden={ariaHidden}>
       {children}
     </p>
   );

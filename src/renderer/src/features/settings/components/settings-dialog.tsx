@@ -126,7 +126,7 @@ function FontField({
       role="group"
       aria-labelledby={`${fieldId}-label`}
     >
-      <FieldLabel id={`${fieldId}-label`}>{label}</FieldLabel>
+      <FieldLabel id={`${fieldId}-label`} aria-hidden>{label}</FieldLabel>
       <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] gap-2">
         <div className="min-w-0">
           <SubLabel htmlFor={familyId}>{familyLabel}</SubLabel>
@@ -275,7 +275,7 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel id="settings-theme-label">
+          <FieldLabel id="settings-theme-label" aria-hidden>
             {t('settings.theme')}
           </FieldLabel>
           <div
@@ -308,7 +308,7 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel id="settings-color-theme-label">
+          <FieldLabel id="settings-color-theme-label" aria-hidden>
             {t('settings.colorTheme')}
           </FieldLabel>
           <div
@@ -434,7 +434,7 @@ export function SettingsDialog() {
         </div>
 
         <div>
-          <FieldLabel id="settings-pdf-margins-label">
+          <FieldLabel id="settings-pdf-margins-label" aria-hidden>
             {t('settings.pdfMargins')}
           </FieldLabel>
           <div
