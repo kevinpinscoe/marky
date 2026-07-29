@@ -140,7 +140,7 @@
     --editor-active-line: hsl(var(--primary) / 0.07);
     --editor-selection: hsl(var(--primary) / 0.22);
     --syntax-foreground: 268 24% 18%;
-    --syntax-comment: 330 18% 46%;
+    --syntax-comment: 330 12% 46%;
     --syntax-string: 45 85% 29.5%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
@@ -190,7 +190,7 @@
     --editor-active-line: hsl(var(--primary) / 0.07);
     --editor-selection: hsl(var(--primary) / 0.22);
     --syntax-foreground: 268 24% 18%;
-    --syntax-comment: 170 18% 40.5%;
+    --syntax-comment: 160 18% 40.5%;
     --syntax-string: 45 85% 29.5%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
@@ -240,7 +240,7 @@
     --editor-active-line: hsl(var(--primary) / 0.07);
     --editor-selection: hsl(var(--primary) / 0.22);
     --syntax-foreground: 268 24% 18%;
-    --syntax-comment: 60 18% 39%;
+    --syntax-comment: 60 12% 32.5%;
     --syntax-string: 45 85% 29.5%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
@@ -393,7 +393,7 @@
     --editor-active-line: hsl(244 25% 25%);
     --editor-selection: hsl(245 15% 30%);
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 244 25% 61.5%;
+    --syntax-comment: 244 31% 63%;
     --syntax-string: 60 100% 75%;
     --syntax-keyword: 330 100% 75%;
     --syntax-function: 115 100% 75%;
@@ -443,7 +443,7 @@
     --editor-active-line: hsl(289 25% 25%);
     --editor-selection: hsl(290 15% 30%);
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 288 25% 59%;
+    --syntax-comment: 288 31% 59.5%;
     --syntax-string: 60 100% 75%;
     --syntax-keyword: 330 100% 75%;
     --syntax-function: 115 100% 75%;
