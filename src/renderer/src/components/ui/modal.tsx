@@ -69,7 +69,7 @@ export function Modal({
           <div>
             <h2 className="text-sm font-semibold tracking-wide">{title}</h2>
             {subtitle && (
-              <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
+              <p className="mt-1 text-hint text-muted-foreground">{subtitle}</p>
             )}
           </div>
           <Button
