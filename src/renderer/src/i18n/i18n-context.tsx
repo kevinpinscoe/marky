@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 import type { Locale } from '@shared/types';
 import type { TranslationKeys } from './types';
 import { en } from './en';
@@ -71,6 +71,12 @@ export function I18nProvider({
       t: (key, vars) => translate(dict, key, vars),
       locale,
     };
+  }, [locale]);
+
+  // index.html ships lang="en"; without this the document keeps claiming
+  // English and screen readers read pt-BR and es with English phonetics.
+  useEffect(() => {
+    globalThis.document.documentElement.lang = locale;
   }, [locale]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
