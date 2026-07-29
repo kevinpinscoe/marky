@@ -26,7 +26,29 @@ import {
   insertLink,
 } from '@renderer/features/editor/lib/toolbar-actions';
 import { useScrollSync } from '@renderer/features/editor/hooks/use-scroll-sync';
-import { I18nProvider } from '@renderer/i18n';
+import {
+  I18nProvider,
+  useTranslation,
+  type TranslationKeys,
+} from '@renderer/i18n';
+
+/**
+ * A named landmark region.
+ *
+ * Separate component because App renders the I18nProvider, so it sits outside
+ * its own context and would always translate against the default locale.
+ */
+function LabelledRegion({
+  labelKey,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLElement> & {
+  labelKey: keyof TranslationKeys;
+  ref?: React.Ref<HTMLElement>;
+}) {
+  const { t } = useTranslation();
+  return <section ref={ref} aria-label={t(labelKey)} {...props} />;
+}
 
 export function App() {
   const previewRef = useRef<HTMLDivElement | null>(null);
@@ -137,7 +159,8 @@ export function App() {
 
           <main className="flex flex-1 overflow-hidden">
             {viewMode !== 'preview' && (
-              <section
+              <LabelledRegion
+                labelKey="region.editor"
                 className={cn(
                   'app-editor-pane',
                   viewMode === 'split' && 'border-r border-border/80',
@@ -151,11 +174,12 @@ export function App() {
                     editorViewRef.current = view;
                   }}
                 />
-              </section>
+              </LabelledRegion>
             )}
 
             {viewMode !== 'editor' && (
-              <section
+              <LabelledRegion
+                labelKey="region.preview"
                 ref={previewRef}
                 className="app-preview-pane focus:outline-none"
                 tabIndex={-1}
@@ -166,7 +190,7 @@ export function App() {
                     documentPath={activeDocument.path}
                   />
                 </div>
-              </section>
+              </LabelledRegion>
             )}
           </main>
 

@@ -49,6 +49,10 @@ export type TranslationKeys = {
   'titlebar.settings': string;
   'titlebar.keyboardShortcuts': string;
   'titlebar.close': string;
+
+  // ── Landmark regions ─────────────────────────────────────────────
+  'region.editor': string;
+  'region.preview': string;
   'titlebar.minimize': string;
   'titlebar.maximize': string;
   'titlebar.restore': string;
