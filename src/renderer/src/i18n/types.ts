@@ -8,6 +8,7 @@ export type TranslationKeys = {
   'settings.theme': string;
   'settings.light': string;
   'settings.dark': string;
+  'settings.colorTheme': string;
   'settings.writing': string;
   'settings.editorFont': string;
   'settings.previewFont': string;

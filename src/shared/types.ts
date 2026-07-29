@@ -20,6 +20,14 @@ export type PdfPageSize = 'A4' | 'Letter' | 'Legal' | 'A3';
 
 export type ExportFont = 'system' | 'serif' | 'mono';
 
+export type ThemeName =
+  | 'amethyst'
+  | 'rose'
+  | 'jade'
+  | 'amber'
+  | 'coral'
+  | 'sapphire';
+
 export type PdfMargins = {
   top: number;
   right: number;
@@ -29,6 +37,7 @@ export type PdfMargins = {
 
 export type AppSettings = {
   theme: 'light' | 'dark';
+  colorTheme: ThemeName;
   language: Locale;
   exportFont: ExportFont;
   editorFontFamily: string;

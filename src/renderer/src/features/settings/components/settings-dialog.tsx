@@ -11,6 +11,7 @@ import {
   type FontOption,
   type LoadedFontOptions,
 } from '../lib/font-options';
+import { THEMES } from '../lib/themes';
 import { useSettingsStore } from '../store';
 import { useTranslation, type TranslationKeys } from '@renderer/i18n';
 
@@ -284,6 +285,32 @@ export function SettingsDialog() {
                   <Moon className="size-4" />
                 )}
                 {theme === 'light' ? t('settings.light') : t('settings.dark')}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p className={labelClass}>{t('settings.colorTheme')}</p>
+          <div className="grid grid-cols-3 gap-2">
+            {THEMES.map((option) => (
+              <button
+                key={option.name}
+                type="button"
+                onClick={() => updateSettings({ colorTheme: option.name })}
+                aria-pressed={settings.colorTheme === option.name}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors',
+                  settings.colorTheme === option.name
+                    ? 'border-primary bg-primary/10 text-foreground'
+                    : 'border-border bg-background text-muted-foreground hover:bg-accent',
+                )}
+              >
+                <span
+                  className="size-4 shrink-0 rounded-full ring-1 ring-inset ring-black/10"
+                  style={{ backgroundColor: option.swatch }}
+                />
+                {option.label}
               </button>
             ))}
           </div>

@@ -2,6 +2,7 @@ import type { AppSettings } from './types';
 
 export const defaultAppSettings: AppSettings = {
   theme: 'light',
+  colorTheme: 'amethyst',
   language: 'en',
   exportFont: 'system',
   editorFontFamily: 'IBM Plex Mono',
