@@ -105,6 +105,9 @@ describe('theme contrast (WCAG)', () => {
         expect(contrast(fg, bg)).toBeGreaterThanOrEqual(4.5);
       });
 
+      // 4.5:1 is WCAG AA for normal-size text, which is what code is. The
+      // threshold used to be 3:1, under which every token passed while 18 sat
+      // below the bar issue #4 actually asks for.
       it(`${mode}/${name}: syntax tokens are legible on the editor surface`, () => {
         const surface = hslTripletToRgb(vars['editor-surface']);
         for (const key of SYNTAX_KEYS) {
@@ -112,7 +115,7 @@ describe('theme contrast (WCAG)', () => {
           expect(
             contrast(token, surface),
             `${key} in ${mode}/${name}`,
-          ).toBeGreaterThanOrEqual(3);
+          ).toBeGreaterThanOrEqual(4.5);
         }
       });
     }
