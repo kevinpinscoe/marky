@@ -3,6 +3,12 @@ import { tags as t } from '@lezer/highlight';
 
 const color = {
   foreground: 'hsl(var(--syntax-foreground))',
+  /**
+   * Headings and links used --primary directly, which is an accent built for
+   * fills and swatches rather than for text. On a light surface that reached
+   * 2.13:1 in amber. This keeps the accent's hue and darkens it enough to read.
+   */
+  heading: 'hsl(var(--syntax-heading))',
   comment: 'hsl(var(--syntax-comment))',
   string: 'hsl(var(--syntax-string))',
   keyword: 'hsl(var(--syntax-keyword))',
@@ -12,7 +18,6 @@ const color = {
   parameter: 'hsl(var(--syntax-parameter))',
   error: 'hsl(var(--syntax-error))',
   tag: 'hsl(var(--syntax-tag))',
-  accent: 'hsl(var(--primary))',
 } as const;
 
 /**
@@ -23,11 +28,11 @@ const color = {
  */
 export const markyHighlightStyle = HighlightStyle.define([
   // --- Markdown structural tokens ---
-  { tag: t.heading, color: color.accent, fontWeight: '700' },
+  { tag: t.heading, color: color.heading, fontWeight: '700' },
   { tag: t.strong, color: color.foreground, fontWeight: '700' },
   { tag: t.emphasis, color: color.foreground, fontStyle: 'italic' },
   { tag: t.strikethrough, textDecoration: 'line-through' },
-  { tag: [t.link, t.url], color: color.accent, textDecoration: 'underline' },
+  { tag: [t.link, t.url], color: color.heading, textDecoration: 'underline' },
   { tag: t.quote, color: color.comment, fontStyle: 'italic' },
   { tag: t.monospace, color: color.string },
   { tag: t.list, color: color.keyword },
