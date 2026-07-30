@@ -157,6 +157,32 @@ test.describe('dialog screenshots', () => {
     },
   ];
 
+  /**
+   * The open list, which none of the dialog shots reach: it renders through a
+   * portal outside [role="dialog"], and it is closed while those are taken.
+   * It is also the surface #17 was actually about, the one the operating
+   * system used to draw.
+   *
+   * The language picker rather than a font picker on purpose. Font options come
+   * from whatever is installed on the machine, so a runner image gaining or
+   * losing a family would churn the baseline for no reason.
+   */
+  for (const theme of ['light', 'dark'] as const) {
+    test(`combobox-open / ${theme} / en`, async ({ window }) => {
+      await configure(window, { locale: 'en', theme });
+      await window.locator(label('en', 'titlebar.settings')).click();
+      await window.locator('#settings-language').click();
+
+      const list = window.getByRole('listbox').first();
+      await expect(list).toBeVisible();
+
+      await expect(list).toHaveScreenshot(`combobox-open-${theme}-en.png`, {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.01,
+      });
+    });
+  }
+
   for (const locale of ['en', 'pt-BR'] as const) {
     for (const theme of ['light', 'dark'] as const) {
       for (const dialog of DIALOGS) {
