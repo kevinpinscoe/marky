@@ -105,6 +105,25 @@ describe('theme contrast (WCAG)', () => {
         expect(contrast(fg, bg)).toBeGreaterThanOrEqual(4.5);
       });
 
+      /**
+       * Muted text carries real content — section headings, hints, sub-labels,
+       * the unselected theme names — so AA applies to it as much as to body
+       * text. It was 3.10:1 against card in every dark palette until axe found
+       * it, which nothing here was checking.
+       *
+       * Only the surfaces it actually renders on. Any translucent panel is a
+       * blend of background and card, and clearing both brackets the blend.
+       */
+      it(`${mode}/${name}: muted text is legible on every surface it sits on`, () => {
+        const muted = hslTripletToRgb(vars['muted-foreground']);
+        for (const surface of ['background', 'card', 'editor-surface']) {
+          expect(
+            contrast(muted, hslTripletToRgb(vars[surface])),
+            `muted-foreground on ${surface} in ${mode}/${name}`,
+          ).toBeGreaterThanOrEqual(4.5);
+        }
+      });
+
       // 4.5:1 is WCAG AA for normal-size text, which is what code is. The
       // threshold used to be 3:1, under which every token passed while 18 sat
       // below the bar issue #4 actually asks for.
