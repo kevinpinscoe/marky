@@ -8,6 +8,7 @@ import {
   inputClass,
 } from '@renderer/components/ui/field';
 import { Modal } from '@renderer/components/ui/modal';
+import { Select } from '@renderer/components/ui/select';
 import { cn } from '@renderer/lib/utils';
 import type { ExportFont, Locale, PdfPageSize } from '@shared/types';
 import {
@@ -126,13 +127,14 @@ function FontField({
       role="group"
       aria-labelledby={`${fieldId}-label`}
     >
-      <FieldLabel id={`${fieldId}-label`} aria-hidden>{label}</FieldLabel>
+      <FieldLabel id={`${fieldId}-label`} aria-hidden>
+        {label}
+      </FieldLabel>
       <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] gap-2">
         <div className="min-w-0">
           <SubLabel htmlFor={familyId}>{familyLabel}</SubLabel>
-          <select
+          <Select
             id={familyId}
-            className={inputClass}
             value={value}
             onChange={(event) => onChange(event.target.value)}
           >
@@ -141,13 +143,12 @@ function FontField({
                 {option.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div>
           <SubLabel htmlFor={sizeId}>{sizeLabel}</SubLabel>
-          <select
+          <Select
             id={sizeId}
-            className={inputClass}
             aria-label={`${label} size`}
             value={fontSize}
             onChange={(event) => onFontSizeChange(Number(event.target.value))}
@@ -157,7 +158,7 @@ function FontField({
                 {option.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
       <FieldHint>{helper}</FieldHint>
@@ -258,9 +259,8 @@ export function SettingsDialog() {
           <FieldLabel htmlFor="settings-language">
             {t('settings.language')}
           </FieldLabel>
-          <select
+          <Select
             id="settings-language"
-            className={inputClass}
             value={settings.language}
             onChange={(event) =>
               updateSettings({ language: event.target.value as Locale })
@@ -271,7 +271,7 @@ export function SettingsDialog() {
                 {option.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div>
@@ -397,9 +397,8 @@ export function SettingsDialog() {
           <FieldLabel htmlFor="settings-export-font">
             {t('settings.documentFont')}
           </FieldLabel>
-          <select
+          <Select
             id="settings-export-font"
-            className={inputClass}
             value={settings.exportFont}
             onChange={(event) =>
               updateSettings({ exportFont: event.target.value as ExportFont })
@@ -410,16 +409,15 @@ export function SettingsDialog() {
                 {t(option.labelKey)}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div>
           <FieldLabel htmlFor="settings-pdf-page-size">
             {t('settings.pdfPageSize')}
           </FieldLabel>
-          <select
+          <Select
             id="settings-pdf-page-size"
-            className={inputClass}
             value={settings.pdfPageSize}
             onChange={(event) =>
               updateSettings({ pdfPageSize: event.target.value as PdfPageSize })
@@ -430,7 +428,7 @@ export function SettingsDialog() {
                 {option.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div>
