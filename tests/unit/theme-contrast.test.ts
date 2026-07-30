@@ -19,6 +19,7 @@ const css = readFileSync(resolve('src/renderer/src/index.css'), 'utf-8').replace
 
 const THEMES = ['amethyst', 'rose', 'jade', 'amber', 'coral', 'sapphire'];
 const SYNTAX_KEYS = [
+  'syntax-heading',
   'syntax-foreground',
   'syntax-comment',
   'syntax-string',
