@@ -52,5 +52,8 @@ export const markyHighlightStyle = HighlightStyle.define([
   },
   { tag: [t.tagName, t.angleBracket], color: color.tag },
   { tag: [t.operator, t.punctuation, t.separator], color: color.foreground },
-  { tag: t.invalid, color: color.error },
+  // Wavy underline rather than colour alone: error collapses into keyword, tag,
+  // string and parameter once simulated for colour vision deficiency, and it is
+  // the token that can least afford to be missed.
+  { tag: t.invalid, color: color.error, textDecoration: 'underline wavy' },
 ]);

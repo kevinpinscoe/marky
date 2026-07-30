@@ -1,0 +1,10 @@
+# Keep line endings stable across platforms. Tools that read source files
+# literally (see tests/unit/theme-contrast.test.ts) break on CRLF checkouts.
+* text=auto eol=lf
+
+# Binary assets git should never touch.
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
