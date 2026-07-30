@@ -11,14 +11,19 @@ import type { ViewMode } from '@shared/types';
  * when the preview scroll would otherwise trigger a reverse sync.
  */
 export function useScrollSync(
-  editorViewRef: RefObject<EditorView | null>,
+  /**
+   * Passed by value rather than as a ref. A ref's current value cannot be an
+   * effect dependency, and CodeMirror reports its view after the first commit,
+   * so reading one here would attach the listener only on a later run — which
+   * meant sync stayed dead until the view mode was toggled.
+   */
+  editorView: EditorView | null,
   previewRef: RefObject<HTMLElement | null>,
   viewMode: ViewMode,
 ) {
   useEffect(() => {
     if (viewMode !== 'split') return;
 
-    const editorView = editorViewRef.current;
     const previewElement = previewRef.current;
     if (!editorView || !previewElement) return;
 
@@ -46,5 +51,5 @@ export function useScrollSync(
     return () => {
       scroller.removeEventListener('scroll', handleEditorScroll);
     };
-  }, [editorViewRef, previewRef, viewMode]);
+  }, [editorView, previewRef, viewMode]);
 }

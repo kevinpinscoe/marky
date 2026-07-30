@@ -53,6 +53,9 @@ function LabelledRegion({
 export function App() {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
+  // Mirrored in state so effects can depend on the view arriving. The ref is
+  // kept for the imperative callers below, which need it during render.
+  const [editorView, setEditorView] = useState<EditorView | null>(null);
   const [insertDialog, setInsertDialog] = useState<InsertAssetRequest | null>(
     null,
   );
@@ -60,7 +63,7 @@ export function App() {
   const activeDocument = useWorkspaceStore((state) => state.document);
   const viewMode = useWorkspaceStore((state) => state.viewMode);
 
-  useScrollSync(editorViewRef, previewRef, viewMode);
+  useScrollSync(editorView, previewRef, viewMode);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -172,6 +175,7 @@ export function App() {
                   onChange={setContent}
                   onReady={(view) => {
                     editorViewRef.current = view;
+                    setEditorView(view);
                   }}
                 />
               </LabelledRegion>
