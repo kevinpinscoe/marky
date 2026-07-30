@@ -109,7 +109,7 @@ export function PreviewPane({ markdown, documentPath }: PreviewPaneProps) {
     (state) => state.settings.previewFontSize,
   );
   const html = useMemo(
-    () => renderMarkdown(markdown, documentPath),
+    () => renderMarkdown(markdown, documentPath, { sourceLines: true }),
     [markdown, documentPath],
   );
 
