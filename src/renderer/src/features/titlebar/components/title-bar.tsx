@@ -172,9 +172,11 @@ export function TitleBar({
     <div className="flex items-center gap-1" style={noDrag}>
       <Button
         variant="ghost"
+        size="icon"
         className="rounded-full"
         onClick={onNew}
         disabled={!canCreateNewDocument}
+        aria-label={t('titlebar.new')}
       >
         <FilePlus className="size-4" />
       </Button>

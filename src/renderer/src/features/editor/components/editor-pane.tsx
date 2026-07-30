@@ -95,10 +95,13 @@ export function EditorPane({ value, onChange, onReady }: EditorPaneProps) {
       tableNavigationExtension,
       formattingKeymap,
       EditorView.lineWrapping,
+      // CodeMirror's editable surface reports as a textbox with no name of its
+      // own, so a screen reader announces the whole document unlabelled.
+      EditorView.contentAttributes.of({ 'aria-label': t('region.editor') }),
       theme,
       editorStateExtension(setFormatting, setStats),
     ],
-    [setFormatting, setStats],
+    [setFormatting, setStats, t],
   );
 
   const handleReady = useCallback(

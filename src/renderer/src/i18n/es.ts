@@ -44,6 +44,7 @@ export const es: TranslationKeys = {
   'settings.exportFontMono': 'Monoespaciada',
 
   // Barra de título
+  'titlebar.new': 'Nuevo documento',
   'titlebar.open': 'Abrir',
   'titlebar.save': 'Guardar',
   'titlebar.saveCopy': 'Guardar una copia',

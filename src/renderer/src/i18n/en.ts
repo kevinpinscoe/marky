@@ -44,6 +44,7 @@ export const en: TranslationKeys = {
   'settings.exportFontMono': 'Monospace',
 
   // Title bar
+  'titlebar.new': 'New document',
   'titlebar.open': 'Open',
   'titlebar.save': 'Save',
   'titlebar.saveCopy': 'Save a copy',

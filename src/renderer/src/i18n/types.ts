@@ -36,6 +36,7 @@ export type TranslationKeys = {
 
   // ── Title bar ────────────────────────────────────────────────────
   'titlebar.removeRecent': string;
+  'titlebar.new': string;
   'titlebar.open': string;
   'titlebar.save': string;
   'titlebar.saveCopy': string;
