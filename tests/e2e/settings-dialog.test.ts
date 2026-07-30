@@ -9,11 +9,9 @@ test.describe('settings dialog', () => {
 
   test('contains language selector', async ({ window }) => {
     await window.locator('button[aria-label="Settings"]').click();
-    // The language select has the current value "en" for English
-    const langSelect = window
-      .locator('select')
-      .filter({ has: window.locator('option[value="en"]') });
-    await expect(langSelect).toBeVisible();
+    const language = window.locator('#settings-language');
+    await expect(language).toBeVisible();
+    await expect(language).toHaveValue('English');
     await window.keyboard.press('Escape');
   });
 
@@ -27,10 +25,10 @@ test.describe('settings dialog', () => {
   test('contains font size selectors', async ({ window }) => {
     await window.locator('button[aria-label="Settings"]').click();
     await expect(
-      window.locator('select[aria-label="Editor font size"]'),
+      window.getByRole('combobox', { name: 'Editor font size' }),
     ).toBeVisible();
     await expect(
-      window.locator('select[aria-label="Preview font size"]'),
+      window.getByRole('combobox', { name: 'Preview font size' }),
     ).toBeVisible();
     await window.keyboard.press('Escape');
   });

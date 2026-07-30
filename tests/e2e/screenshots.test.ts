@@ -75,7 +75,18 @@ test.describe('dialog screenshots', () => {
     await window.locator(labelAnyLocale('titlebar.settings')).click();
     const dialog = panel(window);
 
-    await dialog.locator('#settings-language').selectOption(locale);
+    // Language is a combobox now, and its option labels are the language's own
+    // name, so they do not move with the current locale.
+    const LANGUAGE_LABELS: Record<Locale, string> = {
+      en: 'English',
+      'pt-BR': 'Português (Brasil)',
+      es: 'Español',
+    };
+    await dialog.locator('#settings-language').click();
+    await window
+      .getByRole('option', { name: LANGUAGE_LABELS[locale], exact: true })
+      .click();
+
     const dict = DICTIONARIES[locale];
 
     await dialog
