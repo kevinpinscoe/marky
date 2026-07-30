@@ -28,6 +28,7 @@ const css = readFileSync(
 
 const THEMES = ['amethyst', 'rose', 'jade', 'amber', 'coral', 'sapphire'];
 const SYNTAX_KEYS = [
+  'syntax-heading',
   'syntax-foreground',
   'syntax-comment',
   'syntax-string',
@@ -66,9 +67,11 @@ const KNOWN = new Set([
   'dark/amber deuteranopia function/parameter',
   'dark/amber protanopia comment/error',
   'dark/amber protanopia foreground/class',
+  'dark/amber protanopia heading/function',
   'dark/amber protanopia string/function',
   'dark/amber tritanopia error/tag',
   'dark/amber tritanopia foreground/string',
+  'dark/amber tritanopia heading/foreground',
   'dark/amber tritanopia keyword/error',
   'dark/amethyst deuteranopia function/parameter',
   'dark/amethyst protanopia foreground/class',
@@ -81,11 +84,14 @@ const KNOWN = new Set([
   'dark/coral protanopia string/function',
   'dark/coral tritanopia error/tag',
   'dark/coral tritanopia foreground/string',
+  'dark/coral tritanopia heading/keyword',
+  'dark/coral tritanopia heading/tag',
   'dark/coral tritanopia keyword/error',
   'dark/jade deuteranopia comment/keyword',
   'dark/jade deuteranopia comment/tag',
   'dark/jade deuteranopia function/parameter',
   'dark/jade protanopia foreground/class',
+  'dark/jade protanopia heading/foreground',
   'dark/jade protanopia string/function',
   'dark/jade tritanopia error/tag',
   'dark/jade tritanopia foreground/string',
@@ -95,6 +101,7 @@ const KNOWN = new Set([
   'dark/rose protanopia string/function',
   'dark/rose tritanopia error/tag',
   'dark/rose tritanopia foreground/string',
+  'dark/rose tritanopia heading/error',
   'dark/rose tritanopia keyword/error',
   'dark/sapphire deuteranopia function/parameter',
   'dark/sapphire protanopia comment/keyword',
@@ -104,9 +111,12 @@ const KNOWN = new Set([
   'dark/sapphire tritanopia error/tag',
   'dark/sapphire tritanopia foreground/string',
   'dark/sapphire tritanopia keyword/error',
+  'light/amber deuteranopia heading/error',
   'light/amber deuteranopia parameter/error',
   'light/amber deuteranopia string/error',
   'light/amber deuteranopia string/parameter',
+  'light/amber protanopia heading/parameter',
+  'light/amber protanopia heading/string',
   'light/amber protanopia string/parameter',
   'light/amber tritanopia function/class',
   'light/amethyst deuteranopia parameter/error',
@@ -119,6 +129,7 @@ const KNOWN = new Set([
   'light/coral deuteranopia parameter/error',
   'light/coral deuteranopia string/error',
   'light/coral deuteranopia string/parameter',
+  'light/coral protanopia heading/function',
   'light/coral protanopia string/parameter',
   'light/coral tritanopia comment/string',
   'light/coral tritanopia function/class',
@@ -129,14 +140,18 @@ const KNOWN = new Set([
   'light/jade deuteranopia string/parameter',
   'light/jade protanopia string/parameter',
   'light/jade tritanopia function/class',
+  'light/jade tritanopia heading/function',
   'light/rose deuteranopia comment/keyword',
   'light/rose deuteranopia comment/tag',
+  'light/rose deuteranopia heading/function',
   'light/rose deuteranopia parameter/error',
   'light/rose deuteranopia string/error',
   'light/rose deuteranopia string/parameter',
   'light/rose protanopia comment/class',
   'light/rose protanopia string/parameter',
   'light/rose tritanopia function/class',
+  'light/rose tritanopia heading/keyword',
+  'light/rose tritanopia heading/tag',
   'light/sapphire deuteranopia comment/class',
   'light/sapphire deuteranopia parameter/error',
   'light/sapphire deuteranopia string/error',
@@ -290,9 +305,14 @@ describe('syntax colours under colour vision deficiency', () => {
   // The count that actually matters. Everything else in KNOWN survives on
   // italics or a wavy underline; these are distinguishable by hue alone, so a
   // reader with colour vision deficiency has nothing else to go on.
-  it('adds no colour-only collapse beyond the recorded 42', () => {
+  //
+  // Went from 42 to 54 when headings became syntax-heading. Those collisions
+  // are not new: headings were drawn in --primary, which this file never
+  // measured, so naming the colour brought existing debt into view rather than
+  // adding any.
+  it('adds no colour-only collapse beyond the recorded 54', () => {
     const bare = collapsed.filter((pair) => !isMitigated(pair));
-    expect(bare.length).toBeLessThanOrEqual(42);
+    expect(bare.length).toBeLessThanOrEqual(54);
   });
 
   it('keeps error distinguishable by something other than hue', () => {
