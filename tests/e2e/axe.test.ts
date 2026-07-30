@@ -29,11 +29,12 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
  * this set fails the run.
  */
 const ACCEPTED: Record<string, string> = {
-  // --muted-foreground is 3.10:1 against --card in every dark palette and needs
-  // roughly +9.5 lightness to clear AA. That brightens every muted string in
-  // the app, so it is a palette decision rather than a test fix. Tracked with
-  // measurements in the follow-up issue.
-  'color-contrast': 'dark muted-foreground, tracked separately',
+  // What remains is one token on the active line background: the heading colour
+  // is 4.06:1 against it in dark amethyst. The active line is a different root
+  // cause from the muted-foreground fix, and every token sits on it when the
+  // caret is there, so it needs the palette solved against that surface too.
+  // Measured and tracked separately.
+  'color-contrast': 'syntax tokens on the active line, tracked separately',
   // CodeMirror's scroller is not focusable itself, but the contenteditable it
   // wraps is, and moving the caret scrolls it. Keyboard users are not stranded.
   'scrollable-region-focusable': 'cm-scroller scrolls via the caret',
@@ -43,8 +44,11 @@ const ACCEPTED: Record<string, string> = {
  * Total accepted nodes across every surface and theme. A cap rather than an
  * exact figure because it varies with how much text each surface renders, but
  * low enough that a new batch of violations cannot hide inside it.
+ *
+ * Was 40 while dark sat at 33. Fixing muted-foreground dropped dark to 12 and
+ * light to 6, so the ceiling comes down with it.
  */
-const ACCEPTED_NODE_CAP = 40;
+const ACCEPTED_NODE_CAP = 15;
 
 type Violation = {
   id: string;
