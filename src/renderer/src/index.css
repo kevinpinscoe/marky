@@ -5,7 +5,6 @@
 @tailwind utilities;
 
 @layer base {
-
   :root {
     color-scheme: light;
     --radius: 1.35rem;
@@ -55,7 +54,7 @@
     --shadow-panel: 0 18px 44px hsl(var(--primary) / 0.2);
   }
 
-/* ==== LIGHT THEMES ==== */
+  /* ==== LIGHT THEMES ==== */
 
   :root,
   :root[data-color-theme='amethyst'] {
@@ -88,16 +87,16 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(var(--primary) / 0.07);
-    --editor-selection: hsl(var(--primary) / 0.22);
+    --editor-selection: hsl(var(--primary) / 0.07);
     --syntax-heading: 269 52% 49%;
     --syntax-foreground: 268 24% 18%;
     --syntax-comment: 250 18% 46%;
-    --syntax-string: 45 85% 29.5%;
+    --syntax-string: 45 85% 22%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
-    --syntax-class: 182 62% 30%;
+    --syntax-class: 182 62% 29%;
     --syntax-constant: 258 60% 50%;
-    --syntax-parameter: 28 82% 37.5%;
+    --syntax-parameter: 28 82% 35%;
     --syntax-error: 0 70% 46%;
     --syntax-tag: 330 72% 42%;
     --mermaid-primary-color: #dbcafc;
@@ -139,16 +138,16 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(var(--primary) / 0.07);
-    --editor-selection: hsl(var(--primary) / 0.22);
+    --editor-selection: hsl(var(--primary) / 0.07);
     --syntax-heading: 349 52% 48.5%;
     --syntax-foreground: 268 24% 18%;
-    --syntax-comment: 330 12% 46%;
-    --syntax-string: 45 85% 29.5%;
+    --syntax-comment: 330 12% 44%;
+    --syntax-string: 45 85% 22%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
-    --syntax-class: 182 62% 30%;
+    --syntax-class: 182 62% 29%;
     --syntax-constant: 258 60% 50%;
-    --syntax-parameter: 28 82% 37.5%;
+    --syntax-parameter: 28 82% 29.5%;
     --syntax-error: 0 70% 46%;
     --syntax-tag: 330 72% 42%;
     --mermaid-primary-color: #fccada;
@@ -189,17 +188,17 @@
     --success-foreground: 150 49% 30%;
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
-    --editor-active-line: hsl(var(--primary) / 0.07);
-    --editor-selection: hsl(var(--primary) / 0.22);
+    --editor-active-line: hsl(var(--primary) / 0.08);
+    --editor-selection: hsl(var(--primary) / 0.09);
     --syntax-heading: 189 52% 34.5%;
     --syntax-foreground: 268 24% 18%;
-    --syntax-comment: 160 18% 40.5%;
-    --syntax-string: 45 85% 29.5%;
+    --syntax-comment: 160 18% 39%;
+    --syntax-string: 45 85% 23%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
     --syntax-class: 182 62% 30%;
     --syntax-constant: 258 60% 50%;
-    --syntax-parameter: 28 82% 37.5%;
+    --syntax-parameter: 28 82% 36.5%;
     --syntax-error: 0 70% 46%;
     --syntax-tag: 330 72% 42%;
     --mermaid-primary-color: #cafcfc;
@@ -241,7 +240,7 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(var(--primary) / 0.07);
-    --editor-selection: hsl(var(--primary) / 0.22);
+    --editor-selection: hsl(var(--primary) / 0.07);
     --syntax-heading: 79 52% 31.5%;
     --syntax-foreground: 268 24% 18%;
     --syntax-comment: 60 12% 32.5%;
@@ -291,17 +290,17 @@
     --success-foreground: 150 49% 30%;
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
-    --editor-active-line: hsl(var(--primary) / 0.07);
-    --editor-selection: hsl(var(--primary) / 0.22);
-    --syntax-heading: 29 52% 39%;
+    --editor-active-line: hsl(var(--primary) / 0.085);
+    --editor-selection: hsl(var(--primary) / 0.095);
+    --syntax-heading: 29 52% 38.5%;
     --syntax-foreground: 268 24% 18%;
-    --syntax-comment: 10 18% 46%;
-    --syntax-string: 45 85% 29.5%;
+    --syntax-comment: 10 18% 44.5%;
+    --syntax-string: 45 85% 22.5%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
-    --syntax-class: 182 62% 30%;
+    --syntax-class: 182 62% 29.5%;
     --syntax-constant: 258 60% 50%;
-    --syntax-parameter: 28 82% 37.5%;
+    --syntax-parameter: 28 82% 36%;
     --syntax-error: 0 70% 46%;
     --syntax-tag: 330 72% 42%;
     --mermaid-primary-color: #fcdbca;
@@ -343,16 +342,16 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(var(--primary) / 0.07);
-    --editor-selection: hsl(var(--primary) / 0.22);
+    --editor-selection: hsl(var(--primary) / 0.07);
     --syntax-heading: 229 52% 49%;
     --syntax-foreground: 268 24% 18%;
-    --syntax-comment: 210 18% 45%;
-    --syntax-string: 45 85% 29.5%;
+    --syntax-comment: 210 18% 42.5%;
+    --syntax-string: 45 85% 22%;
     --syntax-keyword: 330 72% 42%;
     --syntax-function: 142 58% 30%;
-    --syntax-class: 182 62% 30%;
+    --syntax-class: 182 62% 29%;
     --syntax-constant: 258 60% 50%;
-    --syntax-parameter: 28 82% 37.5%;
+    --syntax-parameter: 28 82% 35.5%;
     --syntax-error: 0 70% 46%;
     --syntax-tag: 330 72% 42%;
     --mermaid-primary-color: #cadafc;
@@ -364,7 +363,7 @@
     --mermaid-edge-label-background: #f4f7ff;
   }
 
-/* ==== DARK THEMES ==== */
+  /* ==== DARK THEMES ==== */
 
   .dark,
   .dark[data-color-theme='amethyst'] {
@@ -397,15 +396,15 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(244 25% 25%);
-    --editor-selection: hsl(245 15% 30%);
+    --editor-selection: hsl(245 15% 23%);
     --syntax-heading: 250 100% 77.5%;
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 244 31% 63%;
+    --syntax-comment: 244 31% 69%;
     --syntax-string: 60 100% 75%;
     --syntax-keyword: 330 100% 75%;
     --syntax-function: 115 100% 75%;
     --syntax-class: 170 100% 75%;
-    --syntax-constant: 250 100% 75%;
+    --syntax-constant: 250 100% 77.5%;
     --syntax-parameter: 35 100% 75%;
     --syntax-error: 10 100% 75%;
     --syntax-tag: 330 100% 75%;
@@ -448,15 +447,15 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(289 25% 25%);
-    --editor-selection: hsl(290 15% 30%);
+    --editor-selection: hsl(290 15% 24%);
     --syntax-heading: 330 100% 75%;
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 288 31% 59.5%;
+    --syntax-comment: 288 31% 68.5%;
     --syntax-string: 60 100% 75%;
     --syntax-keyword: 330 100% 75%;
     --syntax-function: 115 100% 75%;
     --syntax-class: 170 100% 75%;
-    --syntax-constant: 250 100% 75%;
+    --syntax-constant: 250 100% 79.5%;
     --syntax-parameter: 35 100% 75%;
     --syntax-error: 10 100% 75%;
     --syntax-tag: 330 100% 75%;
@@ -499,18 +498,18 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(169 25% 25%);
-    --editor-selection: hsl(170 15% 30%);
+    --editor-selection: hsl(170 15% 26.5%);
     --syntax-heading: 170 100% 75%;
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 168 25% 55%;
+    --syntax-comment: 168 25% 68%;
     --syntax-string: 60 100% 75%;
-    --syntax-keyword: 330 100% 75%;
+    --syntax-keyword: 330 100% 80.5%;
     --syntax-function: 115 100% 75%;
     --syntax-class: 170 100% 75%;
-    --syntax-constant: 250 100% 75%;
+    --syntax-constant: 250 100% 84.5%;
     --syntax-parameter: 35 100% 75%;
-    --syntax-error: 10 100% 75%;
-    --syntax-tag: 330 100% 75%;
+    --syntax-error: 10 100% 78%;
+    --syntax-tag: 330 100% 80.5%;
     --mermaid-primary-color: #254f53;
     --mermaid-primary-text-color: #dfffff;
     --mermaid-primary-border-color: #93f4f3;
@@ -550,18 +549,18 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(49 25% 25%);
-    --editor-selection: hsl(50 15% 30%);
+    --editor-selection: hsl(50 15% 26%);
     --syntax-heading: 60 100% 75%;
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 48 25% 55%;
+    --syntax-comment: 48 25% 68%;
     --syntax-string: 60 100% 75%;
-    --syntax-keyword: 330 100% 75%;
+    --syntax-keyword: 330 100% 80.5%;
     --syntax-function: 115 100% 75%;
     --syntax-class: 170 100% 75%;
-    --syntax-constant: 250 100% 75%;
+    --syntax-constant: 250 100% 84.5%;
     --syntax-parameter: 35 100% 75%;
-    --syntax-error: 10 100% 75%;
-    --syntax-tag: 330 100% 75%;
+    --syntax-error: 10 100% 78%;
+    --syntax-tag: 330 100% 80.5%;
     --mermaid-primary-color: #485325;
     --mermaid-primary-text-color: #f9ffdf;
     --mermaid-primary-border-color: #e5f493;
@@ -601,15 +600,15 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(356 25% 25%);
-    --editor-selection: hsl(355 15% 30%);
+    --editor-selection: hsl(355 15% 24%);
     --syntax-heading: 10 100% 75%;
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 356 25% 59.5%;
+    --syntax-comment: 356 25% 68%;
     --syntax-string: 60 100% 75%;
     --syntax-keyword: 330 100% 75%;
     --syntax-function: 115 100% 75%;
     --syntax-class: 170 100% 75%;
-    --syntax-constant: 250 100% 75%;
+    --syntax-constant: 250 100% 79%;
     --syntax-parameter: 35 100% 75%;
     --syntax-error: 10 100% 75%;
     --syntax-tag: 330 100% 75%;
@@ -652,15 +651,15 @@
     --editor-text: hsl(var(--foreground));
     --editor-cursor: hsl(var(--primary));
     --editor-active-line: hsl(210 25% 25%);
-    --editor-selection: hsl(209 15% 30%);
+    --editor-selection: hsl(209 15% 25%);
     --syntax-heading: 210 100% 75%;
     --syntax-foreground: 60 30% 96%;
-    --syntax-comment: 211 25% 55%;
+    --syntax-comment: 211 25% 68%;
     --syntax-string: 60 100% 75%;
     --syntax-keyword: 330 100% 75%;
     --syntax-function: 115 100% 75%;
     --syntax-class: 170 100% 75%;
-    --syntax-constant: 250 100% 75%;
+    --syntax-constant: 250 100% 81%;
     --syntax-parameter: 35 100% 75%;
     --syntax-error: 10 100% 75%;
     --syntax-tag: 330 100% 75%;
@@ -672,7 +671,6 @@
     --mermaid-tertiary-color: #111623;
     --mermaid-edge-label-background: #111623;
   }
-
 
   * {
     @apply border-border;
