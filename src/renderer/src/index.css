@@ -168,7 +168,7 @@
     --secondary: 185 50% 92%;
     --secondary-foreground: 188 28% 28%;
     --muted: 184 42% 94%;
-    --muted-foreground: 186 14% 44%;
+    --muted-foreground: 186 14% 42%;
     --accent: 196 58% 90%;
     --accent-foreground: 190 31% 27%;
     --destructive: 353 70% 54%;
@@ -218,7 +218,7 @@
     --secondary: 75 50% 92%;
     --secondary-foreground: 78 28% 28%;
     --muted: 74 42% 94%;
-    --muted-foreground: 76 14% 44%;
+    --muted-foreground: 76 14% 40.5%;
     --accent: 86 58% 90%;
     --accent-foreground: 80 31% 27%;
     --destructive: 353 70% 54%;
@@ -268,7 +268,7 @@
     --secondary: 25 50% 92%;
     --secondary-foreground: 28 28% 28%;
     --muted: 24 42% 94%;
-    --muted-foreground: 26 14% 44%;
+    --muted-foreground: 26 14% 43.5%;
     --accent: 36 58% 90%;
     --accent-foreground: 30 31% 27%;
     --destructive: 353 70% 54%;
@@ -371,7 +371,7 @@
     --secondary: 245 14% 22%;
     --secondary-foreground: 60 20% 85%;
     --muted: 245 14% 20%;
-    --muted-foreground: 244 25% 55%;
+    --muted-foreground: 244 25% 64.5%;
     --accent: 245 14% 25%;
     --accent-foreground: 60 20% 88%;
     --destructive: 353 74% 61%;
@@ -421,7 +421,7 @@
     --secondary: 289 14% 22%;
     --secondary-foreground: 60 20% 85%;
     --muted: 289 14% 20%;
-    --muted-foreground: 288 25% 55%;
+    --muted-foreground: 288 25% 62.5%;
     --accent: 289 14% 25%;
     --accent-foreground: 60 20% 88%;
     --destructive: 353 74% 61%;
@@ -571,7 +571,7 @@
     --secondary: 355 14% 22%;
     --secondary-foreground: 60 20% 85%;
     --muted: 355 14% 20%;
-    --muted-foreground: 356 25% 55%;
+    --muted-foreground: 356 25% 63%;
     --accent: 355 14% 25%;
     --accent-foreground: 60 20% 88%;
     --destructive: 353 74% 61%;
