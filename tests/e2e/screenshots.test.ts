@@ -110,6 +110,10 @@ test.describe('dialog screenshots', () => {
   // The app is shared across the whole e2e run, so anything left behind here
   // would break every later spec that looks for an English label.
   test.afterEach(async ({ window }) => {
+    // Twice: a test that left a combobox open spends the first Escape on the
+    // list and would otherwise leave the dialog covering the settings button
+    // that configure() needs to click. A spare Escape is harmless.
+    await window.keyboard.press('Escape');
     await window.keyboard.press('Escape');
     await configure(window, { locale: 'en', theme: 'light' });
   });
