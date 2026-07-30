@@ -76,7 +76,20 @@ function visibleHeadings(window: Page) {
   });
 }
 
+/** Raw scroll offsets of both panes. */
+function positions(window: Page) {
+  return window.evaluate(() => {
+    const pane = document.querySelector('.app-preview-pane') as HTMLElement;
+    const scroller = document.querySelector('.cm-scroller') as HTMLElement;
+    return { preview: pane.scrollTop, editor: scroller.scrollTop };
+  });
+}
+
 test.describe('scroll sync', () => {
+  // Loading the fixture and stepping through it takes longer than the suite
+  // default; mermaid alone needs a moment to render.
+  test.describe.configure({ timeout: 120_000 });
+
   test('preview follows the editor without toggling the view mode', async ({
     window,
   }) => {
@@ -112,7 +125,6 @@ test.describe('scroll sync', () => {
   test('preview shows the section the editor is showing', async ({
     window,
   }) => {
-    test.setTimeout(120_000);
     await loadFixture(window);
 
     const anchors = await window.evaluate(
@@ -156,6 +168,56 @@ test.describe('scroll sync', () => {
       new Set(seen).size,
       'should have lined up on at least three sections',
     ).toBeGreaterThanOrEqual(3);
+  });
+
+  test('editor follows when the preview is scrolled', async ({ window }) => {
+    await loadFixture(window);
+
+    /**
+     * Both panes are reset first. `fill` leaves the caret at the end of the
+     * document, so the editor is already scrolled and "editor moved" would pass
+     * without the preview having driven anything.
+     */
+    await window.evaluate(() => {
+      (document.querySelector('.cm-scroller') as HTMLElement).scrollTop = 0;
+    });
+    await window.waitForTimeout(400);
+
+    const baseline = await positions(window);
+    expect(baseline.editor, 'editor should start at the top').toBeLessThan(5);
+
+    const box = await window.locator('.app-preview-pane').boundingBox();
+    await window.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+    for (let i = 0; i < 10; i++) {
+      await window.mouse.wheel(0, 150);
+      await window.waitForTimeout(60);
+    }
+    await window.waitForTimeout(400);
+
+    const state = await positions(window);
+    expect(state.preview, 'preview should have scrolled').toBeGreaterThan(20);
+    expect(state.editor, 'editor should have followed').toBeGreaterThan(20);
+  });
+
+  /**
+   * Checks that the panes settle rather than oscillate. It does not isolate the
+   * ownership guard: the mapping is consistent enough in both directions that
+   * removing the guard still converges, because a sub-pixel correction is
+   * discarded. The guard earns its place during continuous scrolling, where the
+   * echo would otherwise fight the momentum, which is not reproducible here.
+   */
+  test('both panes come to rest after scrolling', async ({ window }) => {
+    await loadFixture(window);
+
+    await wheel(window, 4);
+    await window.waitForTimeout(600);
+    const first = await positions(window);
+
+    await window.waitForTimeout(900);
+    const second = await positions(window);
+
+    expect(second.editor).toBeCloseTo(first.editor, 0);
+    expect(second.preview).toBeCloseTo(first.preview, 0);
   });
 
   test('reaching the end of the editor reaches the end of the preview', async ({
