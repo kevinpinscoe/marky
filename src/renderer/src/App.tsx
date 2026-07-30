@@ -186,7 +186,7 @@ export function App() {
                 labelKey="region.preview"
                 ref={previewRef}
                 className="app-preview-pane focus:outline-none"
-                tabIndex={-1}
+                tabIndex={0}
               >
                 <div data-preview-root className="mx-auto max-w-3xl px-8 py-10">
                   <PreviewPane

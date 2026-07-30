@@ -44,6 +44,7 @@ export const ptBR: TranslationKeys = {
   'settings.exportFontMono': 'Monoespaçada',
 
   // Barra de título
+  'titlebar.new': 'Novo documento',
   'titlebar.open': 'Abrir',
   'titlebar.save': 'Salvar',
   'titlebar.saveCopy': 'Salvar uma cópia',
