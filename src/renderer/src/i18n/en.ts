@@ -169,4 +169,7 @@ export const en: TranslationKeys = {
   'notice.freshDraft': 'Started a fresh draft.',
   'notice.opened': 'Opened {name}.',
   'notice.fileNotFound': 'File not found — removed from recent list.',
+
+  // Shared controls
+  'combobox.noMatches': 'No matches',
 };

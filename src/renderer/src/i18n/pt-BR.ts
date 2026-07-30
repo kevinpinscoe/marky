@@ -170,4 +170,7 @@ export const ptBR: TranslationKeys = {
   'notice.opened': '{name} aberto.',
   'notice.fileNotFound':
     'Arquivo não encontrado — removido da lista de recentes.',
+
+  // Controles compartilhados
+  'combobox.noMatches': 'Nenhum resultado',
 };

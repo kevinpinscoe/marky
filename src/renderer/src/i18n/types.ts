@@ -157,5 +157,8 @@ export type TranslationKeys = {
   'notice.opened': string;
   'notice.fileNotFound': string;
 
+  // Shared controls
+  'combobox.noMatches': string;
+
   // Native menu labels live in src/main/menu.ts
 };

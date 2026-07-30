@@ -59,6 +59,7 @@ export default tseslint.config(
     files: [
       'src/renderer/src/components/ui/field.tsx',
       'src/renderer/src/components/ui/modal.tsx',
+      'src/renderer/src/components/ui/combobox.tsx',
       'src/renderer/src/features/**/components/*-dialog.tsx',
     ],
     rules: {

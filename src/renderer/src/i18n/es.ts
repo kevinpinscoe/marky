@@ -170,4 +170,7 @@ export const es: TranslationKeys = {
   'notice.opened': '{name} abierto.',
   'notice.fileNotFound':
     'Archivo no encontrado — eliminado de la lista de recientes.',
+
+  // Controles compartidos
+  'combobox.noMatches': 'Sin coincidencias',
 };
