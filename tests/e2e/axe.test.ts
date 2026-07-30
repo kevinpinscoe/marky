@@ -20,7 +20,10 @@ import { test, expect } from './fixture';
  * this complements the other two files rather than replacing them.
  */
 const require = createRequire(import.meta.url);
-const AXE_SOURCE = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf-8');
+const AXE_SOURCE = readFileSync(
+  require.resolve('axe-core/axe.min.js'),
+  'utf-8',
+);
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
@@ -60,10 +63,11 @@ async function scan(window: Page, label: string) {
   await window.evaluate(AXE_SOURCE);
   const result = (await window.evaluate(
     (tags) =>
-      (window as unknown as { axe: { run: (c: unknown, o: unknown) => unknown } }).axe.run(
-        document,
-        { runOnly: { type: 'tag', values: tags } },
-      ),
+      (
+        window as unknown as {
+          axe: { run: (c: unknown, o: unknown) => unknown };
+        }
+      ).axe.run(document, { runOnly: { type: 'tag', values: tags } }),
     TAGS,
   )) as { violations: Violation[] };
 
@@ -125,6 +129,15 @@ test.describe('axe accessibility scan', () => {
 
       await window.locator('button[aria-label="Settings"]').click();
       results.push(await scan(window, `${theme}/settings`));
+
+      // Again with a combobox open. The listbox, its options and
+      // aria-activedescendant only exist in that state, so a scan of the
+      // closed dialog never sees the markup that carries the most ARIA.
+      await window.locator('#settings-language').click();
+      await window.locator('[role="listbox"]:not([hidden])').first().waitFor();
+      results.push(await scan(window, `${theme}/settings-combobox-open`));
+      await window.keyboard.press('Escape');
+
       await window.keyboard.press('Escape');
 
       await window.locator('button[aria-label="Keyboard shortcuts"]').click();

@@ -75,7 +75,18 @@ test.describe('dialog screenshots', () => {
     await window.locator(labelAnyLocale('titlebar.settings')).click();
     const dialog = panel(window);
 
-    await dialog.locator('#settings-language').selectOption(locale);
+    // Language is a combobox now, and its option labels are the language's own
+    // name, so they do not move with the current locale.
+    const LANGUAGE_LABELS: Record<Locale, string> = {
+      en: 'English',
+      'pt-BR': 'Português (Brasil)',
+      es: 'Español',
+    };
+    await dialog.locator('#settings-language').click();
+    await window
+      .getByRole('option', { name: LANGUAGE_LABELS[locale], exact: true })
+      .click();
+
     const dict = DICTIONARIES[locale];
 
     await dialog
@@ -99,6 +110,10 @@ test.describe('dialog screenshots', () => {
   // The app is shared across the whole e2e run, so anything left behind here
   // would break every later spec that looks for an English label.
   test.afterEach(async ({ window }) => {
+    // Twice: a test that left a combobox open spends the first Escape on the
+    // list and would otherwise leave the dialog covering the settings button
+    // that configure() needs to click. A spare Escape is harmless.
+    await window.keyboard.press('Escape');
     await window.keyboard.press('Escape');
     await configure(window, { locale: 'en', theme: 'light' });
   });
@@ -145,6 +160,32 @@ test.describe('dialog screenshots', () => {
       },
     },
   ];
+
+  /**
+   * The open list, which none of the dialog shots reach: it renders through a
+   * portal outside [role="dialog"], and it is closed while those are taken.
+   * It is also the surface #17 was actually about, the one the operating
+   * system used to draw.
+   *
+   * The language picker rather than a font picker on purpose. Font options come
+   * from whatever is installed on the machine, so a runner image gaining or
+   * losing a family would churn the baseline for no reason.
+   */
+  for (const theme of ['light', 'dark'] as const) {
+    test(`combobox-open / ${theme} / en`, async ({ window }) => {
+      await configure(window, { locale: 'en', theme });
+      await window.locator(label('en', 'titlebar.settings')).click();
+      await window.locator('#settings-language').click();
+
+      const list = window.getByRole('listbox').first();
+      await expect(list).toBeVisible();
+
+      await expect(list).toHaveScreenshot(`combobox-open-${theme}-en.png`, {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.01,
+      });
+    });
+  }
 
   for (const locale of ['en', 'pt-BR'] as const) {
     for (const theme of ['light', 'dark'] as const) {

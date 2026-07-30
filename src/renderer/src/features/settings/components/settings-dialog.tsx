@@ -8,7 +8,7 @@ import {
   inputClass,
 } from '@renderer/components/ui/field';
 import { Modal } from '@renderer/components/ui/modal';
-import { Select } from '@renderer/components/ui/select';
+import { Combobox } from '@renderer/components/ui/combobox';
 import { cn } from '@renderer/lib/utils';
 import type { ExportFont, Locale, PdfPageSize } from '@shared/types';
 import {
@@ -133,32 +133,25 @@ function FontField({
       <div className="grid grid-cols-[minmax(0,1fr)_7.5rem] gap-2">
         <div className="min-w-0">
           <SubLabel htmlFor={familyId}>{familyLabel}</SubLabel>
-          <Select
+          <Combobox
             id={familyId}
             value={value}
-            onChange={(event) => onChange(event.target.value)}
-          >
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+            options={options}
+            onChange={onChange}
+          />
         </div>
         <div>
           <SubLabel htmlFor={sizeId}>{sizeLabel}</SubLabel>
-          <Select
+          <Combobox
             id={sizeId}
             aria-label={`${label} size`}
-            value={fontSize}
-            onChange={(event) => onFontSizeChange(Number(event.target.value))}
-          >
-            {availableFontSizes.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+            value={String(fontSize)}
+            options={availableFontSizes.map((option) => ({
+              value: String(option.value),
+              label: option.label,
+            }))}
+            onChange={(next) => onFontSizeChange(Number(next))}
+          />
         </div>
       </div>
       <FieldHint>{helper}</FieldHint>
@@ -259,19 +252,12 @@ export function SettingsDialog() {
           <FieldLabel htmlFor="settings-language">
             {t('settings.language')}
           </FieldLabel>
-          <Select
+          <Combobox
             id="settings-language"
             value={settings.language}
-            onChange={(event) =>
-              updateSettings({ language: event.target.value as Locale })
-            }
-          >
-            {languageOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+            options={languageOptions}
+            onChange={(next) => updateSettings({ language: next as Locale })}
+          />
         </div>
 
         <div>
@@ -397,38 +383,31 @@ export function SettingsDialog() {
           <FieldLabel htmlFor="settings-export-font">
             {t('settings.documentFont')}
           </FieldLabel>
-          <Select
+          <Combobox
             id="settings-export-font"
             value={settings.exportFont}
-            onChange={(event) =>
-              updateSettings({ exportFont: event.target.value as ExportFont })
+            options={exportFontOptions.map((option) => ({
+              value: option.value,
+              label: t(option.labelKey),
+            }))}
+            onChange={(next) =>
+              updateSettings({ exportFont: next as ExportFont })
             }
-          >
-            {exportFontOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {t(option.labelKey)}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
 
         <div>
           <FieldLabel htmlFor="settings-pdf-page-size">
             {t('settings.pdfPageSize')}
           </FieldLabel>
-          <Select
+          <Combobox
             id="settings-pdf-page-size"
             value={settings.pdfPageSize}
-            onChange={(event) =>
-              updateSettings({ pdfPageSize: event.target.value as PdfPageSize })
+            options={pageSizeOptions}
+            onChange={(next) =>
+              updateSettings({ pdfPageSize: next as PdfPageSize })
             }
-          >
-            {pageSizeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
 
         <div>
