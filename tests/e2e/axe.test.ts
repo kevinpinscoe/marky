@@ -29,12 +29,6 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
  * this set fails the run.
  */
 const ACCEPTED: Record<string, string> = {
-  // What remains is one token on the active line background: the heading colour
-  // is 4.06:1 against it in dark amethyst. The active line is a different root
-  // cause from the muted-foreground fix, and every token sits on it when the
-  // caret is there, so it needs the palette solved against that surface too.
-  // Measured and tracked separately.
-  'color-contrast': 'syntax tokens on the active line, tracked separately',
   // CodeMirror's scroller is not focusable itself, but the contenteditable it
   // wraps is, and moving the caret scrolls it. Keyboard users are not stranded.
   'scrollable-region-focusable': 'cm-scroller scrolls via the caret',
@@ -46,9 +40,14 @@ const ACCEPTED: Record<string, string> = {
  * low enough that a new batch of violations cannot hide inside it.
  *
  * Was 40 while dark sat at 33. Fixing muted-foreground dropped dark to 12 and
- * light to 6, so the ceiling comes down with it.
+ * light to 6; solving the palette against the active line and the selection
+ * took color-contrast off the accepted list entirely, leaving 6 on each.
+ *
+ * Worth knowing what this does not prove: axe only ever scans the default
+ * amethyst palette. The other five are covered by theme-contrast.test.ts,
+ * which measures all twelve against all three editor backgrounds.
  */
-const ACCEPTED_NODE_CAP = 15;
+const ACCEPTED_NODE_CAP = 8;
 
 type Violation = {
   id: string;

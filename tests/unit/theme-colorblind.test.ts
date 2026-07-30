@@ -1,6 +1,11 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { describe, it, expect } from 'vitest';
+import {
+  THEMES,
+  deltaE2000,
+  hslTripletToRgb,
+  paletteVars,
+  simulate,
+} from '../helpers/theme-colors';
 
 /**
  * Syntax highlighting has to stay legible for readers with colour vision
@@ -18,12 +23,6 @@ import { describe, it, expect } from 'vitest';
  * suite fails both on a new collapse and on a stale entry, so the list has to
  * shrink deliberately rather than drift.
  */
-const css = readFileSync(
-  resolve('src/renderer/src/index.css'),
-  'utf-8',
-).replace(/\r\n/g, '\n');
-
-const THEMES = ['amethyst', 'rose', 'jade', 'amber', 'coral', 'sapphire'];
 const SYNTAX_KEYS = [
   'syntax-heading',
   'syntax-foreground',
@@ -47,22 +46,17 @@ const SYNTAX_KEYS = [
  * reliable around 10 to 11. Side-by-side text in a single line is the easiest
  * case there is — real code scatters these tokens — so the threshold sits at
  * the optimistic end of what was legible, not beyond it.
- *
- * This replaced dE76 at the same numeric value, which is a coincidence and not
- * a translation: the two metrics disagree sharply on saturated colours, and
- * the swap roughly doubled the recorded debt because dE76 was calling pairs
- * distinct that are not.
  */
 const DISTINCT = 10;
 
 /**
  * Machado, Oliveira & Fernandes (2009), applied in linear RGB, as published in
- * the colour-science dataset. Rows are the flattened 3x3 matrix.
+ * the colour-science dataset. Each row is the flattened 3x3 matrix.
  *
  * Severity 1.0 is dichromacy; lower severities are anomalous trichromacy,
  * which is both milder and far more common. Severity 1.0 is not a worst case
- * that subsumes the rest — `heading/comment` in dark amethyst collapses from
- * 0.5 to 0.8 and separates again by 1.0 — so the whole range is swept.
+ * that subsumes the rest — colours can converge partway along the range and
+ * separate again — so the whole range is swept.
  */
 // prettier-ignore
 const CVD_MATRICES = {
@@ -95,6 +89,7 @@ const CVD_MATRICES = {
 const SEVERITIES = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0] as const;
 
 const KNOWN: Record<string, string[]> = {
+  'deuteranomaly class/tag': ['dark/amber', 'dark/jade'],
   'deuteranomaly comment/class': [
     'light/amethyst',
     'light/rose',
@@ -105,6 +100,8 @@ const KNOWN: Record<string, string[]> = {
   'deuteranomaly comment/function': ['light/amber', 'light/coral'],
   'deuteranomaly comment/keyword': [
     'dark/jade',
+    'dark/rose',
+    'dark/sapphire',
     'light/amber',
     'light/coral',
     'light/jade',
@@ -112,6 +109,8 @@ const KNOWN: Record<string, string[]> = {
   ],
   'deuteranomaly comment/tag': [
     'dark/jade',
+    'dark/rose',
+    'dark/sapphire',
     'light/amber',
     'light/coral',
     'light/jade',
@@ -133,8 +132,8 @@ const KNOWN: Record<string, string[]> = {
     'dark/rose',
     'dark/sapphire',
   ],
-  'deuteranomaly heading/comment': ['dark/amethyst'],
-  'deuteranomaly heading/constant': ['light/sapphire'],
+  'deuteranomaly heading/comment': ['dark/amethyst', 'dark/rose'],
+  'deuteranomaly heading/constant': ['dark/sapphire', 'light/sapphire'],
   'deuteranomaly heading/error': ['light/amber', 'light/coral'],
   'deuteranomaly heading/foreground': ['dark/jade'],
   'deuteranomaly heading/function': [
@@ -143,12 +142,15 @@ const KNOWN: Record<string, string[]> = {
     'light/coral',
     'light/rose',
   ],
+  'deuteranomaly heading/keyword': ['dark/jade'],
   'deuteranomaly heading/parameter': [
     'dark/amber',
     'dark/coral',
     'light/amber',
   ],
   'deuteranomaly heading/string': ['light/amber', 'light/coral'],
+  'deuteranomaly heading/tag': ['dark/jade'],
+  'deuteranomaly keyword/class': ['dark/amber', 'dark/jade'],
   'deuteranomaly parameter/error': [
     'dark/amber',
     'dark/amethyst',
@@ -163,14 +165,7 @@ const KNOWN: Record<string, string[]> = {
     'light/rose',
     'light/sapphire',
   ],
-  'deuteranomaly string/error': [
-    'light/amber',
-    'light/amethyst',
-    'light/coral',
-    'light/jade',
-    'light/rose',
-    'light/sapphire',
-  ],
+  'deuteranomaly string/error': ['light/amber', 'light/jade'],
   'deuteranomaly string/function': [
     'dark/amber',
     'dark/amethyst',
@@ -178,6 +173,7 @@ const KNOWN: Record<string, string[]> = {
     'dark/jade',
     'dark/rose',
     'dark/sapphire',
+    'light/jade',
   ],
   'deuteranomaly string/parameter': [
     'dark/amber',
@@ -187,14 +183,10 @@ const KNOWN: Record<string, string[]> = {
     'dark/rose',
     'dark/sapphire',
     'light/amber',
-    'light/amethyst',
-    'light/coral',
-    'light/jade',
     'light/rose',
-    'light/sapphire',
   ],
   'protanomaly comment/class': ['light/rose', 'light/sapphire'],
-  'protanomaly comment/constant': ['dark/amethyst'],
+  'protanomaly comment/constant': ['dark/amethyst', 'dark/rose'],
   'protanomaly comment/error': ['dark/amber', 'light/amber'],
   'protanomaly comment/keyword': [
     'dark/amethyst',
@@ -208,6 +200,7 @@ const KNOWN: Record<string, string[]> = {
     'dark/sapphire',
     'light/amethyst',
   ],
+  'protanomaly constant/tag': ['dark/amber', 'dark/jade'],
   'protanomaly foreground/class': [
     'dark/amber',
     'dark/amethyst',
@@ -227,16 +220,30 @@ const KNOWN: Record<string, string[]> = {
     'light/amethyst',
     'light/coral',
     'light/jade',
-    'light/rose',
     'light/sapphire',
   ],
   'protanomaly heading/comment': ['dark/amethyst', 'dark/rose'],
-  'protanomaly heading/constant': ['light/sapphire'],
+  'protanomaly heading/constant': ['dark/sapphire', 'light/sapphire'],
   'protanomaly heading/error': ['light/coral'],
   'protanomaly heading/foreground': ['dark/jade'],
   'protanomaly heading/function': ['dark/amber', 'light/amber', 'light/coral'],
   'protanomaly heading/parameter': ['light/amber'],
   'protanomaly heading/string': ['light/amber', 'light/coral'],
+  'protanomaly keyword/constant': ['dark/amber', 'dark/jade'],
+  'protanomaly parameter/error': [
+    'light/amethyst',
+    'light/coral',
+    'light/jade',
+    'light/rose',
+    'light/sapphire',
+  ],
+  'protanomaly string/error': [
+    'light/amethyst',
+    'light/coral',
+    'light/jade',
+    'light/rose',
+    'light/sapphire',
+  ],
   'protanomaly string/function': [
     'dark/amber',
     'dark/amethyst',
@@ -245,11 +252,6 @@ const KNOWN: Record<string, string[]> = {
     'dark/rose',
     'dark/sapphire',
     'light/amber',
-    'light/amethyst',
-    'light/coral',
-    'light/jade',
-    'light/rose',
-    'light/sapphire',
   ],
   'protanomaly string/parameter': [
     'light/amber',
@@ -262,7 +264,7 @@ const KNOWN: Record<string, string[]> = {
   'tritanomaly comment/class': ['light/sapphire'],
   'tritanomaly comment/constant': ['dark/amethyst'],
   'tritanomaly comment/function': ['light/jade'],
-  'tritanomaly comment/string': ['light/coral', 'light/rose'],
+  'tritanomaly comment/string': ['light/coral'],
   'tritanomaly error/tag': [
     'dark/amber',
     'dark/amethyst',
@@ -303,8 +305,6 @@ const KNOWN: Record<string, string[]> = {
   'tritanomaly heading/foreground': ['dark/amber'],
   'tritanomaly heading/function': ['dark/jade', 'light/jade'],
   'tritanomaly heading/keyword': ['dark/coral', 'light/rose'],
-  'tritanomaly heading/parameter': ['light/rose'],
-  'tritanomaly heading/string': ['light/coral'],
   'tritanomaly heading/tag': ['dark/coral', 'light/rose'],
   'tritanomaly keyword/error': [
     'dark/amber',
@@ -323,11 +323,12 @@ const KNOWN: Record<string, string[]> = {
     'light/sapphire',
   ],
   'tritanomaly parameter/error': [
+    'dark/amber',
+    'dark/jade',
     'light/amber',
     'light/amethyst',
     'light/coral',
     'light/jade',
-    'light/rose',
     'light/sapphire',
   ],
   'tritanomaly parameter/tag': [
@@ -340,152 +341,6 @@ const KNOWN: Record<string, string[]> = {
   ],
 };
 
-type Rgb = [number, number, number];
-
-function hslTripletToRgb(triplet: string): Rgb {
-  const m = triplet.trim().match(/^([\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/);
-  if (!m) throw new Error(`not an HSL triplet: "${triplet}"`);
-  const h = parseFloat(m[1]);
-  const s = parseFloat(m[2]) / 100;
-  const l = parseFloat(m[3]) / 100;
-  const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-  const mm = l - c / 2;
-  let rgb: Rgb = [0, 0, 0];
-  if (h < 60) rgb = [c, x, 0];
-  else if (h < 120) rgb = [x, c, 0];
-  else if (h < 180) rgb = [0, c, x];
-  else if (h < 240) rgb = [0, x, c];
-  else if (h < 300) rgb = [x, 0, c];
-  else rgb = [c, 0, x];
-  return rgb.map((v) => (v + mm) * 255) as Rgb;
-}
-
-const toLinear = (v: number) => {
-  const n = v / 255;
-  return n <= 0.04045 ? n / 12.92 : ((n + 0.055) / 1.055) ** 2.4;
-};
-
-const toSrgb = (v: number) => {
-  const n =
-    v <= 0.0031308
-      ? v * 12.92
-      : 1.055 * Math.pow(Math.max(v, 0), 1 / 2.4) - 0.055;
-  return Math.min(255, Math.max(0, n * 255));
-};
-
-function simulate(rgb: Rgb, matrix: readonly number[]): Rgb {
-  const l = rgb.map(toLinear);
-  return [0, 1, 2].map((i) =>
-    toSrgb(
-      matrix[i * 3] * l[0] +
-        matrix[i * 3 + 1] * l[1] +
-        matrix[i * 3 + 2] * l[2],
-    ),
-  ) as Rgb;
-}
-
-function toLab([r, g, b]: Rgb): Rgb {
-  const [R, G, B] = [r, g, b].map(toLinear);
-  let X = (0.4124 * R + 0.3576 * G + 0.1805 * B) / 0.95047;
-  let Y = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  let Z = (0.0193 * R + 0.1192 * G + 0.9505 * B) / 1.08883;
-  const f = (t: number) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
-  [X, Y, Z] = [f(X), f(Y), f(Z)];
-  return [116 * Y - 16, 500 * (X - Y), 200 * (Y - Z)];
-}
-
-const rad = (d: number) => (d * Math.PI) / 180;
-const deg = (r: number) => (r * 180) / Math.PI;
-
-/**
- * CIEDE2000, Sharma, Wu & Dalal (2005) formulation, kL = kC = kH = 1.
- * Verified against all of that paper's reference vectors.
- */
-function deltaE(rgbA: Rgb, rgbB: Rgb): number {
-  const [L1, a1, b1] = toLab(rgbA);
-  const [L2, a2, b2] = toLab(rgbB);
-
-  const C1 = Math.hypot(a1, b1);
-  const C2 = Math.hypot(a2, b2);
-  const cBar = (C1 + C2) / 2;
-  const G = 0.5 * (1 - Math.sqrt(cBar ** 7 / (cBar ** 7 + 25 ** 7)));
-
-  const ap1 = (1 + G) * a1;
-  const ap2 = (1 + G) * a2;
-  const cp1 = Math.hypot(ap1, b1);
-  const cp2 = Math.hypot(ap2, b2);
-
-  const hue = (b: number, ap: number) => {
-    if (b === 0 && ap === 0) return 0;
-    const h = deg(Math.atan2(b, ap));
-    return h >= 0 ? h : h + 360;
-  };
-  const hp1 = hue(b1, ap1);
-  const hp2 = hue(b2, ap2);
-
-  const dLp = L2 - L1;
-  const dCp = cp2 - cp1;
-
-  let dhp: number;
-  if (cp1 * cp2 === 0) dhp = 0;
-  else if (Math.abs(hp2 - hp1) <= 180) dhp = hp2 - hp1;
-  else if (hp2 - hp1 > 180) dhp = hp2 - hp1 - 360;
-  else dhp = hp2 - hp1 + 360;
-  const dHp = 2 * Math.sqrt(cp1 * cp2) * Math.sin(rad(dhp) / 2);
-
-  const lBar = (L1 + L2) / 2;
-  const cpBar = (cp1 + cp2) / 2;
-
-  let hpBar: number;
-  if (cp1 * cp2 === 0) hpBar = hp1 + hp2;
-  else if (Math.abs(hp1 - hp2) <= 180) hpBar = (hp1 + hp2) / 2;
-  else if (hp1 + hp2 < 360) hpBar = (hp1 + hp2 + 360) / 2;
-  else hpBar = (hp1 + hp2 - 360) / 2;
-
-  const T =
-    1 -
-    0.17 * Math.cos(rad(hpBar - 30)) +
-    0.24 * Math.cos(rad(2 * hpBar)) +
-    0.32 * Math.cos(rad(3 * hpBar + 6)) -
-    0.2 * Math.cos(rad(4 * hpBar - 63));
-
-  const dTheta = 30 * Math.exp(-(((hpBar - 275) / 25) ** 2));
-  const rC = 2 * Math.sqrt(cpBar ** 7 / (cpBar ** 7 + 25 ** 7));
-  const sL = 1 + (0.015 * (lBar - 50) ** 2) / Math.sqrt(20 + (lBar - 50) ** 2);
-  const sC = 1 + 0.045 * cpBar;
-  const sH = 1 + 0.015 * cpBar * T;
-  const rT = -Math.sin(rad(2 * dTheta)) * rC;
-
-  return Math.sqrt(
-    (dLp / sL) ** 2 +
-      (dCp / sC) ** 2 +
-      (dHp / sH) ** 2 +
-      rT * (dCp / sC) * (dHp / sH),
-  );
-}
-
-function blockVars(selector: RegExp): Record<string, string> {
-  const match = selector.exec(css);
-  if (!match) throw new Error(`missing CSS block for ${selector}`);
-  const open = css.indexOf('{', match.index);
-  const close = css.indexOf('}', open);
-  const vars: Record<string, string> = {};
-  for (const line of css.slice(open + 1, close).split('\n')) {
-    const m = line.match(/--([\w-]+):\s*([^;]+);/);
-    if (m) vars[m[1]] = m[2].trim();
-  }
-  return vars;
-}
-
-function selectorFor(mode: 'light' | 'dark', name: string): RegExp {
-  const base = mode === 'dark' ? '\\.dark' : ':root';
-  const attribute = `\\[data-color-theme='${name}'\\]`;
-  return name === 'amethyst'
-    ? new RegExp(`${base},\\s*${base}${attribute}`)
-    : new RegExp(`${base}${attribute}`);
-}
-
 /**
  * Conflict -> the palettes it occurs in. A pair counts as collapsed if it is
  * indistinguishable at any severity, recorded once per deficiency rather than
@@ -496,7 +351,7 @@ function collapsedConflicts(): Record<string, string[]> {
 
   for (const mode of ['light', 'dark'] as const) {
     for (const name of THEMES) {
-      const vars = blockVars(selectorFor(mode, name));
+      const vars = paletteVars(mode, name);
       const colors = SYNTAX_KEYS.filter((k) => vars[k]).map(
         (k) => [k.replace('syntax-', ''), hslTripletToRgb(vars[k])] as const,
       );
@@ -506,7 +361,7 @@ function collapsedConflicts(): Record<string, string[]> {
           const [nameA, a] = colors[i];
           const [nameB, b] = colors[j];
           // Tokens that already share a colour are not a collapse to fix.
-          if (deltaE(a, b) < DISTINCT) continue;
+          if (deltaE2000(a, b) < DISTINCT) continue;
 
           for (const deficiency of Object.keys(CVD_MATRICES) as Array<
             keyof typeof CVD_MATRICES
@@ -514,12 +369,13 @@ function collapsedConflicts(): Record<string, string[]> {
             for (const severity of SEVERITIES) {
               const matrix = CVD_MATRICES[deficiency][severity];
               if (
-                deltaE(simulate(a, matrix), simulate(b, matrix)) >= DISTINCT
+                deltaE2000(simulate(a, matrix), simulate(b, matrix)) >= DISTINCT
               ) {
                 continue;
               }
-              const conflict = `${deficiency} ${nameA}/${nameB}`;
-              (found[conflict] ??= []).push(`${mode}/${name}`);
+              (found[`${deficiency} ${nameA}/${nameB}`] ??= []).push(
+                `${mode}/${name}`,
+              );
               break;
             }
           }
@@ -581,13 +437,14 @@ describe('syntax colours under colour vision deficiency', () => {
   // wavy underline; these are distinguishable by hue alone, so a reader with
   // colour vision deficiency has nothing else to go on.
   //
-  // 124 of 207. The palette did not get worse: this is what switching from
-  // dE76 to CIEDE2000 revealed was already there.
-  it('adds no colour-only collapse beyond the recorded 124', () => {
+  // 125 of 220, against 124 before this palette moved. Holding it flat was not
+  // free: raising dark tokens for contrast pushed it to 136, and light strings
+  // were then darkened further than contrast alone required to bring it back.
+  it('adds no colour-only collapse beyond the recorded 125', () => {
     const bare = Object.entries(collapsed)
       .filter(([conflict]) => !isMitigated(conflict))
       .reduce((total, [, palettes]) => total + palettes.length, 0);
-    expect(bare).toBeLessThanOrEqual(124);
+    expect(bare).toBeLessThanOrEqual(125);
   });
 
   it('keeps error distinguishable by something other than hue', () => {
