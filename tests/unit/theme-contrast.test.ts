@@ -8,9 +8,9 @@ import { describe, it, expect } from 'vitest';
  * with the very dark Sapphire background explicitly covered.
  */
 /**
- * Newlines are normalised before matching. The repository has no .gitattributes,
- * so this file arrives CRLF on a Windows checkout and every selector lookup
- * below would miss, failing the whole suite with "missing CSS block".
+ * Newlines are normalised before matching. .gitattributes pins this repository
+ * to LF, but a checkout configured otherwise would arrive CRLF and every
+ * selector lookup below would miss, failing the suite with "missing CSS block".
  */
 const css = readFileSync(resolve('src/renderer/src/index.css'), 'utf-8').replace(
   /\r\n/g,
