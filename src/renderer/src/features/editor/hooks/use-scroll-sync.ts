@@ -50,22 +50,29 @@ function buildAnchors(
   return anchors.sort((a, b) => a.editorTop - b.editorTop);
 }
 
-function mapOffset(anchors: Anchor[], editorOffset: number): number {
+/**
+ * Maps an offset from one pane to the other by interpolating between the two
+ * anchors that bracket it. Runs in both directions, so `from` and `to` name
+ * which side is being read and which is being produced.
+ */
+function mapOffset(
+  anchors: Anchor[],
+  offset: number,
+  from: keyof Anchor,
+  to: keyof Anchor,
+): number {
   let index = 0;
-  while (
-    index < anchors.length - 2 &&
-    anchors[index + 1].editorTop <= editorOffset
-  ) {
+  while (index < anchors.length - 2 && anchors[index + 1][from] <= offset) {
     index++;
   }
 
-  const from = anchors[index];
-  const to = anchors[index + 1] ?? from;
-  const span = to.editorTop - from.editorTop;
-  if (span <= 0) return from.previewTop;
+  const start = anchors[index];
+  const end = anchors[index + 1] ?? start;
+  const span = end[from] - start[from];
+  if (span <= 0) return start[to];
 
-  const progress = (editorOffset - from.editorTop) / span;
-  return from.previewTop + progress * (to.previewTop - from.previewTop);
+  const progress = (offset - start[from]) / span;
+  return start[to] + progress * (end[to] - start[to]);
 }
 
 export function useScrollSync(
@@ -87,7 +94,28 @@ export function useScrollSync(
 
     const scroller = editorView.scrollDOM;
     let anchors: Anchor[] | null = null;
-    let isSyncing = false;
+
+    /**
+     * Whichever pane the user touched owns the sync until they stop.
+     *
+     * Both directions are live, and writing one pane's scrollTop makes the
+     * browser fire the other's scroll event, so without this they would drive
+     * each other. A rAF is not long enough — scroll events can land a frame or
+     * more after the write — so the claim is held briefly on a timer and
+     * refreshed while the same pane keeps scrolling.
+     */
+    let owner: 'editor' | 'preview' | null = null;
+    let release: number | undefined;
+
+    function claim(source: 'editor' | 'preview') {
+      if (owner && owner !== source) return false;
+      owner = source;
+      window.clearTimeout(release);
+      release = window.setTimeout(() => {
+        owner = null;
+      }, 150);
+      return true;
+    }
 
     /**
      * Anchor offsets come from layout, so they are cached and dropped whenever
@@ -98,8 +126,19 @@ export function useScrollSync(
       anchors = null;
     }
 
+    /**
+     * The editor's position in document coordinates, not `scrollTop`.
+     * `lineBlockAt().top` measures from the first line, while `scrollTop` also
+     * counts the content's padding, so mixing the two puts every anchor out by
+     * that padding. `documentTop` is the document's current screen position, so
+     * this subtraction lands in the same space the anchors use.
+     */
+    function editorOffset() {
+      return scroller.getBoundingClientRect().top - editorView!.documentTop;
+    }
+
     function handleEditorScroll() {
-      if (isSyncing) return;
+      if (!claim('editor')) return;
 
       anchors ??= buildAnchors(editorView!, previewElement!);
 
@@ -107,23 +146,39 @@ export function useScrollSync(
         previewElement!.scrollHeight - previewElement!.clientHeight;
       if (previewMax <= 0) return;
 
-      /**
-       * Document coordinates, not `scrollTop`. `lineBlockAt().top` measures from
-       * the first line, while `scrollTop` also counts the content's padding, so
-       * mixing the two puts every anchor out by that padding. `documentTop` is
-       * the document's current screen position, so this subtraction lands in the
-       * same space the anchors use.
-       */
-      const editorOffset =
-        scroller.getBoundingClientRect().top - editorView!.documentTop;
-
-      const target = mapOffset(anchors, editorOffset);
-
-      isSyncing = true;
+      const target = mapOffset(
+        anchors,
+        editorOffset(),
+        'editorTop',
+        'previewTop',
+      );
       previewElement!.scrollTop = Math.max(0, Math.min(previewMax, target));
-      requestAnimationFrame(() => {
-        isSyncing = false;
-      });
+    }
+
+    function handlePreviewScroll() {
+      if (!claim('preview')) return;
+
+      anchors ??= buildAnchors(editorView!, previewElement!);
+
+      const target = mapOffset(
+        anchors,
+        previewElement!.scrollTop,
+        'previewTop',
+        'editorTop',
+      );
+
+      // Applied as a delta: converting a document offset back to a scrollTop
+      // would need the content padding this deliberately avoids measuring.
+      const delta = target - editorOffset();
+      if (Math.abs(delta) < 1) return;
+
+      scroller.scrollTop = Math.max(
+        0,
+        Math.min(
+          scroller.scrollHeight - scroller.clientHeight,
+          scroller.scrollTop + delta,
+        ),
+      );
     }
 
     const mutations = new MutationObserver(invalidate);
@@ -134,9 +189,14 @@ export function useScrollSync(
     resizes.observe(scroller);
 
     scroller.addEventListener('scroll', handleEditorScroll, { passive: true });
+    previewElement.addEventListener('scroll', handlePreviewScroll, {
+      passive: true,
+    });
 
     return () => {
       scroller.removeEventListener('scroll', handleEditorScroll);
+      previewElement.removeEventListener('scroll', handlePreviewScroll);
+      window.clearTimeout(release);
       mutations.disconnect();
       resizes.disconnect();
     };
