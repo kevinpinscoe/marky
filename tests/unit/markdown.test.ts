@@ -118,4 +118,28 @@ describe('renderMarkdown', () => {
     const html = renderMarkdown(md);
     expect(html).toContain('<br>');
   });
+
+  describe('source lines', () => {
+    const md = '# One\n\nsecond\n\n## Third\n';
+
+    it('are absent by default, so exported HTML stays clean', () => {
+      expect(renderMarkdown(md)).not.toContain('data-source-line');
+    });
+
+    it('mark each top-level block with the line it came from', () => {
+      const html = renderMarkdown(md, null, { sourceLines: true });
+      expect(html).toContain('<h1 data-source-line="1">');
+      expect(html).toContain('<p data-source-line="3">');
+      expect(html).toContain('<h2 data-source-line="5">');
+    });
+
+    it('does not annotate inline elements', () => {
+      const html = renderMarkdown('a **bold** word', null, {
+        sourceLines: true,
+      });
+      expect(html).toBe(
+        '<p data-source-line="1">a <strong>bold</strong> word</p>',
+      );
+    });
+  });
 });

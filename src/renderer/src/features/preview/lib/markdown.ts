@@ -65,12 +65,46 @@ function rehypeResolveLocalImages(baseDir: string) {
   };
 }
 
-function createProcessor(baseDir?: string) {
+/**
+ * Records which source line each top-level block came from.
+ *
+ * Scroll sync uses these to line the preview up with the text the editor is
+ * actually showing. Without them it can only match scrollbar percentages, which
+ * drifts as soon as the two panes disagree about height — a tall mermaid block
+ * in the editor is a short diagram once rendered.
+ *
+ * Only top-level blocks are marked: enough to anchor the mapping, and it keeps
+ * the markup free of attributes on every inline element.
+ */
+function rehypeSourceLines() {
+  return () => (tree: Root) => {
+    for (const node of tree.children) {
+      if (node.type !== 'element') continue;
+
+      const line = node.position?.start.line;
+      if (typeof line === 'number') {
+        node.properties = {
+          ...node.properties,
+          'data-source-line': String(line),
+        };
+      }
+    }
+  };
+}
+
+function createProcessor(baseDir?: string, sourceLines = false) {
   const pipeline = unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkBreaks)
-    .use(remarkRehype)
+    .use(remarkRehype);
+
+  // Before rehypeHighlight, which rewrites the inside of code blocks.
+  if (sourceLines) {
+    pipeline.use(rehypeSourceLines());
+  }
+
+  pipeline
     .use(rehypeDropUnsafeLinks())
     // Mermaid blocks are rendered by the preview/export, so leave them as plain
     // text; unknown languages are ignored rather than throwing.
@@ -84,11 +118,28 @@ function createProcessor(baseDir?: string) {
 }
 
 const defaultProcessor = createProcessor();
+const sourceLineProcessor = createProcessor(undefined, true);
 
-export function renderMarkdown(markdown: string, documentPath?: string | null) {
+/**
+ * `sourceLines` adds a `data-source-line` attribute to each top-level block.
+ * The preview asks for them so scroll sync can map text to rendered output;
+ * export leaves them off so the written HTML stays clean.
+ */
+export function renderMarkdown(
+  markdown: string,
+  documentPath?: string | null,
+  options?: { sourceLines?: boolean },
+) {
+  const sourceLines = options?.sourceLines ?? false;
   const baseDir = documentPath ? dirname(documentPath) : '';
+
   if (baseDir) {
-    return createProcessor(baseDir).processSync(markdown).toString();
+    return createProcessor(baseDir, sourceLines)
+      .processSync(markdown)
+      .toString();
   }
-  return defaultProcessor.processSync(markdown).toString();
+
+  return (sourceLines ? sourceLineProcessor : defaultProcessor)
+    .processSync(markdown)
+    .toString();
 }
