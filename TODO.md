@@ -9,17 +9,26 @@ Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can 
 
 ## Upstream sync — started 2026-07-31, not finished
 
-- [ ] **[hanging] Restart Marky and look at the synced build.** The instance running during the
-      2026-07-31 session was still the June build, so the upstream appearance has not actually been
-      seen yet. `./build.sh` installed the new AppImage to `~/.local/bin/Marky.AppImage` at 20:49;
-      the running process kept its old inode. This blocks the palette decision below.
+- [x] **Restart Marky and look at the synced build.** Done 2026-08-01 — rebuilt via `bash ./build.sh`
+      and reinstalled to `~/.local/bin/Marky.AppImage` (verified byte-identical to
+      `dist/Marky-0.1.1.AppImage`), then launched and confirmed running by Kevin.
 
-- [ ] **[decision] Rule on the theme palettes.** Commit `400e973` (purple → neutral dark,
-      high-contrast white text) was dropped during the rebase because upstream rewrote `index.css`
-      and shipped a six-palette theme system with a settings picker. Judge whether one of those six
-      delivers the neutral-dark, high-contrast look. If none does, raise it as fresh work against
-      upstream's theme system — do **not** reinstate the old CSS patch, which fought a stylesheet
-      that no longer exists.
+- [ ] **[decision] Rule on the theme palettes.** *Deferred by Kevin on 2026-08-01 — he ran the new
+      build, is content with the current appearance for now, and is too busy to judge it properly.
+      Still open on purpose.* Commit `400e973` (purple → neutral dark, high-contrast white text) was
+      dropped during the rebase because upstream rewrote `index.css` and shipped a six-palette theme
+      system with a settings picker. Judge whether one of those six delivers the neutral-dark,
+      high-contrast look. If none does, raise it as fresh work against upstream's theme system — do
+      **not** reinstate the old CSS patch, which fought a stylesheet that no longer exists.
+
+      Findings from 2026-08-01 to save re-deriving them: `~/.config/marky/settings.json` has
+      `"theme": "dark"` but no `colorTheme` key, so the effective palette is the default,
+      **amethyst**. In dark mode all six palettes share one formula — `--background: <hue> 14% 12%`
+      with an identical `--foreground: 60 30% 96%` — so they are near-neutral charcoals that differ
+      only in hue; the purple `400e973` fought was the *light* theme (`264 58% 97%`). The exception
+      is **sapphire** (`210 15% 2%`), by far the highest contrast of the six and the one most likely
+      to settle this. The palette hue really shows in the accents (`--primary: 250 100% 75%`), so
+      judge buttons and links separately from the background.
 
 - [ ] **[decision] Approve the force-push of `personal`.** `personal` was rebuilt as 10 signed
       commits on top of upstream `93ae8ab` (tip `ca3a6c5`) and every automated check passes, but
