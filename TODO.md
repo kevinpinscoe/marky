@@ -60,6 +60,78 @@ Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can 
       without it KDE may fail to associate running Marky windows with the installed desktop entry.
       Candidate upstream PR.
 
+## Release workflow — build installers from `personal` (Vermilian-style)
+
+Goal: a GitHub Actions release workflow on the `personal` branch producing **macOS (Apple
+Silicon)**, **Linux x86_64 AppImage**, and **Linux arm64 AppImage** (Raspberry Pi 5 / Debian),
+modelled on `kevinpinscoe/vermilian`'s `.github/workflows/release.yml`.
+
+Estimated at 1–2 hours of authoring plus 2–4 CI round trips. Groundwork already in place: the fork
+is **public**, so `ubuntu-24.04-arm` runners are free; Marky's existing `linux-build.yml` proves the
+electron-builder AppImage path works in CI; and `actions/checkout`, `actions/setup-node` and
+`softprops/action-gh-release` are all already in the SHA table in
+`~/ai/directives/when-generating-code-or-updating-code-in-an-outside-repo.md`, which requires
+SHA-pinned action refs.
+
+Not a copy-paste from Vermilian: that repo uses **pnpm + Electron Forge** in an `app/`
+subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *shape* carries over
+(create draft release → matrix build → publish); the build steps get rewritten.
+
+- [ ] **[decision] Pick the release tag pattern.** Upstream's `linux-build.yml`, `windows-build.yml`
+      and `flatpak.yml` all trigger on `tags: ['v*']`, and **tags are not branch-scoped** — tagging
+      `v0.1.2` on `personal` fires all three upstream workflows as well, building and possibly
+      releasing artifacts that were never wanted. Recommend a distinct pattern such as
+      `personal-v*`. Decide before writing the workflow; everything else depends on it.
+
+- [ ] **[decision] macOS architecture — Apple Silicon only, or Intel too?** `package.json` currently
+      declares `mac.target[0].arch: ["x64", "arm64"]`, so an unmodified `npm run build:mac` builds
+      both. Kevin asked for Silicon; that means overriding to `--arm64` on the CLI. Silicon-only is
+      faster and yields one artifact. Note the same override trick is needed on Linux for the
+      opposite reason — `linux.target[0].arch` is `["x64"]` only, so arm64 needs `--arm64` passed on
+      the command line. **Prefer CLI flags over editing `package.json`**: it keeps the diff against
+      upstream at zero and avoids a permanent merge conflict surface.
+
+- [ ] **macOS install via Homebrew Cask.** The tap already exists and is reusable —
+      `github.com/kevinpinscoe/homebrew-tap` is public and already carries nine casks including
+      `vermilian.rb`. Adding Marky means a new `Casks/marky.rb` plus a step in the release workflow
+      that rewrites it with the new version, DMG URL and SHA-256, mirroring Vermilian's
+      "Update Homebrew tap (Cask)" job. Needs the `HOMEBREW_TAP_TOKEN` secret on the marky repo.
+      End state matches Vermilian:
+      ```bash
+      brew tap kevinpinscoe/tap
+      brew install --cask marky
+      brew upgrade --cask marky
+      ```
+
+      > ⚠️ **Homebrew does not sign the app.** Vermilian is shipped **unsigned** — its README says
+      > so plainly, and its Cask carries a `postflight` block running
+      > `xattr -dr com.apple.quarantine` to strip the quarantine flag so Gatekeeper will launch it.
+      > That is a *workaround for* the absence of a signature, not a signature. Real signing means
+      > an **Apple Developer ID certificate (~$99/year)** plus notarization, and the certificate and
+      > app-specific password stored as repo secrets. If the goal is genuinely signed builds, that
+      > is a separate, paid decision — see the item below.
+
+- [ ] **[decision] Is a real Apple Developer ID worth it?** Only this buys actual code signing and
+      notarization: no Gatekeeper warning, no `xattr` workaround, no "app is damaged" dialog. Costs
+      ~$99/year and adds `CSC_LINK` / `CSC_KEY_PASSWORD` / notarization secrets to the workflow.
+      Without it the build needs `CSC_IDENTITY_AUTO_DISCOVERY=false` or electron-builder will try to
+      sign, fail, and break the job.
+
+- [ ] **Publish a `checksums.txt` covering every release asset.** Roughly ten lines, copied from
+      Vermilian's `channels` job: `gh release download`, `sha256sum *`, `gh release upload
+      --clobber`. Deferred to another day, per Kevin 2026-08-01.
+
+- [ ] **Run the test suite in the workflow before building.** `personal` currently has **no CI at
+      all** — upstream's `test.yml` triggers only on `main` and on PRs to `main`, and the Husky
+      hooks are deliberately bypassed on `personal`, so nothing is checked automatically on this
+      branch. Gate the release on the 154 unit tests at minimum. E2E needs
+      `npx electron-vite build` first (see `RUNBOOK.md` Step 5). Deferred to another day, per Kevin
+      2026-08-01.
+
+- [ ] **Linux arm64 AppImage prerequisites.** The runner needs FUSE for `appimagetool` — Vermilian
+      installs `libfuse2t64` with a fallback to `libfuse2`. Build natively on `ubuntu-24.04-arm`
+      rather than cross-compiling.
+
 ## Features
 
 - [ ] **Open a file by full path.** Typing a full path (e.g. `/home/kinscoe/notes/draft.md`) into the
