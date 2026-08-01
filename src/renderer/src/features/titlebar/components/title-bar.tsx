@@ -6,7 +6,6 @@ import {
   Minus,
   PanelLeft,
   PanelRight,
-  RefreshCw,
   ScanSearch,
   Settings,
   Square,
@@ -20,6 +19,7 @@ import type { TranslationKeys } from '@renderer/i18n';
 import type { ViewMode } from '@shared/types';
 import {
   ExportDropdown,
+  ReloadButton,
   SplitOpenButton,
   SplitSaveButton,
 } from './file-actions';
@@ -190,16 +190,7 @@ export function TitleBar({
         onRemoveRecent={onRemoveRecent}
         onClearRecent={onClearRecent}
       />
-      <Button
-        variant="ghost"
-        size="icon"
-        className="rounded-full"
-        onClick={onReload}
-        aria-label={t('titlebar.reload')}
-        title={`${t('titlebar.reload')} (Ctrl+R)`}
-      >
-        <RefreshCw className="size-4" />
-      </Button>
+      <ReloadButton onReload={onReload} />
       <SplitSaveButton onSave={onSave} onSaveAs={onSaveAs} />
       <ExportDropdown onExportPdf={onExportPdf} onExportHtml={onExportHtml} />
       <Button

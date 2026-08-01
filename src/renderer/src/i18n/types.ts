@@ -98,6 +98,7 @@ export type TranslationKeys = {
   'help.saveCopy': string;
   'help.exportHtml': string;
   'help.exportPdf': string;
+  'help.reload': string;
   'help.editorOnly': string;
   'help.splitView': string;
   'help.previewOnly': string;
@@ -159,6 +160,8 @@ export type TranslationKeys = {
   'notice.fileNotFound': string;
   'notice.reloaded': string;
   'notice.nothingToReload': string;
+  'notice.reloadBlockedUnsaved': string;
+  'notice.reloadFileNotFound': string;
 
   // Shared controls
   'combobox.noMatches': string;

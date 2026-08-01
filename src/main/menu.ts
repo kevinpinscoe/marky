@@ -143,8 +143,11 @@ export function createAppMenu(window: BrowserWindow, locale: Locale = 'en') {
             label: 'Developer',
             submenu: [
               {
+                // Deliberately not on any +R combo: CmdOrCtrl+R is now
+                // reload-from-disk, and a neighbouring shortcut that instead
+                // restarts the renderer and wipes state is a trap.
                 role: 'forceReload' as const,
-                accelerator: 'CmdOrCtrl+Shift+R',
+                accelerator: 'CmdOrCtrl+Shift+F5',
               },
               {
                 role: 'toggleDevTools' as const,

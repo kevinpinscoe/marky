@@ -107,6 +107,7 @@ export const en: TranslationKeys = {
   'help.saveCopy': 'Save a copy',
   'help.exportHtml': 'Export HTML',
   'help.exportPdf': 'Export PDF',
+  'help.reload': 'Reload from disk',
   'help.editorOnly': 'Editor only',
   'help.splitView': 'Split view',
   'help.previewOnly': 'Preview only',
@@ -172,6 +173,9 @@ export const en: TranslationKeys = {
   'notice.fileNotFound': 'File not found — removed from recent list.',
   'notice.reloaded': 'File reloaded from disk.',
   'notice.nothingToReload': 'No saved file is open — nothing to reload.',
+  'notice.reloadBlockedUnsaved':
+    'Unsaved changes — save or undo them before reloading from disk.',
+  'notice.reloadFileNotFound': 'File no longer exists on disk.',
 
   // Shared controls
   'combobox.noMatches': 'No matches',

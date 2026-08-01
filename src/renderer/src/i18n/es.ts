@@ -107,6 +107,7 @@ export const es: TranslationKeys = {
   'help.saveCopy': 'Guardar una copia',
   'help.exportHtml': 'Exportar HTML',
   'help.exportPdf': 'Exportar PDF',
+  'help.reload': 'Recargar desde el disco',
   'help.editorOnly': 'Solo editor',
   'help.splitView': 'Vista dividida',
   'help.previewOnly': 'Solo vista previa',
@@ -174,6 +175,9 @@ export const es: TranslationKeys = {
   'notice.reloaded': 'Archivo recargado desde el disco.',
   'notice.nothingToReload':
     'No hay ningún archivo guardado abierto — nada que recargar.',
+  'notice.reloadBlockedUnsaved':
+    'Hay cambios sin guardar — guárdalos o deshazlos antes de recargar desde el disco.',
+  'notice.reloadFileNotFound': 'El archivo ya no existe en el disco.',
 
   // Controles compartidos
   'combobox.noMatches': 'Sin coincidencias',
