@@ -132,6 +132,42 @@ subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *s
       installs `libfuse2t64` with a fallback to `libfuse2`. Build natively on `ubuntu-24.04-arm`
       rather than cross-compiling.
 
+## CI for the `personal` branch
+
+- [ ] **Add continuous CI on `personal`.** The branch currently has **no automated verification of
+      any kind**, and it is the branch actually being used and built. Two independent gaps stack up:
+
+      1. Upstream's `.github/workflows/test.yml` triggers only on `push`/`pull_request` to `main`,
+         so nothing runs when `personal` is pushed.
+      2. `.husky/pre-commit` and `.husky/commit-msg` both exit 0 immediately on `personal` (see
+         `CLAUDE.md` → Git hooks), so lint, typecheck and commitlint are all skipped locally too.
+
+      Net effect: every check on `personal` today is one a human remembered to run by hand.
+
+      **Write a new `.github/workflows/personal-ci.yml` rather than editing `test.yml`.** `test.yml`
+      is an upstream file that travels back in pull requests; adding `personal` to its branch list
+      would create a permanent conflict on every future sync. A separate personal-only file has zero
+      conflict surface — the same reasoning already applied to the release workflow above.
+
+      What it should run — note the first two are **not** covered by upstream's `test.yml` at all,
+      they only ever ran in the bypassed Husky hook:
+
+      - `npm run lint` — expect 0 errors, 2 known upstream warnings in `i18n-context.tsx`
+      - `npm run typecheck`
+      - `npm test` — 154 unit tests
+      - e2e — copy the working recipe from `test.yml`'s `e2e-tests` job: `npm run build`, then
+        `npx playwright install-deps`, then
+        `xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" npx playwright test`.
+        The `npm run build` step is what keeps `out/` fresh, so the stale-`out/` trap documented in
+        `RUNBOOK.md` Step 5 does not apply in CI — do not drop it.
+
+      SHA-pin every action per
+      `~/ai/directives/when-generating-code-or-updating-code-in-an-outside-repo.md`.
+
+      **Interim, needs no work at all:** `test.yml` already declares `workflow_dispatch`, so it can
+      be run manually against `personal` from the Actions tab by selecting that branch as the ref.
+      That covers unit + e2e today, though still not lint or typecheck.
+
 ## Features
 
 - [ ] **Open a file by full path.** Typing a full path (e.g. `/home/kinscoe/notes/draft.md`) into the
