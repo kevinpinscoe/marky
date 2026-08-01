@@ -30,12 +30,12 @@ Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can 
       to settle this. The palette hue really shows in the accents (`--primary: 250 100% 75%`), so
       judge buttons and links separately from the background.
 
-- [ ] **[decision] Approve the force-push of `personal`.** `personal` was rebuilt as 10 signed
-      commits on top of upstream `93ae8ab` (tip `ca3a6c5`) and every automated check passes, but
-      nothing has been published. `origin/personal` still points at `35c1464`. Step 6 is
-      `git push --force-with-lease origin personal`, and it is the point of no return: until it
-      runs, `git reset --hard personal-pre-sync-2026-07-31` (tag → `37b1707`) restores the old
-      branch exactly.
+- [x] **Approve and perform the force-push of `personal`.** Approved by Kevin and done 2026-08-01 —
+      `git push --force-with-lease origin personal`, `35c1464` → `3699290` (forced update), verified
+      in sync. Ten old commit SHAs are no longer reachable from `origin/personal`; they are preserved
+      locally by the tag `personal-pre-sync-2026-07-31` (`37b1707`), which was verified to contain
+      the old remote tip before the push. **The history was rewritten** — any other clone of this
+      repo must `git reset --hard origin/personal` rather than pull.
 
 - [x] **Document the `upstream` remote and the sync procedure in `CLAUDE.md`.** Done 2026-08-01 —
       added a *Remotes* table (including why the `upstream` push URL is deliberately broken) and a

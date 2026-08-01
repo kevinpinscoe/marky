@@ -100,23 +100,31 @@ The `personal` branch bypasses the Husky hooks, so none of this runs automatical
 
 **Also noted:** electron-builder warns that `desktopName` is not set in `package.json`, so KDE may fail to associate running windows with the desktop entry. Candidate upstream PR.
 
-### Step 6 — Publish and document — NOT STARTED, resume here
-- [ ] `git push --force-with-lease origin personal` — **awaiting Kevin's go-ahead.** `origin/personal` still points at the old `37b1707`; nothing about `personal` has been published yet
-- [ ] Update `CLAUDE.md` to document the `upstream` remote and this sync procedure — the omission that caused the drift
-- [ ] Update `RUNBOOK.md` if the build or test procedure changed — at minimum, record the stale-`out/` e2e gotcha from Step 5
-- [ ] Delete the `personal-pre-sync-2026-07-31` tag once the result is confirmed good
+### Step 6 — Publish and document — ✅ except the tag deletion
+- [x] `git push --force-with-lease origin personal` — done 2026-08-01 on Kevin's approval. `35c1464` → `3699290` (forced update), verified in sync. Ten old SHAs left `origin/personal`; all are contained in the safety tag, which was checked before the push
+- [x] Update `CLAUDE.md` to document the `upstream` remote and this sync procedure — the omission that caused the drift. Done 2026-08-01: *Remotes* table (with why the upstream push URL is deliberately a non-URL, and how to restore the remote) and *Syncing with upstream* (safety tag → ff `main` → rebase the PR branch **before** `personal` → rebase `personal`, plus the cherry-pick workaround for the unavailable interactive rebase)
+- [x] Update `RUNBOOK.md` if the build or test procedure changed — done 2026-08-01: the stale-`out/` gotcha as a warned Step 5, in Verification, and as a Troubleshooting row; plus a `build.sh` install step with a `cmp` verification, rollback-from-tag instructions, rows for "Text file busy" and the `desktopName` warning, and corrected Maintenance Notes
+- [ ] Delete the `personal-pre-sync-2026-07-31` tag once the result is confirmed good — **still open.** It is now the only copy of the pre-sync history, including the two deliberately dropped commits `2b40fd9` and `400e973`. Do not delete it until the palette decision is settled, since `400e973` is the patch that decision concerns
 
 ---
 
-## Where this stopped — 2026-07-31 evening
+## Where this stands — updated 2026-08-01
 
-**Done and published:** `main` is synced to upstream `93ae8ab` and pushed. PR #14 is rebased onto current upstream (`b114153`), force-pushed, and now reports `MERGEABLE`.
+**The sync is complete and fully published.**
 
-**Done but local only:** `personal` was rebuilt as 9 signed commits on top of upstream (`d3868d2`). All automated checks pass. **Not pushed.**
+- `main` — synced to upstream `93ae8ab` and pushed.
+- PR #14 — rebased onto current upstream (`b114153`), force-pushed, reports `MERGEABLE`.
+- `personal` — rebuilt on upstream and **force-pushed 2026-08-01**; `origin/personal` = `3699290`, in sync with local. All automated checks pass (lint, typecheck, 148 unit, 127 e2e).
+- Built and installed on the FLDW — `~/.local/bin/Marky.AppImage`, verified byte-identical to `dist/`, launched and confirmed running by Kevin.
 
-**Recovery:** the tag `personal-pre-sync-2026-07-31` points at the pre-rebase tip `37b1707`. Until the Step 6 force-push happens, `git reset --hard personal-pre-sync-2026-07-31` restores the old branch exactly.
+**History was rewritten.** Any other clone must `git reset --hard origin/personal`; a plain pull will fail or produce a merge mess. The `~/todo/mac/TODO.md` entry for the macOS build carries this instruction.
 
-**Next action on resume:** Kevin restarts Marky (the running instance during this session was still the old June build) and rules on the palette question in Step 5. Then Step 6.
+**Recovery:** the tag `personal-pre-sync-2026-07-31` (`37b1707`) is now the **only** copy of the pre-sync history — it is local-only and was verified to contain the old remote tip before the force-push. It also holds the two deliberately dropped commits, `2b40fd9` and `400e973`.
+
+**What remains — see `TODO.md`:**
+1. The palette decision, deferred by Kevin on 2026-08-01. Keep the safety tag until this is settled: `400e973` is the patch in question.
+2. Delete the safety tag, but only after (1).
+3. Two defects for upstream: the e2e fixture running a stale `out/`, and the missing `desktopName`.
 
 ---
 
