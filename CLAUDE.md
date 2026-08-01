@@ -12,6 +12,57 @@ The `personal` branch is Kevin's long-running customization branch. Commits to `
 
 When making commits on the `personal` branch, sign them per the SSH signing key configured globally (`git config --global gpg.format ssh`).
 
+### Remotes
+
+| Remote | URL | Notes |
+|---|---|---|
+| `origin` | `git@github.com:kevinpinscoe/marky.git` | Kevin's fork — the only remote that is ever pushed to |
+| `upstream` | `https://github.com/marky-editor/marky.git` | The upstream project — **fetch only** |
+
+The `upstream` push URL is deliberately set to the non-URL string `DISABLED-do-not-push-to-upstream`, so `git push upstream` fails loudly instead of attempting to write to the upstream project. Do not "fix" it.
+
+```bash
+git remote -v   # verify before any sync work
+```
+
+**This remote did not exist until 2026-07-31.** `main` was described as tracking upstream but had no configured path for upstream commits to arrive, so it silently fell 95 commits behind. If `git remote -v` ever shows `upstream` missing again, that is the bug — restore it before doing anything else:
+
+```bash
+git remote add upstream https://github.com/marky-editor/marky.git
+git remote set-url --push upstream DISABLED-do-not-push-to-upstream
+```
+
+### Syncing with upstream
+
+Run in this order. Steps 3 and 4 rewrite history on already-published branches, so tag first.
+
+```bash
+# 0. Safety net — the only route back once step 4 force-pushes
+git tag -a personal-pre-sync-$(date +%F) -m "pre-sync snapshot" personal
+
+# 1. Fetch
+git fetch upstream
+
+# 2. Fast-forward main (main carries no commits of its own, so this never conflicts)
+git checkout main && git merge --ff-only upstream/main && git push origin main
+
+# 3. Rebase any open PR branch FIRST, before personal
+git checkout <pr-branch> && git rebase main
+git push --force-with-lease origin <pr-branch>
+
+# 4. Rebase personal on top of the rebased PR branch
+git checkout personal && git rebase <pr-branch>
+git push --force-with-lease origin personal
+```
+
+Why the PR branch goes first: its conflicts against upstream are the same ones `personal` will hit, so resolving them once in the smallest scope means step 4 replays cleanly.
+
+Notes from the 2026-07-31 sync, worth knowing before the next one:
+
+- `git rebase --interactive` is unavailable in the AI agent environment. Rebuild the branch with `git cherry-pick` instead — same result, and it makes deliberately dropped commits explicit.
+- Triage every `personal` commit against the incoming upstream delta before replaying it. Upstream may have superseded a local patch outright; reinstating one that fights a rewritten file is worse than dropping it.
+- Delete the safety tag only once the result is confirmed good.
+
 ### Git hooks
 
 The `.husky/pre-commit` and `.husky/commit-msg` hooks both check the current branch at the start and exit 0 immediately on `personal`, so lint, typecheck, and commitlint are all bypassed. On `main` and any other branch the full upstream hook chain runs: ESLint → TypeScript type-check → Commitlint (Conventional Commits format required).

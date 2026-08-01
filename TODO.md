@@ -37,12 +37,15 @@ Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can 
       runs, `git reset --hard personal-pre-sync-2026-07-31` (tag → `37b1707`) restores the old
       branch exactly.
 
-- [ ] **[hanging] Document the `upstream` remote and the sync procedure in `CLAUDE.md`.** There was
-      no `upstream` remote at all before this work despite `CLAUDE.md` claiming `main` tracked the
-      upstream fork — that omission is the root cause of the 95-commit drift. The remote now exists
-      with its push URL set to `DISABLED-do-not-push-to-upstream`.
+- [x] **Document the `upstream` remote and the sync procedure in `CLAUDE.md`.** Done 2026-08-01 —
+      added a *Remotes* table (including why the `upstream` push URL is deliberately broken) and a
+      *Syncing with upstream* procedure covering the safety tag, the PR-branch-before-`personal`
+      ordering and why, and the cherry-pick workaround for the unavailable interactive rebase.
 
-- [ ] **[hanging] Record the stale-`out/` e2e gotcha in `RUNBOOK.md`.** See the defect below.
+- [x] **Record the stale-`out/` e2e gotcha in `RUNBOOK.md`.** Done 2026-08-01 — added as a warned
+      Step 5 (`npx electron-vite build` is mandatory before `npm run test:e2e`), in the Verification
+      block, and as a Troubleshooting row. Also added Step 4 for `build.sh`, rollback-from-tag
+      instructions, and rows for "Text file busy" and the `desktopName` warning.
 
 - [ ] **[hanging] Delete the `personal-pre-sync-2026-07-31` tag** once the synced branch is confirmed
       good. Not before — it is the only route back.
