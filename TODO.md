@@ -77,11 +77,21 @@ Not a copy-paste from Vermilian: that repo uses **pnpm + Electron Forge** in an 
 subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *shape* carries over
 (create draft release → matrix build → publish); the build steps get rewritten.
 
-- [ ] **[decision] Pick the release tag pattern.** Upstream's `linux-build.yml`, `windows-build.yml`
-      and `flatpak.yml` all trigger on `tags: ['v*']`, and **tags are not branch-scoped** — tagging
-      `v0.1.2` on `personal` fires all three upstream workflows as well, building and possibly
-      releasing artifacts that were never wanted. Recommend a distinct pattern such as
-      `personal-v*`. Decide before writing the workflow; everything else depends on it.
+- [x] **[decision] Pick the release tag pattern.** **Decided by Kevin 2026-08-01: `personal-v*`.**
+      Upstream's `linux-build.yml`, `windows-build.yml` and `flatpak.yml` all trigger on
+      `tags: ['v*']`, and **tags are not branch-scoped** — tagging `v0.1.2` on `personal` would fire
+      all three upstream workflows as well, building and possibly releasing artifacts that were never
+      wanted. `personal-v*` does not match `v*`, so it fires nothing upstream.
+
+      Concrete form: `personal-v0.1.2` — the version portion stays strict semver, only the prefix is
+      added. The release workflow triggers on `tags: ['personal-v[0-9]+.[0-9]+.[0-9]+']` and must
+      strip the `personal-v` prefix when deriving the version for artifact names and the Cask.
+
+      > ⚠️ **Recorded deviation.** `~/ai/directives/when-generating-code-or-updating-code-in-an-outside-repo.md`
+      > §3 requires release tags to be `vMAJOR.MINOR.PATCH` exactly and forbids non-semver tags.
+      > A prefixed tag departs from that. The deviation is deliberate and scoped to this fork's
+      > `personal` branch only, for the trigger-collision reason above; tags cut on `main` or on any
+      > upstream PR branch still follow the directive unchanged.
 
 - [ ] **[decision] macOS architecture — Apple Silicon only, or Intel too?** `package.json` currently
       declares `mac.target[0].arch: ["x64", "arm64"]`, so an unmodified `npm run build:mac` builds
@@ -134,15 +144,23 @@ subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *s
 
 ## CI for the `personal` branch
 
-- [ ] **Add continuous CI on `personal`.** The branch currently has **no automated verification of
-      any kind**, and it is the branch actually being used and built. Two independent gaps stack up:
+- [x] **Add continuous CI on `personal`.** Done 2026-08-01 — `.github/workflows/personal-ci.yml`,
+      three jobs: `static` (lint + typecheck), `unit-tests`, `e2e-tests`. Triggers on push and PR to
+      `personal`, plus `workflow_dispatch`. `actions/checkout` v6.0.2 and `actions/setup-node` v6.4.0
+      are SHA-pinned from the directive table; Node 24 matches `mise.toml`. A `concurrency` group
+      with `cancel-in-progress` keeps a force-push from leaving superseded runs going. All four
+      checks were confirmed green locally first: lint 0 errors / 2 known warnings, typecheck clean,
+      154 unit tests, 127 e2e. The original analysis follows, kept because it explains the design:
+
+      The branch previously had **no automated verification of
+      any kind**, and it is the branch actually being used and built. Two independent gaps stacked up:
 
       1. Upstream's `.github/workflows/test.yml` triggers only on `push`/`pull_request` to `main`,
          so nothing runs when `personal` is pushed.
       2. `.husky/pre-commit` and `.husky/commit-msg` both exit 0 immediately on `personal` (see
          `CLAUDE.md` → Git hooks), so lint, typecheck and commitlint are all skipped locally too.
 
-      Net effect: every check on `personal` today is one a human remembered to run by hand.
+      Net effect: every check on `personal` was one a human remembered to run by hand.
 
       **Write a new `.github/workflows/personal-ci.yml` rather than editing `test.yml`.** `test.yml`
       is an upstream file that travels back in pull requests; adding `personal` to its branch list
@@ -164,9 +182,8 @@ subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *s
       SHA-pin every action per
       `~/ai/directives/when-generating-code-or-updating-code-in-an-outside-repo.md`.
 
-      **Interim, needs no work at all:** `test.yml` already declares `workflow_dispatch`, so it can
-      be run manually against `personal` from the Actions tab by selecting that branch as the ref.
-      That covers unit + e2e today, though still not lint or typecheck.
+      The interim workaround this item used to recommend — running upstream's `test.yml` manually
+      against `personal` via `workflow_dispatch` — is no longer needed, though it still works.
 
 ## Features
 
