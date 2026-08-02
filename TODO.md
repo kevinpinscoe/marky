@@ -13,6 +13,11 @@ Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can 
       and reinstalled to `~/.local/bin/Marky.AppImage` (verified byte-identical to
       `dist/Marky-0.1.1.AppImage`), then launched and confirmed running by Kevin.
 
+      **Superseded 2026-08-02:** the FLDW now runs the *released* build rather than a local one.
+      `Marky-0.1.2.AppImage` was downloaded from `personal-v0.1.2` and installed to the same path,
+      byte-identical to the published asset. The desktop entry's `Exec=` is unchanged, so the KDE
+      launcher needed no edit and the eight installed icons were already correct.
+
 - [ ] **[decision] Rule on the theme palettes.** *Deferred by Kevin on 2026-08-01 — he ran the new
       build, is content with the current appearance for now, and is too busy to judge it properly.
       Still open on purpose.* Commit `400e973` (purple → neutral dark, high-contrast white text) was
@@ -32,10 +37,11 @@ Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can 
 
 - [x] **Approve and perform the force-push of `personal`.** Approved by Kevin and done 2026-08-01 —
       `git push --force-with-lease origin personal`, `35c1464` → `3699290` (forced update), verified
-      in sync. Ten old commit SHAs are no longer reachable from `origin/personal`; they are preserved
-      locally by the tag `personal-pre-sync-2026-07-31` (`37b1707`), which was verified to contain
-      the old remote tip before the push. **The history was rewritten** — any other clone of this
-      repo must `git reset --hard origin/personal` rather than pull.
+      in sync. Ten old commit SHAs are no longer reachable from `origin/personal`. They were held by
+      the tag `personal-pre-sync-2026-07-31` (`37b1707`), which was verified to contain the old
+      remote tip before the push — **that tag was deleted on 2026-08-02** (see below), so there is no
+      longer a route back. **The history was rewritten** — any other clone of this repo must
+      `git reset --hard origin/personal` rather than pull.
 
 - [x] **Document the `upstream` remote and the sync procedure in `CLAUDE.md`.** Done 2026-08-01 —
       added a *Remotes* table (including why the `upstream` push URL is deliberately broken) and a
@@ -47,8 +53,15 @@ Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can 
       block, and as a Troubleshooting row. Also added Step 4 for `build.sh`, rollback-from-tag
       instructions, and rows for "Text file busy" and the `desktopName` warning.
 
-- [ ] **[hanging] Delete the `personal-pre-sync-2026-07-31` tag** once the synced branch is confirmed
-      good. Not before — it is the only route back.
+- [x] **[hanging] Delete the `personal-pre-sync-2026-07-31` tag.** Done 2026-08-02, on Kevin's
+      instruction. The condition was met: `personal` is published, CI is green on it, and
+      `personal-v0.1.2` was built, published and verified from it.
+
+      The tag was never pushed — `personal-v0.1.2` is the only tag on `origin` — and it was the only
+      ref containing `2b40fd9` and `400e973`, so both are now unreachable and will be collected.
+      Their diffs were saved first to `~/tmp/marky-dropped-commits-2026-08-02/` purely as insurance.
+      **`~/tmp` is a scratchpad and may be cleaned** — move them if they should be kept, though per
+      the palette item below the CSS patch must not be reinstated in any case.
 
 ## Defects found during the sync
 
