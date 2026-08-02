@@ -76,8 +76,18 @@ Not a copy-paste from Vermilian: that repo uses **pnpm + Electron Forge** in an 
 subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *shape* carried over
 (create draft release → matrix build → publish); the build steps were rewritten.
 
-**Not yet fired.** No `personal-v*` tag has been pushed, so the workflow has never run. The first
-tag is the real test — see the two verifications already done below before trusting it blindly.
+**First release cut 2026-08-02: [`personal-v0.1.2`](https://github.com/kevinpinscoe/marky/releases/tag/personal-v0.1.2).**
+Run `30755680827`, all five jobs green, about 2m10s end to end. Three assets published:
+
+| Asset | Size | Verified |
+|---|---|---|
+| `Marky-0.1.2.AppImage` | 163.2 MB | ELF `e_machine` = x86-64 |
+| `Marky-0.1.2-arm64.AppImage` | 163.6 MB | ELF `e_machine` = AArch64 |
+| `Marky-0.1.2-arm64.dmg` | 156.6 MB | unsigned, as designed |
+
+Both design bets held up under a real run. The `personal-` prefix worked: **only** `Personal Release`
+fired on the tag — `linux-build.yml`, `windows-build.yml` and `flatpak.yml` all stayed put. And the
+version-align step worked: `package.json` still says `0.1.1`, yet every asset is named `0.1.2`.
 
 - [x] **[decision] Pick the release tag pattern.** **Decided by Kevin 2026-08-01: `personal-v*`.**
       Upstream's `linux-build.yml`, `windows-build.yml` and `flatpak.yml` all trigger on
