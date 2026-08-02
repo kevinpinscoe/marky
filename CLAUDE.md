@@ -32,6 +32,22 @@ git remote add upstream https://github.com/marky-editor/marky.git
 git remote set-url --push upstream DISABLED-do-not-push-to-upstream
 ```
 
+### The `gh` CLI needs an explicit `--repo` here
+
+There are two GitHub repos behind this checkout and **no default is set**, so `gh` guesses — and it
+guesses `upstream`. `gh run list` will report "no runs" while CI is in fact running green on the
+fork, and `gh workflow run` will try to dispatch against `marky-editor/marky` and 404. Always say
+which repo you mean:
+
+```bash
+gh run list  --repo kevinpinscoe/marky --branch personal   # CI on the fork
+gh pr view 14 --repo marky-editor/marky                     # PRs live upstream
+```
+
+Do not fix this with `gh repo set-default`. Either choice is wrong half the time: CI and Actions
+live on the fork, pull requests live upstream. An explicit flag is unambiguous; a default is a
+silent wrong answer.
+
 ### Syncing with upstream
 
 Run in this order. Steps 3 and 4 rewrite history on already-published branches, so tag first.
@@ -66,6 +82,19 @@ Notes from the 2026-07-31 sync, worth knowing before the next one:
 ### Git hooks
 
 The `.husky/pre-commit` and `.husky/commit-msg` hooks both check the current branch at the start and exit 0 immediately on `personal`, so lint, typecheck, and commitlint are all bypassed. On `main` and any other branch the full upstream hook chain runs: ESLint → TypeScript type-check → Commitlint (Conventional Commits format required).
+
+### CI
+
+| Workflow | Branch | Runs |
+|---|---|---|
+| `.github/workflows/personal-ci.yml` | `personal` | lint, typecheck, unit tests, e2e |
+| `.github/workflows/test.yml` (upstream) | `main` and PRs to `main` | unit tests, e2e |
+
+`personal-ci.yml` is a fork-only file and must never be sent upstream. It exists because the Husky hooks above are bypassed on `personal` and upstream's `test.yml` never triggers there — before it, nothing on this branch was checked automatically. It is also the only workflow that runs **lint and typecheck**; `test.yml` never has.
+
+Keep it as a separate file. Adding `personal` to `test.yml`'s branch list would conflict on every future upstream sync, since `test.yml` travels back in pull requests.
+
+Its `e2e-tests` job must keep the `npm run build` step — that is what keeps `out/` fresh and is why the stale-`out/` trap in `RUNBOOK.md` step 5 does not bite in CI.
 
 ## What this is
 

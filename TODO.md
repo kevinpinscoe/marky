@@ -150,7 +150,9 @@ subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *s
       are SHA-pinned from the directive table; Node 24 matches `mise.toml`. A `concurrency` group
       with `cancel-in-progress` keeps a force-push from leaving superseded runs going. All four
       checks were confirmed green locally first: lint 0 errors / 2 known warnings, typecheck clean,
-      154 unit tests, 127 e2e. The original analysis follows, kept because it explains the design:
+      154 unit tests, 127 e2e. Confirmed green in CI too — run `30725481929` on `259baeb`, all three
+      jobs success, about 2m40s wall clock. The original analysis follows, kept because it explains
+      the design:
 
       The branch previously had **no automated verification of
       any kind**, and it is the branch actually being used and built. Two independent gaps stacked up:
