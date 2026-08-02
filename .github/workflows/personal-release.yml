@@ -1,0 +1,185 @@
+# Release builds from the `personal` branch. Fork-only — never send this upstream.
+#
+# TRIGGER: a `personal-v<semver>` tag, NOT `v<semver>`. Tags are not branch-scoped,
+# so a `v*` tag cut on `personal` would also fire upstream's linux-build.yml,
+# windows-build.yml and flatpak.yml, releasing artifacts nobody asked for. The
+# `personal-` prefix matches none of them. See TODO.md for the recorded deviation
+# from the outside-repo directive's strict-semver tag rule.
+#
+#   git tag -s personal-v0.1.2 -m "personal release v0.1.2"
+#   git push origin personal-v0.1.2
+#
+# SHAPE (Vermilian's): create ONE draft release first, then fan out the build
+# matrix uploading into that draft, then promote it. The draft is pre-created to
+# avoid a race — concurrent jobs that each create their own release scatter the
+# artifacts across several drafts and only one gets promoted.
+#
+# ARTIFACTS: macOS Apple Silicon .dmg, Linux x86_64 AppImage, Linux arm64 AppImage
+# (Raspberry Pi 5 / Debian). No Windows — upstream already covers it and Kevin
+# does not build for it here.
+#
+# The macOS .dmg is UNSIGNED. See the "macOS is unsigned" step for what that means.
+#
+# Actions are SHA-pinned per ~/ai/directives/when-generating-code-or-updating-code-in-an-outside-repo.md
+name: Personal Release
+
+on:
+  push:
+    tags:
+      - 'personal-v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create draft release
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.ref_name }}
+
+      # This repo has no CHANGELOG.md, so the body is written here rather than
+      # extracted. Deterministic beats --generate-notes, which on a fork would
+      # list the entire upstream commit range.
+      - name: Write release notes
+        run: |
+          VERSION="${TAG#personal-v}"
+          cat > /tmp/notes.md <<NOTES
+          Personal build of Marky $VERSION from the \`personal\` branch.
+
+          This is **not** an upstream release. The project itself lives at
+          <https://github.com/marky-editor/marky>.
+
+          | Platform | Asset |
+          |---|---|
+          | macOS (Apple Silicon) | \`.dmg\` |
+          | Linux x86_64 | \`.AppImage\` |
+          | Linux arm64 (Raspberry Pi 5 / Debian) | \`-arm64.AppImage\` |
+
+          The macOS build is **unsigned and not notarized**. Gatekeeper will refuse
+          it on first launch. Clear the quarantine flag after copying it to
+          /Applications:
+
+          \`\`\`bash
+          xattr -dr com.apple.quarantine /Applications/Marky.app
+          \`\`\`
+
+          Linux AppImages need no such step — \`chmod +x\` and run.
+          NOTES
+          cat /tmp/notes.md
+
+      # Idempotent so a re-run of a failed release reuses the draft.
+      - name: Create draft release if absent
+        run: |
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "Release $TAG already exists — reusing it."
+          else
+            gh release create "$TAG" --repo "$REPO" --draft --title "$TAG" \
+              --notes-file /tmp/notes.md
+          fi
+
+  build:
+    name: Build ${{ matrix.label }}
+    needs: create-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Runner images are pinned, not -latest, so a release is reproducible.
+          #
+          # The `args` below override package.json on the CLI in BOTH directions,
+          # deliberately, so package.json keeps a zero diff against upstream and
+          # never becomes a merge-conflict surface on a sync:
+          #   linux.target[0].arch is ["x64"] only      -> arm64 must be forced on
+          #   mac.target[0].arch is ["x64","arm64"]     -> x64 must be forced off
+          - os: ubuntu-24.04
+            label: Linux x86_64 AppImage
+            args: --linux AppImage --x64
+            glob: dist/*.AppImage
+          - os: ubuntu-24.04-arm
+            label: Linux arm64 AppImage
+            args: --linux AppImage --arm64
+            glob: dist/*.AppImage
+          - os: macos-14
+            label: macOS Apple Silicon dmg
+            args: --mac dmg --arm64
+            glob: dist/*.dmg
+    runs-on: ${{ matrix.os }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+      # No Apple Developer ID. Without this, electron-builder hunts for a signing
+      # identity, fails to find one, and fails the job.
+      CSC_IDENTITY_AUTO_DISCOVERY: false
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # appimagetool needs FUSE 2. libfuse2t64 is the Ubuntu 24.04 name; the
+      # fallback covers older images.
+      - name: Install AppImage build deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2t64 || sudo apt-get install -y libfuse2
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # electron-builder names artifacts from package.json's version, not from the
+      # tag, so personal-v0.1.2 would otherwise ship a file called Marky-0.1.1.dmg.
+      # Set it in the CI workspace only — committing a version bump to package.json
+      # would put this fork permanently at odds with upstream's own bumps.
+      - name: Align package.json version with the tag
+        run: |
+          VERSION="${TAG#personal-v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          echo "Building version $VERSION for tag $TAG"
+
+      - run: npm run build
+
+      - name: Package
+        run: npx electron-builder ${{ matrix.args }} --publish never
+
+      # Upload straight to the pre-created draft. --clobber makes a re-run of a
+      # single failed matrix leg replace its own asset rather than erroring.
+      - name: Upload to draft release
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(${{ matrix.glob }})
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No artifact matched '${{ matrix.glob }}' — nothing to upload."
+            ls -la dist || true
+            exit 1
+          fi
+          printf 'Uploading: %s\n' "${files[@]}"
+          gh release upload "$TAG" --repo "$REPO" --clobber "${files[@]}"
+
+  publish:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+    steps:
+      # --latest is deliberately NOT set: upstream's own v* releases share this
+      # repo's release list, and a personal build should not displace them as the
+      # repo's headline download.
+      - name: Promote draft to published
+        run: gh release edit "$TAG" --repo "$REPO" --draft=false
+
+      - name: Show published assets
+        run: gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets[] | "\(.name)  \(.size) bytes"'

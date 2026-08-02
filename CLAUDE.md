@@ -85,16 +85,35 @@ The `.husky/pre-commit` and `.husky/commit-msg` hooks both check the current bra
 
 ### CI
 
-| Workflow | Branch | Runs |
+| Workflow | Trigger | Runs |
 |---|---|---|
-| `.github/workflows/personal-ci.yml` | `personal` | lint, typecheck, unit tests, e2e |
-| `.github/workflows/test.yml` (upstream) | `main` and PRs to `main` | unit tests, e2e |
+| `.github/workflows/personal-ci.yml` | push/PR to `personal` | lint, typecheck, unit tests, e2e |
+| `.github/workflows/personal-release.yml` | `personal-v*` tag | builds and publishes the release |
+| `.github/workflows/test.yml` (upstream) | push/PR to `main` | unit tests, e2e |
+| `linux-build.yml`, `windows-build.yml`, `flatpak.yml` (upstream) | `main`, and `v*` tags | platform builds |
 
-`personal-ci.yml` is a fork-only file and must never be sent upstream. It exists because the Husky hooks above are bypassed on `personal` and upstream's `test.yml` never triggers there — before it, nothing on this branch was checked automatically. It is also the only workflow that runs **lint and typecheck**; `test.yml` never has.
+`personal-ci.yml` and `personal-release.yml` are fork-only files and must never be sent upstream. It exists because the Husky hooks above are bypassed on `personal` and upstream's `test.yml` never triggers there — before it, nothing on this branch was checked automatically. It is also the only workflow that runs **lint and typecheck**; `test.yml` never has.
 
 Keep it as a separate file. Adding `personal` to `test.yml`'s branch list would conflict on every future upstream sync, since `test.yml` travels back in pull requests.
 
 Its `e2e-tests` job must keep the `npm run build` step — that is what keeps `out/` fresh and is why the stale-`out/` trap in `RUNBOOK.md` step 5 does not bite in CI.
+
+### Cutting a personal release
+
+```bash
+git tag -s personal-v0.1.2 -m "personal release v0.1.2"
+git push origin personal-v0.1.2
+gh run watch --repo kevinpinscoe/marky
+```
+
+**The `personal-` prefix is load-bearing.** Tags are not branch-scoped, so a bare `v0.1.2` tag cut on `personal` would also fire upstream's `linux-build.yml`, `windows-build.yml` and `flatpak.yml`, publishing artifacts nobody asked for. `personal-v*` matches none of them. This is a deliberate, recorded deviation from the outside-repo directive's strict-semver tag rule — see `TODO.md`.
+
+Three artifacts: macOS Apple Silicon `.dmg`, Linux x86_64 AppImage, Linux arm64 AppImage. Two things about how it gets them are easy to "fix" and break:
+
+- **Architecture comes from CLI flags, never from `package.json`.** `linux.target[0].arch` is `["x64"]` only and `mac.target[0].arch` is `["x64","arm64"]`, so the workflow forces arm64 on for Linux and off for macOS on the command line. Editing `package.json` instead would create a permanent merge-conflict surface against upstream.
+- **The version is aligned to the tag in the CI workspace only.** electron-builder names artifacts from `package.json`, not from the tag, so without that step a `personal-v0.1.2` tag ships files called `Marky-0.1.1.*`. It is deliberately not committed, for the same zero-diff reason.
+
+The `.dmg` is unsigned and un-notarized — there is no Apple Developer ID. The generated release notes tell users to run `xattr -dr com.apple.quarantine /Applications/Marky.app`.
 
 ## What this is
 

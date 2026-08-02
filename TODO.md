@@ -66,16 +66,18 @@ Goal: a GitHub Actions release workflow on the `personal` branch producing **mac
 Silicon)**, **Linux x86_64 AppImage**, and **Linux arm64 AppImage** (Raspberry Pi 5 / Debian),
 modelled on `kevinpinscoe/vermilian`'s `.github/workflows/release.yml`.
 
-Estimated at 1–2 hours of authoring plus 2–4 CI round trips. Groundwork already in place: the fork
-is **public**, so `ubuntu-24.04-arm` runners are free; Marky's existing `linux-build.yml` proves the
-electron-builder AppImage path works in CI; and `actions/checkout`, `actions/setup-node` and
-`softprops/action-gh-release` are all already in the SHA table in
-`~/ai/directives/when-generating-code-or-updating-code-in-an-outside-repo.md`, which requires
-SHA-pinned action refs.
+**Written 2026-08-02 — `.github/workflows/personal-release.yml`.** Three jobs: `create-release`
+(one idempotent draft, pre-created to stop the matrix racing to make competing drafts), `build`
+(a three-leg matrix on `ubuntu-24.04`, `ubuntu-24.04-arm` and `macos-14`), and `publish` (promote
+the draft). Uploads go through `gh release upload --clobber` rather than electron-builder's
+`--publish`, so the pre-created draft is always the target.
 
 Not a copy-paste from Vermilian: that repo uses **pnpm + Electron Forge** in an `app/`
-subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *shape* carries over
-(create draft release → matrix build → publish); the build steps get rewritten.
+subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *shape* carried over
+(create draft release → matrix build → publish); the build steps were rewritten.
+
+**Not yet fired.** No `personal-v*` tag has been pushed, so the workflow has never run. The first
+tag is the real test — see the two verifications already done below before trusting it blindly.
 
 - [x] **[decision] Pick the release tag pattern.** **Decided by Kevin 2026-08-01: `personal-v*`.**
       Upstream's `linux-build.yml`, `windows-build.yml` and `flatpak.yml` all trigger on
@@ -93,15 +95,33 @@ subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *s
       > `personal` branch only, for the trigger-collision reason above; tags cut on `main` or on any
       > upstream PR branch still follow the directive unchanged.
 
-- [ ] **[decision] macOS architecture — Apple Silicon only, or Intel too?** `package.json` currently
-      declares `mac.target[0].arch: ["x64", "arm64"]`, so an unmodified `npm run build:mac` builds
-      both. Kevin asked for Silicon; that means overriding to `--arm64` on the CLI. Silicon-only is
-      faster and yields one artifact. Note the same override trick is needed on Linux for the
-      opposite reason — `linux.target[0].arch` is `["x64"]` only, so arm64 needs `--arm64` passed on
-      the command line. **Prefer CLI flags over editing `package.json`**: it keeps the diff against
-      upstream at zero and avoids a permanent merge conflict surface.
+- [x] **[decision] macOS architecture — Apple Silicon only, or Intel too?** **Built as Apple Silicon
+      only**, per Kevin's stated ask, on the `macos-14` runner with `--mac dmg --arm64`. Changing to
+      also ship Intel is one extra matrix leg (`macos-13` with `--x64`), not a rewrite.
 
-- [ ] **macOS install via Homebrew Cask.** The tap already exists and is reusable —
+      `package.json` declares `mac.target[0].arch: ["x64", "arm64"]`, so an unmodified
+      `npm run build:mac` builds both; the CLI narrows it. The same override trick is used on Linux
+      for the opposite reason — `linux.target[0].arch` is `["x64"]` only, so arm64 is forced on with
+      `--arm64`. **CLI flags, never edits to `package.json`**: it keeps the diff against upstream at
+      zero and avoids a permanent merge conflict surface.
+
+      **Verified 2026-08-02, because this was the assumption most likely to be wrong.** Read
+      `node_modules/electron-builder/out/builder.js`: when a target type is given on the CLI, the
+      arch list is built from the CLI flags and the config's arch list is never consulted. Then
+      built it for real on this x86_64 host — `dist/Marky-0.1.1-arm64.AppImage`, with `file`
+      reporting "ELF 64-bit LSB executable, ARM aarch64".
+
+- [ ] **macOS install via Homebrew Cask.** *Deliberately left out of the release workflow written
+      on 2026-08-02.* Two reasons: it is a separate deliverable from "build the three artifacts", and
+      `gh secret list --repo kevinpinscoe/marky` returns **empty** — `HOMEBREW_TAP_TOKEN` is not set
+      on this repo, so a Cask step would fail on the first release. Set the secret first:
+      ```bash
+      gh secret set HOMEBREW_TAP_TOKEN --repo kevinpinscoe/marky --body "$(gh auth token)"
+      ```
+      Then the Cask step drops into the `publish` job, modelled on Vermilian's, which writes the
+      cask file whole rather than patching it.
+
+      The tap already exists and is reusable —
       `github.com/kevinpinscoe/homebrew-tap` is public and already carries nine casks including
       `vermilian.rb`. Adding Marky means a new `Casks/marky.rb` plus a step in the release workflow
       that rewrites it with the new version, DMG URL and SHA-256, mirroring Vermilian's
@@ -121,11 +141,16 @@ subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *s
       > app-specific password stored as repo secrets. If the goal is genuinely signed builds, that
       > is a separate, paid decision — see the item below.
 
-- [ ] **[decision] Is a real Apple Developer ID worth it?** Only this buys actual code signing and
-      notarization: no Gatekeeper warning, no `xattr` workaround, no "app is damaged" dialog. Costs
-      ~$99/year and adds `CSC_LINK` / `CSC_KEY_PASSWORD` / notarization secrets to the workflow.
-      Without it the build needs `CSC_IDENTITY_AUTO_DISCOVERY=false` or electron-builder will try to
-      sign, fail, and break the job.
+- [ ] **[decision] Is a real Apple Developer ID worth it?** *Still open.* The workflow currently
+      ships **unsigned**, matching Vermilian: it sets `CSC_IDENTITY_AUTO_DISCOVERY: false`, without
+      which electron-builder hunts for a signing identity, fails to find one, and fails the job. The
+      release notes it generates tell the user to run
+      `xattr -dr com.apple.quarantine /Applications/Marky.app`.
+
+      Only a real Developer ID buys actual code signing and notarization: no Gatekeeper warning, no
+      `xattr` workaround, no "app is damaged" dialog. Costs ~$99/year and adds `CSC_LINK` /
+      `CSC_KEY_PASSWORD` / notarization secrets to the workflow. Buying one later is an edit to the
+      `macos-14` matrix leg, not a rewrite — nothing here forecloses it.
 
 - [ ] **Publish a `checksums.txt` covering every release asset.** Roughly ten lines, copied from
       Vermilian's `channels` job: `gh release download`, `sha256sum *`, `gh release upload
@@ -138,9 +163,9 @@ subdirectory, Marky uses **npm + electron-builder** at the repo root. The job *s
       `npx electron-vite build` first (see `RUNBOOK.md` Step 5). Deferred to another day, per Kevin
       2026-08-01.
 
-- [ ] **Linux arm64 AppImage prerequisites.** The runner needs FUSE for `appimagetool` — Vermilian
-      installs `libfuse2t64` with a fallback to `libfuse2`. Build natively on `ubuntu-24.04-arm`
-      rather than cross-compiling.
+- [x] **Linux arm64 AppImage prerequisites.** Done 2026-08-02 — both Linux matrix legs install
+      `libfuse2t64` with a fallback to `libfuse2` before packaging, and arm64 builds natively on
+      `ubuntu-24.04-arm` rather than cross-compiling.
 
 ## CI for the `personal` branch
 
