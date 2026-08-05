@@ -183,3 +183,66 @@ jobs:
 
       - name: Show published assets
         run: gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets[] | "\(.name)  \(.size) bytes"'
+
+      # --- Homebrew Cask -------------------------------------------------------
+      # Modelled on Vermilian's "Update Homebrew tap (Cask)" job: writes the cask
+      # file whole rather than patching it. Needs HOMEBREW_TAP_TOKEN (a PAT with
+      # push access to kevinpinscoe/homebrew-tap) set as a secret on this repo.
+      - name: Download macOS dmg
+        run: |
+          mkdir -p dist
+          gh release download "$TAG" --repo "$REPO" --dir dist --pattern '*.dmg'
+          ls -la dist
+
+      - name: Compute version and sha256
+        id: meta
+        run: |
+          VERSION="${TAG#personal-v}"
+          DMG=$(cd dist && ls *.dmg | head -1)
+          DMG_SHA=$(sha256sum "dist/$DMG" | awk '{print $1}')
+          {
+            echo "version=$VERSION"
+            echo "dmg_url=https://github.com/${REPO}/releases/download/${TAG}/${DMG}"
+            echo "dmg_sha=$DMG_SHA"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update Homebrew tap (Cask)
+        env:
+          TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/kevinpinscoe/homebrew-tap.git" tap
+          mkdir -p tap/Casks
+          cat > tap/Casks/marky.rb <<EOF
+          cask "marky" do
+            version "${{ steps.meta.outputs.version }}"
+            sha256 "${{ steps.meta.outputs.dmg_sha }}"
+
+            url "${{ steps.meta.outputs.dmg_url }}"
+            name "Marky"
+            desc "Apostrophe-inspired Markdown editor built with Electron, React, and TypeScript"
+            homepage "https://github.com/kevinpinscoe/marky"
+
+            depends_on arch: :arm64
+
+            # Unsigned build — remove the quarantine attribute so Gatekeeper allows launch.
+            postflight do
+              system_command "/usr/bin/xattr",
+                             args: ["-dr", "com.apple.quarantine", "#{appdir}/Marky.app"],
+                             sudo: false
+            end
+
+            app "Marky.app"
+
+            zap trash: [
+              "~/Library/Application Support/Marky",
+              "~/Library/Preferences/com.marky.app.plist",
+              "~/Library/Saved Application State/com.marky.app.savedState",
+            ]
+          end
+          EOF
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/marky.rb
+          git diff --cached --quiet || git commit -m "marky ${TAG}"
+          git push

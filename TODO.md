@@ -134,22 +134,26 @@ version-align step worked: `package.json` still says `0.1.1`, yet every asset is
       built it for real on this x86_64 host — `dist/Marky-0.1.1-arm64.AppImage`, with `file`
       reporting "ELF 64-bit LSB executable, ARM aarch64".
 
-- [ ] **macOS install via Homebrew Cask.** *Deliberately left out of the release workflow written
-      on 2026-08-02.* Two reasons: it is a separate deliverable from "build the three artifacts", and
-      `gh secret list --repo kevinpinscoe/marky` returns **empty** — `HOMEBREW_TAP_TOKEN` is not set
-      on this repo, so a Cask step would fail on the first release. Set the secret first:
-      ```bash
-      gh secret set HOMEBREW_TAP_TOKEN --repo kevinpinscoe/marky --body "$(gh auth token)"
-      ```
-      Then the Cask step drops into the `publish` job, modelled on Vermilian's, which writes the
-      cask file whole rather than patching it.
+- [x] **macOS install via Homebrew Cask.** Added 2026-08-05. `HOMEBREW_TAP_TOKEN` was already set
+      on `kevinpinscoe/marky` (confirmed via `gh secret list`, set 2026-08-05) so the step was wired
+      in directly rather than deferred.
 
-      The tap already exists and is reusable —
-      `github.com/kevinpinscoe/homebrew-tap` is public and already carries nine casks including
-      `vermilian.rb`. Adding Marky means a new `Casks/marky.rb` plus a step in the release workflow
-      that rewrites it with the new version, DMG URL and SHA-256, mirroring Vermilian's
-      "Update Homebrew tap (Cask)" job. Needs the `HOMEBREW_TAP_TOKEN` secret on the marky repo.
-      End state matches Vermilian:
+      Three new steps at the end of the `publish` job in `personal-release.yml`, mirroring
+      Vermilian's "Update Homebrew tap (Cask)" job: download the `.dmg` from the just-published
+      release, compute its version (stripped of the `personal-v` prefix) and SHA-256, then clone
+      `kevinpinscoe/homebrew-tap` and write `Casks/marky.rb` whole (not patched) before committing
+      and pushing.
+
+      One deliberate divergence from Vermilian's cask: the `zap trash` and `postflight` paths use
+      `com.marky.app` (this repo's actual `build.appId` in `package.json`), not the
+      `com.electron.<name>` pattern Vermilian's cask uses — that pattern is electron-forge's
+      *default* bundle id derived from `package.json`'s `name` field, which only applies because
+      Vermilian never overrides it. Marky is built with electron-builder and sets `appId` explicitly,
+      so its real bundle id is `com.marky.app`; copying Vermilian's pattern verbatim would have
+      pointed the cask's uninstall/zap step at a plist and saved-state path the app never creates.
+
+      Not yet verified against a real release — next `personal-v*` tag will be the first to exercise
+      the Cask step end to end. End state matches Vermilian:
       ```bash
       brew tap kevinpinscoe/tap
       brew install --cask marky
