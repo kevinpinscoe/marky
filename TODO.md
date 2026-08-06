@@ -152,13 +152,34 @@ version-align step worked: `package.json` still says `0.1.1`, yet every asset is
       so its real bundle id is `com.marky.app`; copying Vermilian's pattern verbatim would have
       pointed the cask's uninstall/zap step at a plist and saved-state path the app never creates.
 
-      Not yet verified against a real release — next `personal-v*` tag will be the first to exercise
-      the Cask step end to end. End state matches Vermilian:
+      **Verified 2026-08-05 with `personal-v0.1.3`** — first release to exercise the Cask step end
+      to end. All three jobs in `publish` (promote, download dmg, compute sha256, update tap)
+      succeeded on the first try; `Casks/marky.rb` landed in `kevinpinscoe/homebrew-tap` with
+      version `0.1.3`, the correct arm64 DMG URL, and a matching SHA-256. End state matches
+      Vermilian:
       ```bash
       brew tap kevinpinscoe/tap
       brew install --cask marky
       brew upgrade --cask marky
       ```
+
+      > ⚠️ **`personal-v0.1.3`, not `0.1.2`.** A separate, independently-written mac-build +
+      > Homebrew Cask implementation (`macos-build.yml`, PR #1, merged 2026-08-04) had landed
+      > **directly on `main`** — a branch-strategy violation, since fork-only CI belongs on
+      > `personal` and `main` is supposed to carry no commits of its own. A bare `v0.1.2` tag on
+      > `main` (2026-08-05) then fired that workflow alongside every upstream per-tag workflow
+      > (`linux-build.yml`, `windows-build.yml`, `flatpak.yml`) and got marked **Latest** — and its
+      > cask-publish step failed outright, hitting the exact CLI-arch bug already documented above
+      > (`--mac dmg` with no arch flags built only the runner's host arch, so the script's
+      > `INTEL_DMG` glob came up empty). Recovery: `main` was hard-reset to `upstream/main` and
+      > force-pushed (a plain `git revert` would have left two extra commits on `main`, still
+      > diverging it from `upstream/main` and breaking the `merge --ff-only` sync step below); the
+      > `v0.1.2` tag and its GitHub release were deleted; `build/icon.icns` — a genuine, unrelated
+      > bugfix bundled into that same PR (`package.json`'s `mac.icon` had pointed at this path since
+      > the electron-builder setup was added, but the file never existed) — was salvaged onto
+      > `personal` before the reset erased it. `0.1.2` was already used by the (still valid)
+      > `personal-v0.1.2` release, so the recovery release was cut as `personal-v0.1.3` instead of
+      > redoing `0.1.2`.
 
       > ⚠️ **Homebrew does not sign the app.** Vermilian is shipped **unsigned** — its README says
       > so plainly, and its Cask carries a `postflight` block running
