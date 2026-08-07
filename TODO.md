@@ -159,9 +159,14 @@ version-align step worked: `package.json` still says `0.1.1`, yet every asset is
       Vermilian:
       ```bash
       brew tap kevinpinscoe/tap
-      brew install --cask marky
-      brew upgrade --cask marky
+      brew install --cask kevinpinscoe/tap/marky
+      brew upgrade --cask kevinpinscoe/tap/marky
       ```
+
+      > ⚠️ **`marky` alone is ambiguous — always fully-qualify.** `grvydev/tap/marky` is an
+      > unrelated cask that also happens to be named `marky`. Discovered 2026-08-07 when
+      > `brew install --cask marky` failed with "Cask marky exists in multiple taps." Use
+      > `kevinpinscoe/tap/marky` for install/upgrade/list, not the bare name.
 
       > ⚠️ **`personal-v0.1.3`, not `0.1.2`.** A separate, independently-written mac-build +
       > Homebrew Cask implementation (`macos-build.yml`, PR #1, merged 2026-08-04) had landed
