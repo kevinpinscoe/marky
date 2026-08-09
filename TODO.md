@@ -1,8 +1,9 @@
 # TODO
 
 Human-owned task list for this fork. See `CLAUDE.md` for branch strategy. Most of the items
-below come out of the 2026-07-31 upstream sync — `PLAN.md` carries the full detail, and
-`CHECKPOINT.md` (untracked) is still on disk because that work is unfinished.
+below come out of the 2026-07-31 upstream sync — `PLAN.md` carries the full detail. The untracked
+`CHECKPOINT.md` that tracked that work through Session 6 (2026-08-02) was deleted on 2026-08-09;
+every step it recorded is closed except the theme-palette decision, which lives here instead.
 
 Prefixes: **[broken]** a defect to fix, **[decision]** something only Kevin can rule on,
 **[hanging]** work started and not finished.
@@ -209,12 +210,15 @@ version-align step worked: `package.json` still says `0.1.1`, yet every asset is
       Vermilian's `channels` job: `gh release download`, `sha256sum *`, `gh release upload
       --clobber`. Deferred to another day, per Kevin 2026-08-01.
 
-- [ ] **Run the test suite in the workflow before building.** `personal` currently has **no CI at
-      all** — upstream's `test.yml` triggers only on `main` and on PRs to `main`, and the Husky
-      hooks are deliberately bypassed on `personal`, so nothing is checked automatically on this
-      branch. Gate the release on the 154 unit tests at minimum. E2E needs
-      `npx electron-vite build` first (see `RUNBOOK.md` Step 5). Deferred to another day, per Kevin
-      2026-08-01.
+- [ ] **Run the test suite in the release workflow before building.** Gate the release on the 154
+      unit tests at minimum. E2E needs `npx electron-vite build` first (see `RUNBOOK.md` Step 5).
+      Deferred to another day, per Kevin 2026-08-01.
+
+      *Scope narrowed 2026-08-01:* this item originally argued that `personal` had **no CI at all**.
+      That gap is closed — `personal-ci.yml` (see the CI section below) now runs lint, typecheck,
+      unit and e2e on every push to `personal`. What remains is narrower: `personal-release.yml`
+      triggers on a `personal-v*` tag and builds without running any tests itself, so a tag pushed
+      at a red commit still ships. The fix is a test job the `build` matrix depends on.
 
 - [x] **Linux arm64 AppImage prerequisites.** Done 2026-08-02 — both Linux matrix legs install
       `libfuse2t64` with a fallback to `libfuse2` before packaging, and arm64 builds natively on
