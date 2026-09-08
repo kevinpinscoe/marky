@@ -52,3 +52,44 @@ jobs:
           files: |
             dist/*.AppImage
             dist/marky-linux-x64.tar.gz
+
+  arm64-deb:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - run: npx electron-builder --linux deb --arm64 --publish never
+
+      - name: Upload arm64 deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: marky-arm64-deb
+          path: dist/*.deb
+          if-no-files-found: error
+
+      - name: Create release and upload assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.deb
+
+      - name: Notify apt repo
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          gh api repos/kevinpinscoe/apt/dispatches \
+            --method POST \
+            --field event_type=new-release \
+            --field client_payload[repo]="${{ github.repository }}" \
+            --field client_payload[tag]="${{ github.ref_name }}"
+        env:
+          GH_TOKEN: ${{ secrets.REPO_DISPATCH_TOKEN }}

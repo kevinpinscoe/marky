@@ -144,10 +144,21 @@
           "arch": [
             "x64"
           ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "arm64"
+          ]
         }
       ],
       "icon": "build/icons",
       "category": "Office"
+    },
+    "deb": {
+      "maintainer": "Kevin P. Inscoe <kevin.inscoe@gmail.com>",
+      "synopsis": "Apostrophe-inspired Markdown editor",
+      "category": "editors"
     }
   }
 }
