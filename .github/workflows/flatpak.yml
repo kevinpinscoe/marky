@@ -83,7 +83,7 @@ jobs:
                 - |
                   cat > /app/bin/marky << 'WRAPPER'
                   #!/bin/bash
-                  exec zypak-wrapper /app/marky/marky "$@"
+                  exec zypak-wrapper /app/marky/marky-editor "$@"
                   WRAPPER
                 - chmod 755 /app/bin/marky
                 - install -Dm644 flatpak/io.github.marky_editor.marky.desktop /app/share/applications/io.github.marky_editor.marky.desktop
