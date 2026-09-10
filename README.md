@@ -8,6 +8,26 @@ It takes inspiration from Apostrophe on Linux, but it is being built as a cross-
 
 If you are wondering why not simply contribute to Apostrophe instead: Apostrophe is a lovely project, and its GNOME-first design is part of what makes it special. But its own build instructions list `libwebkit2gtk` for rendering the preview panel, which makes it a very different foundation from the one needed for a native Windows-friendly app. Marky exists partly because building a cross-platform editor around a stack I can realistically understand, maintain, and ship is a much more honest path than pretending I can personally take on a deep Windows port of Apostrophe.
 
+## Install
+
+### Debian / Raspberry Pi (arm64)
+
+Marky publishes an arm64 `.deb` for Debian-based systems, including Raspberry Pi OS, through a personal APT repository:
+
+```bash
+curl -sL https://kevinpinscoe.github.io/apt/gpg.key \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/kevinpinscoe.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/kevinpinscoe.gpg] \
+  https://kevinpinscoe.github.io/apt stable main" \
+  | sudo tee /etc/apt/sources.list.d/kevinpinscoe.list
+
+sudo apt update
+sudo apt install marky-editor
+```
+
+Other platforms currently require building from source — see [Getting started](#getting-started) below.
+
 ## Why Marky exists
 
 There are plenty of Markdown tools that are either too bare, too busy, or too dependent on external tooling. Marky aims for a middle ground:
